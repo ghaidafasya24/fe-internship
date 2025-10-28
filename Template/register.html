@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Create Account — Coffee Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    // Theme sync (same logic as landingpage/login)
+    const html = document.documentElement;
+    const isLightOrAuto = localStorage.getItem('hs_theme') === 'light' || (localStorage.getItem('hs_theme') === 'auto' && !window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const isDarkOrAuto = localStorage.getItem('hs_theme') === 'dark' || (localStorage.getItem('hs_theme') === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (isLightOrAuto && html.classList.contains('dark')) html.classList.remove('dark');
+    else if (isDarkOrAuto && html.classList.contains('light')) html.classList.remove('light');
+    else if (isDarkOrAuto && !html.classList.contains('dark')) html.classList.add('dark');
+    else if (isLightOrAuto && !html.classList.contains('light')) html.classList.add('light');
+  </script>
+  <link rel="stylesheet" href="https://preline.co/assets/css/main.css?v=3.0.1">
+  <style>
+    .auth-card { max-width: 520px; }
+  </style>
+</head>
+<body class="dark:bg-neutral-900 bg-white min-h-screen flex flex-col">
+  <header class="py-6">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-x-3">
+        <svg class="w-28 h-auto" width="116" height="32" viewBox="0 0 116 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M33.5696 30.8182V11.3182H37.4474V13.7003H37.6229C37.7952 13.3187 38.0445 12.9309 38.3707 12.5369C38.7031 12.1368 39.134 11.8045 39.6634 11.5398C40.1989 11.2689 40.8636 11.1335 41.6577 11.1335C42.6918 11.1335 43.6458 11.4044 44.5199 11.946C45.3939 12.4815 46.0926 13.291 46.6158 14.3743C47.139 15.4515 47.4006 16.8026 47.4006 18.4276C47.4006 20.0095 47.1451 21.3452 46.6342 22.4347C46.1295 23.518 45.4401 24.3397 44.5661 24.8999C43.6982 25.4538 42.7256 25.7308 41.6484 25.7308C40.8852 25.7308 40.2358 25.6046 39.7003 25.3523C39.1709 25.0999 38.737 24.7829 38.3984 24.4013C38.0599 24.0135 37.8014 23.6226 37.6229 23.2287H37.5028V30.8182H33.5696Z" class="fill-black dark:fill-white" fill="currentColor" />
+        </svg>
+      </a>
+      <div>
+        <a href="landingpage.html" class="text-sm font-medium text-black dark:text-white">Back to shop</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="flex-grow flex items-center justify-center px-4">
+    <div class="auth-card w-full bg-white dark:bg-neutral-900 rounded-2xl shadow-md p-8">
+      <h1 class="text-2xl font-semibold text-black dark:text-white mb-2">Create your account</h1>
+      <p class="text-sm text-gray-600 dark:text-neutral-400 mb-6">Register to start ordering — we'll never share your details.</p>
+
+      <form id="registerForm" class="space-y-4">
+        <div>
+          <label for="username" class="block text-sm font-medium text-black dark:text-white mb-1">Username</label>
+          <input id="username" name="username" type="text" required minlength="3" placeholder="Choose a username" class="block w-full rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-black dark:text-white py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+        </div>
+
+        <div>
+          <label for="phone" class="block text-sm font-medium text-black dark:text-white mb-1">Nomor HP</label>
+          <input id="phone" name="phone" type="tel" required pattern="[0-9+\-\s]{7,15}" placeholder="0812xxxxxxx" class="block w-full rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-black dark:text-white py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-black dark:text-white mb-1">Password</label>
+          <div class="relative">
+            <input id="password" name="password" type="password" required minlength="6" placeholder="At least 6 characters" class="block w-full rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-black dark:text-white py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            <button type="button" id="togglePwd" class="absolute end-3 top-1/2 -translate-y-1/2 text-sm text-gray-600 dark:text-neutral-300">Show</button>
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" class="w-full py-3 px-4 rounded-xl bg-yellow-400 text-black font-medium hover:bg-yellow-500 focus:outline-none">Create account</button>
+        </div>
+      </form>
+
+      <div class="mt-4 text-center text-sm text-gray-600 dark:text-neutral-400">
+        Already have an account? <a href="login.html" class="text-black font-medium dark:text-white">Sign in</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-600 dark:text-neutral-400">
+      © <span id="year"></span> Coffee Shop — All rights reserved
+    </div>
+  </footer>
+
+  <script>
+    // small helpers: year, password toggle, simple client validation demo
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const toggle = document.getElementById('togglePwd');
+    const pwd = document.getElementById('password');
+    toggle.addEventListener('click', function () {
+      if (pwd.type === 'password') { pwd.type = 'text'; toggle.textContent = 'Hide'; }
+      else { pwd.type = 'password'; toggle.textContent = 'Show'; }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value;
+
+      // Basic client validation
+      if (username.length < 3) { alert('Username harus minimal 3 karakter'); return; }
+      if (!/^[0-9+\-\s]{7,15}$/.test(phone)) { alert('Nomor HP tidak valid'); return; }
+      if (password.length < 6) { alert('Password minimal 6 karakter'); return; }
+
+      // Demo handler: replace with real API call
+      alert('Akun dibuat:\nUsername: ' + username + '\nNomor HP: ' + phone + '\n\n(Ganti ini dengan panggilan API backend.)');
+      // Optionally redirect to login: window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
