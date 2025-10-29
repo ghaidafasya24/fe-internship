@@ -47,7 +47,7 @@
 
         <div>
           <label for="phone" class="block text-sm font-medium text-black dark:text-white mb-1">Nomor HP</label>
-          <input id="phone" name="phone" type="tel" required pattern="[0-9+\-\s]{7,15}" placeholder="0812xxxxxxx" class="block w-full rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-black dark:text-white py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+          <input id="phone_number" name="phone_number" type="tel" required pattern="[0-9+\-\s]{7,15}" placeholder="0812xxxxxxx" class="block w-full rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-black dark:text-white py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
         </div>
 
         <div>
@@ -75,32 +75,44 @@
     </div>
   </footer>
 
-  <script>
-    // small helpers: year, password toggle, simple client validation demo
-    document.getElementById('year').textContent = new Date().getFullYear();
+  <script type="module">
+  import { fetchService } from '../Js/Temp/Fetch.js';
 
-    const toggle = document.getElementById('togglePwd');
-    const pwd = document.getElementById('password');
-    toggle.addEventListener('click', function () {
-      if (pwd.type === 'password') { pwd.type = 'text'; toggle.textContent = 'Hide'; }
-      else { pwd.type = 'password'; toggle.textContent = 'Show'; }
-    });
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const username = document.getElementById('username').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const password = document.getElementById('password').value;
+  // Toggle show/hide password
+  const toggle = document.getElementById('togglePwd');
+  const pwd = document.getElementById('password');
+  toggle.addEventListener('click', () => {
+    const isHidden = pwd.type === 'password';
+    pwd.type = isHidden ? 'text' : 'password';
+    toggle.textContent = isHidden ? 'Hide' : 'Show';
+  });
 
-      // Basic client validation
-      if (username.length < 3) { alert('Username harus minimal 3 karakter'); return; }
-      if (!/^[0-9+\-\s]{7,15}$/.test(phone)) { alert('Nomor HP tidak valid'); return; }
-      if (password.length < 6) { alert('Password minimal 6 karakter'); return; }
+  // Submit form
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      // Demo handler: replace with real API call
-      alert('Akun dibuat:\nUsername: ' + username + '\nNomor HP: ' + phone + '\n\n(Ganti ini dengan panggilan API backend.)');
-      // Optionally redirect to login: window.location.href = 'login.html';
-    });
-  </script>
+    const username = document.getElementById('username').value.trim();
+    const phone = document.getElementById('phone_number').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (username.length < 3) return alert('Username minimal 3 karakter');
+    if (!/^[0-9+\-\s]{7,15}$/.test(phone)) return alert('Nomor HP tidak valid');
+    if (password.length < 6) return alert('Password minimal 6 karakter');
+
+    const userData = { username, phone_number: phone, password };
+
+    try {
+      const result = await fetchService.register(userData);
+      alert('✅ Akun berhasil dibuat!\nSelamat datang, ' + result.username);
+      window.location.href = './login.html';
+    } catch (err) {
+      alert('❌ Gagal mendaftar: ' + err.message);
+    }
+  });
+</script>
+
+
 </body>
 </html>
