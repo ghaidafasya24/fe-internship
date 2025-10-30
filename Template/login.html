@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Sign In — Coffee Shop</title>
+  <title>Member Sign In — City Museum</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
     // Theme sync (same logic as landingpage)
@@ -31,7 +31,7 @@
         </svg>
       </a>
       <div>
-        <a href="landingpage.html" class="text-sm font-medium text-black dark:text-white">Back to shop</a>
+        <a href="landingpage.html" class="text-sm font-medium text-black dark:text-white">Home</a>
       </div>
     </nav>
   </header>
@@ -39,8 +39,8 @@
   <!-- Auth card -->
   <main class="flex-grow flex items-center justify-center px-4">
     <div class="auth-card w-full bg-white dark:bg-neutral-900 rounded-2xl shadow-md p-8">
-      <h1 class="text-2xl font-semibold text-black dark:text-white mb-2">Sign in to your account</h1>
-      <p class="text-sm text-gray-600 dark:text-neutral-400 mb-6">Welcome back — please enter your details.</p>
+  <h1 class="text-2xl font-semibold text-black dark:text-white mb-2">Member Sign In</h1>
+  <p class="text-sm text-gray-600 dark:text-neutral-400 mb-6">Welcome back — sign in with your member credentials to access member benefits and personalized tours.</p>
 
       <form id="loginForm" class="space-y-4">
 
@@ -79,9 +79,35 @@
 
   <footer class="py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-600 dark:text-neutral-400">
-      © <span id="year"></span> Coffee Shop — All rights reserved
+      © <span id="year"></span> City Museum — All rights reserved
     </div>
   </footer>
+<<<<<<< HEAD
+
+  <script type="module">
+    import fetchService from '../Js/Temp/Fetch.js';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    if (fetchService.isLoggedIn()) {
+      window.location.href = 'landingpage.html';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      try {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const result = await fetchService.login({ username, password });
+        alert('Welcome back, ' + (result.user?.name || username));
+        window.location.href = 'landingpage.html';
+      } catch (err) {
+        alert(err.message || 'Login failed.');
+      }
+    });
+  </script>
+=======
     <script src="/Js/controller/Login.js"></script>
+>>>>>>> 0a6e33e30149234abc4520b14086e2187451e470
 </body>
 </html>
