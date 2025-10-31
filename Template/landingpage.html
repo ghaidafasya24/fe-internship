@@ -53,11 +53,11 @@
 </head>
 
 <body class="dark:bg-neutral-900">
-  <!-- Announcement Banner -->
-  <!-- <div class="py-2 bg-black text-center dark:bg-white">
+  <!-- Announcement Banner
+  <div class="py-2 bg-amber-600 text-center">
     <div class="max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
-      <p class="text-sm text-white dark:text-black">
-        Free admission for children under 12
+      <p class="text-sm text-white font-medium">
+        🎨 Pameran Spesial: "Warisan Budaya Sunda" | Gratis untuk Pelajar dengan Kartu Identitas
       </p>
     </div>
   </div> -->
@@ -72,7 +72,7 @@
 
         <a class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-hidden focus:opacity-80"
           href="index.html" aria-label="Museum Sri Baduga">
-          <img src="/assets/images/logo sri baduga.jpg" alt="Logo Museum Sri Baduga" class="w-28 h-auto">
+          <img src="/assets/images/Logo_Real_SriBaduga.png" alt="Logo Museum Sri Baduga" class="w-28 h-auto">
         </a>
 
         <!-- <a class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-hidden focus:opacity-80" href="index.html" aria-label="Preline">
@@ -138,15 +138,19 @@
           </div>
           <div>
             <a class="inline-block text-black hover:text-gray-600 focus:outline-hidden focus:text-gray-600 dark:text-white dark:hover:text-neutral-300 dark:focus:text-neutral-300"
-              href="#profile">Profil Museum</a>
+              href="#profile">Tentang Museum</a>
           </div>
           <div>
             <a class="inline-block text-black hover:text-gray-600 focus:outline-hidden focus:text-gray-600 dark:text-white dark:hover:text-neutral-300 dark:focus:text-neutral-300"
-              href="#">Gudang</a>
+              href="#collections">Koleksi</a>
           </div>
           <div>
             <a class="inline-block text-black hover:text-gray-600 focus:outline-hidden focus:text-gray-600 dark:text-white dark:hover:text-neutral-300 dark:focus:text-neutral-300"
-              href="#">Kategori Koleksi</a>
+              href="#exhibitions">Pameran</a>
+          </div>
+          <div>
+            <a class="inline-block text-black hover:text-gray-600 focus:outline-hidden focus:text-gray-600 dark:text-white dark:hover:text-neutral-300 dark:focus:text-neutral-300"
+              href="#visit">Kunjungan</a>
           </div>
         </div>
       </div>
@@ -161,15 +165,35 @@
 
   <main id="content">
     <!-- Hero -->
-    <div class="h-120 md:h-[80dvh] flex flex-col bg-cover bg-center bg-no-repeat rounded-2xl"
+    <div class="relative h-120 md:h-[80dvh] flex flex-col bg-cover bg-center bg-no-repeat rounded-2xl overflow-hidden"
       style="background-image: url('../assets/images/Sri_Baduga_Museum.JPG');">
-      <div class="mt-auto w-2/3 md:max-w-lg ps-5 pb-5 md:ps-10 md:pb-10">
-        <h1 class="text-xl md:text-3xl lg:text-5xl text-white">
-          Museum Sri Baduga
-        </h1>
+      <!-- Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+      
+      <div class="relative mt-auto w-full px-5 py-10 md:px-10 md:py-16">
+        <div class="max-w-2xl mx-auto text-center">
+          <h1 class="text-2xl md:text-4xl lg:text-6xl font-bold text-white mb-4">
+            Museum Sri Baduga
+          </h1>
+          <p class="text-lg md:text-xl text-gray-200 mb-8">
+            Menjelajahi Warisan Budaya Sunda dalam Sejarah yang Hidup
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center">
+            <a href="#visit" 
+               class="inline-flex items-center px-6 py-3 text-base font-medium text-black bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors">
+              Rencanakan Kunjungan
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+            <a href="#collections" 
+               class="inline-flex items-center px-6 py-3 text-base font-medium text-white border-2 border-white rounded-lg hover:bg-white/20 transition-colors">
+              Lihat Koleksi
+            </a>
+          </div>
+        </div>
       </div>
     </div>
-
     <!-- End Hero -->
 
     <!-- Museum Profile -->
@@ -253,433 +277,266 @@
 
     <!-- End Museum Profile -->
 
-    <!-- Works -->
-    <div class="max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-24 mx-auto">
-      <div class="mb-6 sm:mb-10 max-w-2xl text-center mx-auto">
-        <h1 class="font-medium text-black text-3xl sm:text-4xl dark:text-white">
-          Current Exhibitions
+    <!-- Collections & Exhibitions -->
+    <div id="collections" class="max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-24 mx-auto">
+      <div class="mb-12 max-w-2xl text-center mx-auto">
+        <h1 class="font-bold text-black text-3xl sm:text-4xl dark:text-white">
+          Koleksi Unggulan
         </h1>
-        <p class="mt-3 text-gray-600 dark:text-neutral-400">Explore selected highlights from our permanent collection
-          and rotating exhibitions.</p>
+        <p class="mt-4 text-lg text-gray-600 dark:text-neutral-400">
+          Menelusuri warisan budaya Jawa Barat melalui koleksi bersejarah Museum Sri Baduga
+        </p>
       </div>
 
       <!-- Card Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-        <!-- Exhibit Card -->
-        <div class="group flex flex-col">
+        <!-- Koleksi Card 1 -->
+        <div class="group flex flex-col bg-white dark:bg-neutral-800 rounded-2xl shadow-sm hover:shadow-lg transition-shadow">
           <div class="relative">
-            <div class="aspect-4/4 overflow-hidden rounded-2xl">
-              <img class="size-full object-cover rounded-2xl"
-                src="https://images.unsplash.com/photo-1526318472351-c75fcf07008f?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3"
-                alt="Ancient Sculpture">
+            <div class="aspect-4/3 overflow-hidden rounded-t-2xl">
+              <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                src="../assets/images/koleksi_Museum_LP1.jpg"
+                alt="Koleksi Wayang">
             </div>
 
-            <div class="pt-4">
-              <h3 class="font-medium md:text-lg text-black dark:text-white">Ancient Sculptures</h3>
-              <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">Selected works from the 1st–5th century</p>
-            </div>
-
-            <a class="after:absolute after:inset-0 after:z-1" href="#"></a>
-          </div>
-
-          <div class="mb-2 mt-4 text-sm">
-            <div class="flex flex-col">
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Highlights:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">Stone carving, ceremonial pieces</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Origin:</span></div>
-                  <div class="flex justify-end"><span class="text-black dark:text-white">Regional Collection</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Period:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">1st–5th century</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-auto">
-            <a class="py-2 px-3 w-full inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-xl border border-transparent bg-yellow-400 text-black hover:bg-yellow-500 focus:outline-hidden focus:bg-yellow-500 transition"
-              href="#">Learn more</a>
-          </div>
-        </div>
-        <!-- End Exhibit Card -->
-
-        <!-- Exhibit Card -->
-        <div class="group flex flex-col">
-          <div class="relative">
-            <div class="aspect-4/4 overflow-hidden rounded-2xl">
-              <img class="size-full object-cover rounded-2xl"
-                src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3"
-                alt="Renaissance Painting">
-            </div>
-
-            <div class="pt-4">
-              <h3 class="font-medium md:text-lg text-black dark:text-white">Renaissance Paintings</h3>
-              <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">Masterpieces from the Renaissance period</p>
-            </div>
-
-            <a class="after:absolute after:inset-0 after:z-1" href="#"></a>
-          </div>
-
-          <div class="mb-2 mt-4 text-sm">
-            <div class="flex flex-col">
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Highlights:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">Oil paintings, portraits</span></div>
-                </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Origin:</span></div>
-                  <div class="flex justify-end"><span class="text-black dark:text-white">European Collection</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Period:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">1400s–1600s</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-auto">
-            <a class="py-2 px-3 w-full inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-xl border border-transparent bg-yellow-400 text-black hover:bg-yellow-500 focus:outline-hidden focus:bg-yellow-500 transition"
-              href="#">Learn more</a>
-          </div>
-        </div>
-        <!-- End Exhibit Card -->
-
-        <!-- Exhibit Card -->
-        <div class="group flex flex-col">
-          <div class="relative">
-            <div class="aspect-4/4 overflow-hidden rounded-2xl">
-              <img class="size-full object-cover rounded-2xl"
-                src="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3"
-                alt="Local Heritage">
-            </div>
-
-            <div class="pt-4">
-              <h3 class="font-medium md:text-lg text-black dark:text-white">Local Heritage</h3>
-              <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">Artefacts and stories from the local region
+            <div class="p-6">
+              <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-2">Koleksi Wayang</h3>
+              <p class="text-gray-600 dark:text-neutral-400 mb-4">
+                Menampilkan beragam wayang kulit dan golek khas Sunda
               </p>
             </div>
 
-            <a class="after:absolute after:inset-0 after:z-1" href="#"></a>
-          </div>
-
-          <div class="mb-2 mt-4 text-sm">
-            <div class="flex flex-col">
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Highlights:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">Ceramics, textiles</span></div>
+            <div class="px-6 pb-6">
+              <div class="flex flex-col space-y-3 text-sm text-gray-700 dark:text-neutral-300">
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Highlight:</span>
+                  <span>Wayang Golek Purwa</span>
                 </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Origin:</span></div>
-                  <div class="flex justify-end"><span class="text-black dark:text-white">City Collection</span></div>
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Asal:</span>
+                  <span>Jawa Barat</span>
                 </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Period:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">1800s–1900s</span></div>
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Periode:</span>
+                  <span>Abad ke-19</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="mt-auto">
-            <a class="py-2 px-3 w-full inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-xl border border-transparent bg-yellow-400 text-black hover:bg-yellow-500 focus:outline-hidden focus:bg-yellow-500 transition"
-              href="#">Learn more</a>
+          <div class="mt-auto p-6 pt-0">
+            <a href="#" class="block w-full py-3 px-4 text-center font-medium text-black bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors">
+              Selengkapnya
+            </a>
           </div>
         </div>
-        <!-- End Exhibit Card -->
 
-        <!-- Exhibit Card -->
-        <div class="group flex flex-col">
+        <!-- Koleksi Card 2 -->
+        <div class="group flex flex-col bg-white dark:bg-neutral-800 rounded-2xl shadow-sm hover:shadow-lg transition-shadow">
           <div class="relative">
-            <div class="aspect-4/4 overflow-hidden rounded-2xl">
-              <img class="size-full object-cover rounded-2xl"
-                src="https://images.unsplash.com/photo-1504198453319-5ce911bafcde?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3"
-                alt="Maritime Artifacts">
+            <div class="aspect-4/3 overflow-hidden rounded-t-2xl">
+              <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                src="../assets/images/koleksi_Museum_LP2.jpg"
+                alt="Koleksi Etnografi">
             </div>
 
-            <div class="pt-4">
-              <h3 class="font-medium md:text-lg text-black dark:text-white">Maritime Artifacts</h3>
-              <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">Objects from historic voyages and navigation
+            <div class="p-6">
+              <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-2">Koleksi Etnografi</h3>
+              <p class="text-gray-600 dark:text-neutral-400 mb-4">
+                Artefak kehidupan sehari-hari masyarakat Sunda
               </p>
             </div>
 
-            <a class="after:absolute after:inset-0 after:z-1" href="#"></a>
-          </div>
-
-          <div class="mb-2 mt-4 text-sm">
-            <div class="flex flex-col">
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Highlights:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">Models, maps, instruments</span></div>
+            <div class="px-6 pb-6">
+              <div class="flex flex-col space-y-3 text-sm text-gray-700 dark:text-neutral-300">
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Highlight:</span>
+                  <span>Peralatan Rumah Tangga</span>
                 </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Origin:</span></div>
-                  <div class="flex justify-end"><span class="text-black dark:text-white">Maritime Collection</span>
-                  </div>
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Asal:</span>
+                  <span>Berbagai daerah di Jabar</span>
                 </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Period:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">1600s–1900s</span></div>
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Periode:</span>
+                  <span>Abad ke-18 - 20</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="mt-auto">
-            <a class="py-2 px-3 w-full inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-xl border border-transparent bg-yellow-400 text-black hover:bg-yellow-500 focus:outline-hidden focus:bg-yellow-500 transition"
-              href="#">Learn more</a>
+          <div class="mt-auto p-6 pt-0">
+            <a href="#" class="block w-full py-3 px-4 text-center font-medium text-black bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors">
+              Selengkapnya
+            </a>
           </div>
         </div>
-        <!-- End Exhibit Card -->
 
-        <!-- Exhibit Card -->
-        <div class="group flex flex-col">
+        <!-- Koleksi Card 3 -->
+        <div class="group flex flex-col bg-white dark:bg-neutral-800 rounded-2xl shadow-sm hover:shadow-lg transition-shadow">
           <div class="relative">
-            <div class="aspect-4/4 overflow-hidden rounded-2xl">
-              <img class="size-full object-cover rounded-2xl"
-                src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3"
-                alt="Contemporary Art">
+            <div class="aspect-4/3 overflow-hidden rounded-t-2xl">
+              <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                src="../assets/images/Ilustrasi_Pakaian_Adat_Jawa_Timur.width-800.format-webp.webp"
+                alt="Koleksi Tekstil">
             </div>
 
-            <div class="pt-4">
-              <h3 class="font-medium md:text-lg text-black dark:text-white">Contemporary Art</h3>
-              <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">New works by contemporary artists</p>
+            <div class="p-6">
+              <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-2">Koleksi Tekstil</h3>
+              <p class="text-gray-600 dark:text-neutral-400 mb-4">
+                Ragam kain tradisional dan pakaian adat Sunda
+              </p>
             </div>
 
-            <a class="after:absolute after:inset-0 after:z-1" href="#"></a>
-          </div>
-
-          <div class="mb-2 mt-4 text-sm">
-            <div class="flex flex-col">
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Highlights:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">Installations, multimedia</span></div>
+            <div class="px-6 pb-6">
+              <div class="flex flex-col space-y-3 text-sm text-gray-700 dark:text-neutral-300">
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Highlight:</span>
+                  <span>Batik dan Tenun</span>
                 </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Origin:</span></div>
-                  <div class="flex justify-end"><span class="text-black dark:text-white">International</span></div>
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Asal:</span>
+                  <span>Jawa Barat</span>
                 </div>
-              </div>
-
-              <div class="py-3 border-t border-gray-200 dark:border-neutral-700">
-                <div class="grid grid-cols-2 gap-2">
-                  <div><span class="font-medium text-black dark:text-white">Period:</span></div>
-                  <div class="text-end"><span class="text-black dark:text-white">2000s–present</span></div>
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">Periode:</span>
+                  <span>Abad ke-19 - 20</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="mt-auto">
-            <a class="py-2 px-3 w-full inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-xl border border-transparent bg-yellow-400 text-black hover:bg-yellow-500 focus:outline-hidden focus:bg-yellow-500 transition"
-              href="#">Learn more</a>
+          <div class="mt-auto p-6 pt-0">
+            <a href="#" class="block w-full py-3 px-4 text-center font-medium text-black bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors">
+              Selengkapnya
+            </a>
           </div>
         </div>
-        <!-- End Exhibit Card -->
+
       </div>
       <!-- End Card Grid -->
 
-      <div class="mt-10 lg:mt-20 text-center">
-        <a class="relative inline-block font-medium md:text-lg text-black before:absolute before:bottom-0.5 before:start-0 before:-z-1 before:w-full before:h-1 before:bg-yellow-400 hover:before:bg-black focus:outline-hidden focus:before:bg-black dark:text-white dark:hover:before:bg-white dark:focus:before:bg-white"
-          href="#">
-          View all Exhibits
+      <div class="mt-12 text-center">
+        <a class="inline-flex items-center px-6 py-3 text-lg font-medium text-black bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors"
+          href="#exhibitions">
+          Lihat Semua Koleksi
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
         </a>
       </div>
     </div>
-    <!-- End Works -->
+    <!-- End Collections -->
 
-    <!-- Testimonials -->
-    <div class="py-10 md:py-16 lg:py-20 bg-orange-100">
-      <div class="px-4 sm:px-6 lg:px-8">
-        <!-- Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 md:items-center">
-          <div class="relative h-80 md:h-150 bg-gray-100 rounded-2xl dark:bg-neutral-800">
-            <img class="absolute inset-0 size-full object-cover rounded-2xl"
-              src="https://images.unsplash.com/photo-1507914464562-6ff4ac29692f?q=80&w=768&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="Testimonials Image">
-          </div>
-          <!-- End Col -->
-
-          <div class="pt-10 md:p-10">
-            <blockquote class="max-w-4xl mx-auto">
-              <p class="mb-6 md:text-lg">
-                Our Story: Preserving Heritage
-              </p>
-
-              <p class="text-xl sm:text-2xl lg:text-3xl lg:leading-normal text-gray-800 dark:text-neutral-200">
-                The City Museum connects people and places through curated collections and exhibitions — preserving
-                culture, history, and art for future generations.
-              </p>
-
-              <footer class="mt-6 md:mt-10">
-                <div class="border-neutral-700">
-                  <button type="button"
-                    class="group inline-flex items-center gap-x-3 text-gray-800 dark:text-neutral-200 text-sm focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none">
-                    <span
-                      class="size-8 md:size-10 flex flex-col justify-center items-center bg-black text-white rounded-full group-hover:scale-105 group-focus:scale-105 transition-transform duration-300 ease-in-out dark:bg-white dark:text-black">
-                      <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                        fill="currentColor" viewBox="0 0 16 16">
-                        <path
-                          d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393" />
-                      </svg>
-                    </span>
-                    Watch the Video
-                  </button>
-                </div>
-              </footer>
-            </blockquote>
-          </div>
-          <!-- End Col -->
         </div>
         <!-- End Grid -->
       </div>
     </div>
     <!-- End Testimonials -->
 
-    <!-- Contact -->
-    <div class="max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-24 mx-auto">
-      <div class="mb-6 sm:mb-10 max-w-2xl text-center mx-auto">
-        <h2 class="font-medium text-black text-2xl sm:text-4xl dark:text-white">
-          Contacts
+    <!-- Contact & Visit -->
+    <div id="visit" class="max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-24 mx-auto">
+      <div class="mb-10 max-w-2xl text-center mx-auto">
+        <h2 class="font-bold text-black text-3xl sm:text-4xl dark:text-white mb-4">
+          Kunjungi Museum
         </h2>
+        <p class="text-lg text-gray-600 dark:text-neutral-400">
+          Jelajahi sejarah dan warisan budaya Jawa Barat bersama kami
+        </p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 lg:items-center gap-6 md:gap-8 lg:gap-12">
-        <div class="aspect-w-16 aspect-h-6 lg:aspect-h-14 overflow-hidden bg-gray-100 rounded-2xl dark:bg-neutral-800">
-          <img
-            class="group-hover:scale-105 group-focus:scale-105 transition-transform duration-500 ease-in-out object-cover rounded-2xl"
-            src="https://images.unsplash.com/photo-1572021335469-31706a17aaef?q=80&w=560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Contacts Image">
-        </div>
-        <!-- End Col -->
-
-        <div class="space-y-8 lg:space-y-16">
-          <div>
-            <h3 class="mb-5 font-semibold text-black dark:text-white">
-              Our address
-            </h3>
-
-            <!-- Grid -->
-            <div class="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
-              <div class="flex gap-4">
-                <svg class="shrink-0 size-5 text-gray-500 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg"
-                  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Info Section -->
+        <div class="bg-white dark:bg-neutral-800 rounded-2xl p-8">
+          <div class="space-y-8">
+            <!-- Alamat -->
+            <div class="flex items-start gap-4">
+              <span class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-yellow-100">
+                <svg class="w-6 h-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-
-                <div class="grow">
-                  <p class="text-sm text-gray-600 dark:text-neutral-400">
-                    United Kingdom
-                  </p>
-                  <address class="mt-1 text-black not-italic dark:text-white">
-                    300 Bath Street, Tay House<br>
-                    Glasgow G2 4JR
-                  </address>
-                </div>
+              </span>
+              <div>
+                <h3 class="text-xl font-bold text-black dark:text-white mb-2">Lokasi</h3>
+                <p class="text-gray-600 dark:text-neutral-400 mb-1">Kota Bandung</p>
+                <address class="text-lg font-medium text-black not-italic dark:text-white">
+                  Jl. BKR No.185, Cijagra<br>
+                  Kec. Lengkong, Kota Bandung<br>
+                  Jawa Barat 40265
+                </address>
               </div>
             </div>
-            <!-- End Grid -->
-          </div>
 
-          <div>
-            <h3 class="mb-5 font-semibold text-black dark:text-white">
-              Our contacts
-            </h3>
-
-            <!-- Grid -->
-            <div class="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
-              <div class="flex gap-4">
-                <svg class="shrink-0 size-5 text-gray-500 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg"
-                  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path
-                    d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z">
-                  </path>
-                  <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"></path>
+            <!-- Jam Operasional -->
+            <div class="flex items-start gap-4">
+              <span class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-yellow-100">
+                <svg class="w-6 h-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-
-                <div class="grow">
-                  <p class="text-sm text-gray-600 dark:text-neutral-400">
-                    Email us
+              </span>
+              <div>
+                <h3 class="text-xl font-bold text-black dark:text-white mb-2">Jam Operasional</h3>
+                <div class="space-y-2">
+                  <p class="flex flex-col">
+                    <span class="text-gray-600 dark:text-neutral-400">Selasa - Minggu:</span>
+                    <span class="font-medium text-black dark:text-white">08.00 - 16.00 WIB</span>
                   </p>
-                  <p>
-                    <a class="relative inline-block font-medium text-black before:absolute before:bottom-0.5 before:start-0 before:-z-1 before:w-full before:h-1 before:bg-yellow-400 hover:before:bg-black focus:outline-hidden focus:before:bg-black dark:text-white dark:hover:before:bg-white dark:focus:before:bg-white"
-                      href="mailto:example@site.so">
-                      hello@example.so
-                    </a>
-                  </p>
-                </div>
-              </div>
-
-              <div class="flex gap-4">
-                <svg class="shrink-0 size-5 text-gray-500 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg"
-                  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path
-                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-
-                <div class="grow">
-                  <p class="text-sm text-gray-600 dark:text-neutral-400">
-                    Call us
-                  </p>
-                  <p>
-                    <a class="relative inline-block font-medium text-black before:absolute before:bottom-0.5 before:start-0 before:-z-1 before:w-full before:h-1 before:bg-yellow-400 hover:before:bg-black focus:outline-hidden focus:before:bg-black dark:text-white dark:hover:before:bg-white dark:focus:before:bg-white"
-                      href="mailto:example@site.so">
-                      +44 222 777-000
-                    </a>
+                  <p class="flex flex-col">
+                    <span class="text-gray-600 dark:text-neutral-400">Senin & Hari Libur Nasional:</span>
+                    <span class="font-medium text-black dark:text-white">Tutup</span>
                   </p>
                 </div>
               </div>
             </div>
-            <!-- End Grid -->
+
+            <!-- Kontak -->
+            <div class="flex items-start gap-4">
+              <span class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-yellow-100">
+                <svg class="w-6 h-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+              </span>
+              <div>
+                <h3 class="text-xl font-bold text-black dark:text-white mb-2">Hubungi Kami</h3>
+                <div class="space-y-3">
+                  <div>
+                    <p class="text-gray-600 dark:text-neutral-400">Email:</p>
+                    <a href="mailto:museum.sribaduga@jabarprov.go.id" 
+                       class="font-medium text-black hover:text-yellow-600 dark:text-white dark:hover:text-yellow-400">
+                      museum.sribaduga@jabarprov.go.id
+                    </a>
+                  </div>
+                  <div>
+                    <p class="text-gray-600 dark:text-neutral-400">Telepon:</p>
+                    <a href="tel:+62227563939" 
+                       class="font-medium text-black hover:text-yellow-600 dark:text-white dark:hover:text-yellow-400">
+                      (022) 7563939
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- End Col -->
+
+        <!-- Map -->
+        <div class="bg-white dark:bg-neutral-800 rounded-2xl p-8">
+          <div class="rounded-xl overflow-hidden h-full min-h-[400px] bg-gray-200 dark:bg-neutral-700">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.743303811701!2d107.61543661477195!3d-6.927844994993828!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e87f1f67b147%3A0x54e07fc04f69c11c!2sMuseum%20Negeri%20Sri%20Baduga!5e0!3m2!1sen!2sid!4v1635134565023!5m2!1sen!2sid"
+              width="100%"
+              height="100%"
+              style="border:0;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- End Contact -->
+    <!-- End Contact & Visit -->
 
    
   </main>
