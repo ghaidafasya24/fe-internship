@@ -1,3 +1,4 @@
+
 // File: /Js/controller/Login.js
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -37,8 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
 
       if (response.ok) {
-        // alert("Login successful!");
-
         // Simpan token ke cookie (kalau backend tidak otomatis kirim cookie)
         if (data.token) {
           document.cookie = `token=${data.token}; path=/; expires=${new Date(
@@ -46,8 +45,19 @@ document.addEventListener("DOMContentLoaded", () => {
           ).toUTCString()};`;
         }
 
-        // Redirect otomatis ke halaman berikutnya
-        window.location.href = "dasboard.html";
+        // ✅ Tampilkan popup sukses dengan animasi centang
+        Swal.fire({
+          icon: "success",
+          title: "Login Berhasil!",
+          text: "Selamat datang kembali 👋",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+
+        // 🔁 Redirect otomatis setelah popup tertutup
+        setTimeout(() => {
+          window.location.href = "dasboard.html";
+        }, 2000);
       } else {
         alert(data.message || "Invalid username or password.");
       }
@@ -61,3 +71,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
