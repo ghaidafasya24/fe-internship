@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Redirect otomatis ke halaman berikutnya
-        window.location.href = "landingpage.html";
+        window.location.href = "dasboard.html";
       } else {
         alert(data.message || "Invalid username or password.");
       }
