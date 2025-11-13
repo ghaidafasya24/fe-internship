@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah Koleksi - Museum Sri Baduga</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md flex flex-col">
+      <div class="p-5 text-center border-b">
+        <h1 class="text-lg font-bold text-gray-800">Museum Sri Baduga</h1>
+        <p class="text-sm text-gray-500">Admin Dashboard</p>
+      </div>
+      <nav class="flex-1 p-4 space-y-2">
+        <a href="../dasboard.html" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Dashboard</a>
+        <a href="koleksi.html" class="block py-2.5 px-4 bg-gray-200 font-semibold text-gray-900">Koleksi</a>
+        <a href="kategori.html" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Kategori</a>
+        <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Laporan</a>
+        <a id="logoutButton" href="#" class="block py-2.5 px-4 rounded hover:bg-red-200 font-medium text-red-700">Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+      <!-- Header -->
+      <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+        <h2 class="text-xl font-semibold text-gray-800">Manajemen Koleksi Museum</h2>
+      </header>
+
+      <!-- Content -->
+      <main class="p-6 overflow-y-auto flex-1">
+        <div class="bg-white rounded-xl shadow p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Daftar Koleksi</h3>
+            <button id="openModal" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+              + Tambah Koleksi
+            </button>
+          </div>
+          <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">No</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Nama Koleksi</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Kategori</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">No Registrasi</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">No Inventaris</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Bahan</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Ukuran</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Tahun Perolehan</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Asal Perolehan</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Tempat Penyimpanan</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Deskripsi</th>
+                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Gambar</th>
+                <th class="px-4 py-2 border-b text-center text-sm font-semibold text-gray-600">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tableKoleksi"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 hidden bg-black bg-opacity-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
+      <h3 class="text-lg font-semibold mb-4">Tambah Koleksi</h3>
+      <form id="addCollectionForm" class="space-y-4">
+        <input id="nama_benda" name="nama_benda" placeholder="Nama Koleksi" class="border rounded px-2 py-1 w-full" required />
+        <select id="kategori" name="kategori_id" class="border rounded px-2 py-1 w-full" required></select>
+        <input id="no_reg" name="no_reg" placeholder="No Registrasi" class="border rounded px-2 py-1 w-full" required />
+        <input id="no_inv" name="no_inv" placeholder="No Inventaris" class="border rounded px-2 py-1 w-full" required />
+        <input id="bahan" name="bahan" placeholder="Bahan" class="border rounded px-2 py-1 w-full" required />
+        <input id="ukuran" name="ukuran" placeholder="Ukuran" class="border rounded px-2 py-1 w-full" required />
+        <input id="tahun_perolehan" name="tahun_perolehan" placeholder="Tahun Perolehan" class="border rounded px-2 py-1 w-full" required />
+        <input id="asal_perolehan" name="asal_perolehan" placeholder="Asal Perolehan" class="border rounded px-2 py-1 w-full" required />
+        <input id="tempat_penyimpanan" name="tempat_penyimpanan" placeholder="Tempat Penyimpanan" class="border rounded px-2 py-1 w-full" required />
+        <textarea id="deskripsi" name="ket" placeholder="Deskripsi" class="border rounded px-2 py-1 w-full" required></textarea>
+        <input type="file" id="foto" name="foto" class="border rounded px-2 py-1 w-full" required />
+        <div id="imagePreview" class="hidden mt-2">
+          <img id="preview" class="h-48 w-48 object-cover rounded-lg border border-gray-300">
+        </div>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" id="closeModal" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Batal</button>
+          <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Simpan Koleksi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Script -->
+  <script>
+    const modal = document.getElementById('modal');
+    const openModal = document.getElementById('openModal');
+    const closeModal = document.getElementById('closeModal');
+    openModal.addEventListener('click', () => modal.classList.remove('hidden'));
+    closeModal.addEventListener('click', () => modal.classList.add('hidden'));
+  </script>
+  <script type="module" src="../../Js/config/url_koleksi.js"></script>
+  <script type="module" src="../../Js/controller/add-collection.js"></script>
+  <script type="module" src="../../Js/Temp/tabel_koleksi.js"></script>
+</body>
+</html>
