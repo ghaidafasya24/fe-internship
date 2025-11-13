@@ -19,13 +19,13 @@
         <p class="text-sm text-gray-500">Admin Dashboard</p>
       </div>
 
-      <nav class="flex-1 p-4 space-y-2">
-        <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Dashboard</a>
-        <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Koleksi</a>
-        <a href="#" class="block py-2.5 px-4 bg-gray-200 font-semibold text-gray-900">Kategori</a>
-        <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Laporan</a>
-         <a id="logoutButton" href="#" class="block py-2.5 px-4 rounded hover:bg-red-200 font-medium text-red-700">Logout</a>
-      </nav>
+  <nav class="flex-1 p-4 space-y-2">
+  <a href="dasboard.html" class="block py-2.5 px-4 bg-gray-200 font-semibold text-gray-900">Dashboard</a>
+      <a href="admin/koleksi.html" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Koleksi</a>
+      <a href="admin/kategori.html" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Kategori</a>
+      <a href="dasboard.html" class="block py-2.5 px-4 rounded hover:bg-gray-200 font-medium text-gray-700">Laporan</a>
+      <a id="logoutButton" href="#" class="block py-2.5 px-4 rounded hover:bg-red-200 font-medium text-red-700">Logout</a>
+    </nav>
       <!-- Modal Konfirmasi Logout (Themed & Playful) -->
 <div id="logoutModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
   <div id="logoutCard" class="bg-yellow-50 dark:bg-neutral-900 p-6 rounded-3xl shadow-2xl text-center max-w-md w-full transform transition-all duration-300 scale-95 opacity-0">
@@ -64,29 +64,47 @@
 
       <!-- Content -->
       <main class="p-6 overflow-y-auto flex-1">
-        <div class="bg-white rounded-xl shadow p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-800">Manajemen Kategori Koleksi</h3>
-            <button id="openModal" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              + Tambah Kategori
-            </button>
+        <!-- Statistik cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div class="bg-white rounded-xl shadow p-4 flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Jumlah Koleksi</p>
+              <p id="statKoleksiCount" class="text-2xl font-bold text-gray-800">-</p>
+            </div>
+            <div class="text-yellow-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 0 0 2 2h14V7H3z" />
+              </svg>
+            </div>
           </div>
 
-          <!-- Table -->
-          <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden" id="iniTabelKategori">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">No</th>
-                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Nama Kategori</th>
-                <th class="px-4 py-2 border-b text-left text-sm font-semibold text-gray-600">Deskripsi</th>
-                <th class="px-4 py-2 border-b text-center text-sm font-semibold text-gray-600">Aksi</th>
-              </tr>
-            </thead>
-          </table>
+          <div class="bg-white rounded-xl shadow p-4 flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Jumlah Kategori</p>
+              <p id="statKategoriCount" class="text-2xl font-bold text-gray-800">-</p>
+            </div>
+            <div class="text-blue-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl shadow p-4 flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Koleksi dengan Gambar</p>
+              <p id="statWithImageCount" class="text-2xl font-bold text-gray-800">-</p>
+            </div>
+            <div class="text-green-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 0 0 2 2h14V7H3z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11l2 2 4-4" />
+              </svg>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
-  </div>
+
+        
 
   <!-- Modal -->
   <div id="modal" class="fixed inset-0 hidden bg-black bg-opacity-50 flex justify-center items-center">
@@ -116,6 +134,7 @@
     openModal.addEventListener('click', () => modal.classList.remove('hidden'));
     closeModal.addEventListener('click', () => modal.classList.add('hidden'));
   </script>
+  <script type="module" src="../Js/controller/dashboard_stats.js"></script>
   <script type="module" src="../Js/controller/kategori.js"></script>
   <script type="module"  src="../Js/controller/logout.js"></script>
 </body>
