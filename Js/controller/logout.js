@@ -62,11 +62,12 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         modal.classList.add('hidden');
         // redirect after modal hides
-        window.location.href = "../template/landingpage.html";
+        window.location.href = "/../../index.html";
       }, 220);
     } else {
       modal.classList.add('hidden');
-      window.location.href = "../template/landingpage.html";
+      window.location.href = "/../../index.html";
     }
   });
 });
+
