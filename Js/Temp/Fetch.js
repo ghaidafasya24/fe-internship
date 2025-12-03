@@ -21,18 +21,23 @@ class FetchService {
     };
 
     try {
+      console.debug('[FetchService] requesting', url, options?.method || 'GET');
       const response = await fetch(url, { ...defaultOptions, ...options });
 
       // Coba parse JSON, atau tangani jika tidak bisa
       let data;
       try {
         data = await response.json();
-      } catch {
-        data = { message: 'Response tidak valid' };
+      } catch (jsonErr) {
+        // Jika bukan JSON, ambil teks untuk debugging
+        const text = await response.text();
+        console.warn('[FetchService] response not JSON for', url, 'status', response.status, 'body:', text);
+        data = { message: 'Response tidak valid', raw: text };
       }
 
       if (!response.ok) {
-        throw new Error(data.message || 'Terjadi kesalahan pada server');
+        const errMsg = data?.message || `HTTP ${response.status}`;
+        throw new Error(errMsg);
       }
 
       return data;
