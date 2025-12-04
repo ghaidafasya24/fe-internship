@@ -18,7 +18,7 @@ function GetAllCategory(response) {
   while (table.rows.length > 1) table.deleteRow(1);
 
   results.forEach(isiRow);
-  attachDeleteHandlers();
+  attachDeleteHandlersAndEdit();
 }
 
 function isiRow(value, index) {
@@ -56,6 +56,47 @@ function attachDeleteHandlers() {
     // mark handler attached
     btn._hasHandler = true;
   });
+}
+
+// Attach edit handlers: buka modal dan isi form untuk edit
+function attachEditHandlers() {
+  const table = document.getElementById('iniTabelKategori');
+  if (!table) return;
+
+  table.querySelectorAll('.btn-edit').forEach(btn => {
+    if ((btn.dataset && btn.dataset._hasHandlerEdit) || btn._hasHandlerEdit) return;
+    btn.addEventListener('click', (e) => {
+      const id = btn.getAttribute('data-id');
+      if (!id) return alert('ID kategori tidak ditemukan');
+
+      // Cari row dan ambil data nama & deskripsi dari atribut data
+      const row = btn.closest('tr');
+      const nama = row ? row.getAttribute('data-nama') : '';
+      const deskripsi = row ? row.getAttribute('data-deskripsi') : '';
+
+      const modal = document.getElementById('modal');
+      const namaInput = document.getElementById('nama_kategori');
+      const deskInput = document.getElementById('deskripsi');
+      if (!modal || !namaInput || !deskInput) return alert('Modal atau input tidak ditemukan');
+
+      // isi form
+      namaInput.value = nama || '';
+      deskInput.value = deskripsi || '';
+
+      // set edit id di modal dataset
+      modal.dataset.editId = id;
+
+      // ubah judul tombol/label jika mau (opsional)
+      modal.classList.remove('hidden');
+    });
+    btn._hasHandlerEdit = true;
+  });
+}
+
+// After rendering rows attach both handlers
+function attachDeleteHandlersAndEdit() {
+  attachDeleteHandlers();
+  attachEditHandlers();
 }
 
 
