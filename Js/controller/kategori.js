@@ -92,17 +92,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = { nama_kategori: nama, deskripsi };
 
     try {
-      const result = await createKategori(data);
-      alert(`✅ Kategoriberhasil ditambahkan!`);
+      // jika modal memiliki dataset.editId maka lakukan update
+      const editId = modal.dataset.editId;
+      if (editId) {
+        const updated = await updateKategori(editId, data);
+        alert('✅ Kategori berhasil diperbarui');
+        // perbarui baris di tabel jika ada
+        const row = document.querySelector(`tr[data-row-id="${editId}"]`);
+        if (row) {
+          row.setAttribute('data-nama', data.nama_kategori);
+          row.setAttribute('data-deskripsi', data.deskripsi);
+          // update cell texts (No tetap sama)
+          const cells = row.querySelectorAll('td');
+          if (cells && cells.length >= 3) {
+            cells[1].textContent = data.nama_kategori;
+            cells[2].textContent = data.deskripsi;
+          }
+        }
+        // clear edit state
+        delete modal.dataset.editId;
+      } else {
+        const result = await createKategori(data);
+        alert('✅ Kategori berhasil ditambahkan!');
+        console.log('Kategori berhasil ditambahkan:', result);
+      }
 
       // Tutup modal dan reset form
       form.reset();
       modal.classList.add('hidden');
-
-      // (Opsional) reload daftar kategori
-      console.log('Kategori berhasil ditambahkan:', result);
     } catch (err) {
-      alert('❌ Gagal menambahkan kategori: ' + err.message);
+      alert('❌ Gagal menyimpan kategori: ' + (err.message || err));
     }
   });
 
