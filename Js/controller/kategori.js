@@ -64,15 +64,11 @@ export async function updateKategori(id) {
 // Hapus kategori
 export async function deleteKategori(id) {
   try {
-    const response = await authFetch(`${API_URLS.kategori}/${id}`, {
+    await authFetch(`${API_URLS.kategori}/${id}`, {
       method: "DELETE",
     });
 
-    if (!response.ok) {
-      throw new Error(`Gagal menghapus kategori (${response.status})`);
-    }
-
-    return { message: "Kategori berhasil dihapus" }; // FIX
+    return true; // cukup tanda sukses
   } catch (error) {
     console.error("❌ Error deleteKategori:", error.message);
     throw error;
