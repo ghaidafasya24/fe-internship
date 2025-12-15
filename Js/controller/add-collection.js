@@ -1,145 +1,138 @@
-// /Js/controller/add_collection.js
-import { KOLEKSI_URL, KATEGORI_URL } from '../config/url_koleksi.js';
-import { renderKoleksi } from '../Temp/tabel_koleksi.js';
+// ======================= IMPORT =======================
+import { BASE_URL } from "../utils/config.js";
+import { authFetch } from "../utils/auth.js";
 
-const form = document.getElementById('addCollectionForm');
-const imagePreviewDiv = document.getElementById('imagePreview');
-const previewImg = document.getElementById('preview');
-const kategoriSelect = document.getElementById('kategori');
+// console.log("[DEBUG BODY]", data);
 
-// State untuk tracking apakah sedang edit atau add
-let editingId = null;
+// ======================= PAGE INIT =======================
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("[add-collection] DOM Loaded");
+    loadKategori();
+});
 
-// Log FormData untuk debugging (opsional, bisa dihapus nanti)
-function logFormData(fd) {
-  const entries = {};
-  for (let [key, value] of fd.entries()) {
-    entries[key] = value.name ? `[File: ${value.name}]` : value;
-  }
-  console.log('FormData fields:', entries);
-}
-
-// Load kategori dropdown
-export async function loadKategori() {
-  try {
-    const res = await fetch(KATEGORI_URL);
-    const data = (await res.json()).data || [];
-    kategoriSelect.innerHTML = '<option value="">Pilih kategori</option>';
-    data.forEach(k => {
-      const opt = document.createElement('option');
-      opt.value = k.id;
-      opt.textContent = k.nama_kategori;
-      kategoriSelect.appendChild(opt);
-    });
-  } catch (err) {
-    kategoriSelect.innerHTML = '<option value="">Gagal memuat kategori</option>';
-    console.error(err);
-  }
-}
-
-// Form submit
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fd = new FormData(form);
+// ======================= LOAD KATEGORI =======================
+async function loadKategori() {
+  const selectKategori = document.getElementById("kategori");
   
-  // Log FormData sebelum dikirim (untuk debugging)
-  logFormData(fd);
-
-  // timeout helper
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000); // 15s
+  // Cek apakah element ada
+  if (!selectKategori) {
+    console.warn("[kategori] Element dropdown not found, retrying...");
+    setTimeout(loadKategori, 500);
+    return;
+  }
 
   try {
-    // Tentukan URL dan method berdasarkan mode (add vs edit)
-    const url = editingId ? `${KOLEKSI_URL}/${editingId}` : KOLEKSI_URL;
-    const method = editingId ? 'PUT' : 'POST';
-    
-    const res = await fetch(url, { method, body: fd, signal: controller.signal });
-    clearTimeout(timeout);
+    console.log("[kategori] Fetching from:", `${BASE_URL}/api/kategori`);
+    const res = await fetch(`${BASE_URL}/api/kategori`)
+
+    if (!res) {
+      console.warn("[kategori] No response from authFetch");
+      return;
+    }
 
     if (!res.ok) {
-      let bodyText = '';
-      try { bodyText = await res.text(); } catch (e) { /* ignore */ }
-      console.error('Server returned error:', res.status, res.statusText, bodyText);
-      throw new Error(`Gagal simpan koleksi (status ${res.status}): ${bodyText}`);
+      throw new Error(`Server error: ${res.status}`);
     }
 
-    const msgTipe = editingId ? 'diperbarui' : 'ditambahkan';
-    alert(`Koleksi berhasil ${msgTipe}`);
-    form.reset();
-    imagePreviewDiv.classList.add('hidden');
-    editingId = null;
-    // Tutup form
-    document.getElementById('modal').classList.add('hidden');
-    renderKoleksi();
+    const data = await res.json();
+    console.log("[kategori] Data received:", data);
 
-  } catch (err) {
-    clearTimeout(timeout);
-    // More detailed diagnostics for network errors
-    console.error('add-collection error:', err, { name: err.name, message: err.message });
-    if (err.name === 'AbortError') {
-      alert('Request timeout: tidak dapat terhubung ke server. Coba lagi.');
-    } else {
-      alert(`Gagal simpan koleksi: ${err.message}`);
+    selectKategori.innerHTML = `<option value="">-- Pilih Kategori --</option>`;
+    
+    // Cek apakah data array
+    const items = Array.isArray(data) ? data : (data.data || []);
+    
+    if (items.length === 0) {
+      console.warn("[kategori] No categories found");
+      selectKategori.innerHTML += `<option disabled>Tidak ada kategori</option>`;
+      return;
     }
+    
+    items.forEach((item) => {
+      const option = document.createElement("option");
+      option.value = item._id || item.id;
+      option.textContent = item.nama_kategori || item.name || "Unknown";
+      selectKategori.appendChild(option);
+    });
+    
+    console.log("[kategori] Dropdown populated with", items.length, "items");
+
+  } catch (error) {
+    console.error("[kategori] Error:", error.message);
+    selectKategori.innerHTML = `<option value="">-- Error: ${error.message} --</option>`;
   }
-});
-
-// Preview gambar
-document.getElementById('foto').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    previewImg.src = ev.target.result;
-    imagePreviewDiv.classList.remove('hidden');
-  };
-  reader.readAsDataURL(file);
-});
-
-// Load kategori saat halaman dibuka
-loadKategori();
-
-// Expose function untuk edit koleksi
-export async function editKoleksi(itemData) {
-  editingId = itemData.id || itemData._id;
-  
-  // Isi form dengan data item
-  document.getElementById('nama_benda').value = itemData.nama_benda || itemData.nama_koleksi || '';
-  document.getElementById('kategori').value = itemData.kategori_id || itemData.kategori?._id || itemData.kategori?.id || '';
-  document.getElementById('no_reg').value = itemData.no_reg || itemData.no_registrasi || '';
-  document.getElementById('no_inv').value = itemData.no_inv || itemData.no_inventaris || '';
-  document.getElementById('bahan').value = itemData.bahan || '';
-  document.getElementById('ukuran').value = itemData.ukuran || '';
-  document.getElementById('tahun_perolehan').value = itemData.tahun_perolehan || itemData.tahun || '';
-  document.getElementById('asal_perolehan').value = itemData.asal_perolehan || itemData.asal || '';
-  document.getElementById('tempat_penyimpanan').value = itemData.tempat_penyimpanan || itemData.tempat || '';
-  document.getElementById('deskripsi').value = itemData.ket || itemData.deskripsi || '';
-  
-  // Tampilkan preview jika ada gambar
-  if (itemData.foto || itemData.gambar || itemData.image) {
-    previewImg.src = itemData.foto || itemData.gambar || itemData.image;
-    imagePreviewDiv.classList.remove('hidden');
-  }
-  
-  // Update judul dan button
-  const modalTitle = document.querySelector('#modal h3') || document.querySelector('#modal > div > div:first-child h3');
-  if (modalTitle) modalTitle.textContent = 'Edit Koleksi';
-  
-  const submitBtn = form.querySelector('button[type="submit"]');
-  if (submitBtn) submitBtn.textContent = 'Perbarui Koleksi';
-  
-  // Buka modal
-  document.getElementById('modal').classList.remove('hidden');
 }
 
-// Reset form mode ketika modal ditutup
-document.getElementById('closeModal').addEventListener('click', () => {
-  editingId = null;
-  form.reset();
-  imagePreviewDiv.classList.add('hidden');
-  const modalTitle = document.querySelector('#modal h3') || document.querySelector('#modal > div > div:first-child h3');
-  if (modalTitle) modalTitle.textContent = 'Tambah Koleksi';
-  const submitBtn = form.querySelector('button[type="submit"]');
-  if (submitBtn) submitBtn.textContent = 'Simpan Koleksi';
+// ======================= FORM SUBMIT =======================
+const formAdd = document.getElementById("addCollectionForm");
+
+formAdd.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(formAdd);
+  const data = Object.fromEntries(formData.entries());
+
+  console.log("[ADD COLLECTION] Submitting data:", Object.keys(data));
+
+  const timeoutController = new AbortController();
+  const timeoutId = setTimeout(() => timeoutController.abort(), 10000);
+
+  try {
+    console.log("[ADD COLLECTION] Calling authFetch to:", `${BASE_URL}/api/koleksi`);
+    
+    const response = await authFetch(`${BASE_URL}/api/koleksi`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      signal: timeoutController.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    // Check jika authFetch return null (redirect ke login)
+    if (!response) {
+      console.warn("[ADD COLLECTION] No response from authFetch - redirecting to login");
+      return;
+    }
+
+    if (!response.ok) {
+      const errMessage = await response.text();
+      console.error("[ADD COLLECTION] Server returned error:", response.status, errMessage);
+      throw new Error(errMessage || `Server error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log("[ADD COLLECTION] ✅ Success:", result);
+
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil 🎉",
+      text: "Koleksi berhasil ditambahkan!",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+    formAdd.reset();
+    // Close modal if exists
+    const modal = document.getElementById("modal");
+    if (modal) modal.classList.add("hidden");
+
+  } catch (err) {
+    clearTimeout(timeoutId);
+    console.error("[ADD COLLECTION] ❌ Error:", err.message);
+
+    if (err.name === "AbortError") {
+      return Swal.fire({
+        icon: "warning",
+        title: "Timeout",
+        text: "Server tidak merespon, coba lagi.",
+      });
+    }
+
+    Swal.fire({
+      icon: "error",
+      title: "Gagal Menyimpan",
+      text: err.message,
+    });
+  }
 });

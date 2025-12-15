@@ -69,4 +69,14 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // expose for manual refresh
-window.renderDashboardStats = renderDashboardStats;
+// window.renderDashboardStats = renderDashboardStats;
+
+// import { getToken } from "../utils/check-auth.js";
+
+// const token = getToken();
+
+// if (!token) {
+//   alert("Session expired, silakan login kembali.");
+//   window.location.href = "login.html";
+// }
+

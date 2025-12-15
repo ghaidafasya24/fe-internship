@@ -1,121 +1,91 @@
 import { get } from "https://bukulapak.github.io/api/process.js";
 import { addInner } from "https://bukulapak.github.io/element/process.js";
-import { isiKategori } from "../Temp/tabel_kategori.js";
+import { iniTabelKategori } from "../Temp/tabel_kategori.js";
 import { API_URLS } from "../config/url_kategori.js";
 import { deleteKategori } from "./kategori.js";
 
-// Ambil data kategori dari API dan render
-get(API_URLS.kategori, GetAllCategory);
+console.log("[get_kategori] loaded, API_URLS:", API_URLS);
 
-function GetAllCategory(response) {
-  const results = response.data || [];
-  // Kosongkan tabel header terlebih dulu (hanya tbody rows kept in element)
-  // addInner akan menambahkan ke elemen, jadi pastikan element ada
-  const table = document.getElementById('iniTabelKategori');
-  if (!table) return;
-  // bersihkan isi (kecuali thead) — kita akan menambahkan baris ke element table
-  // remove existing rows (keep the thead)
-  while (table.rows.length > 1) table.deleteRow(1);
+// Ambil data kategori
+get(API_URLS.kategori, renderKategori);
 
-  results.forEach(isiRow);
-  attachDeleteHandlersAndEdit();
-}
+// ===================== RENDER TABLE =====================
+function renderKategori(response) {
+  console.log("[get_kategori] RESPONSE DITERIMA:", response);
 
-function isiRow(value, index) {
-  const id = value._id || value.id || value.nama_kategori || index;
-  let content = isiKategori
-    .replace(/#ID#/g, id)
-    .replace(/#No#/g, index + 1)
-    .replace(/#Nama_Kategori#/g, value.nama_kategori || "-")
-    .replace(/#Deskripsi#/g, value.deskripsi || "-");
+  const results = Array.isArray(response.data) ? response.data : [];
 
-  addInner("iniTabelKategori", content);
-}
+  const table = document.getElementById("iniTabelKategori");
+  if (!table) return console.error("❌ Element #iniTabelKategori tidak ditemukan");
 
-// Event delegation for delete buttons
-function attachDeleteHandlers() {
-  const table = document.getElementById('iniTabelKategori');
-  if (!table) return;
+  while (table.rows.length > 0) table.deleteRow(0);
 
-  table.querySelectorAll('.btn-delete').forEach(btn => {
-    if ((btn.dataset && btn.dataset._hasHandler) || btn._hasHandler) return;
-    btn.addEventListener('click', async (e) => {
-      const id = btn.getAttribute('data-id');
-      if (!id) return alert('ID kategori tidak ditemukan');
-      if (!confirm('Yakin ingin menghapus kategori ini?')) return;
-      try {
-        await deleteKategori(id);
-        // Hapus baris dari tabel
-        const row = btn.closest('tr');
-        if (row) row.remove();
-        alert('Kategori berhasil dihapus');
-      } catch (err) {
-        alert('Gagal menghapus kategori: ' + (err.message || err));
-      }
-    });
-    // mark handler attached
-    btn._hasHandler = true;
-  });
-}
+  if (results.length === 0) {
+    addInner("iniTabelKategori",
+      `<tr><td colspan="4" class="text-center py-3">Tidak ada data kategori</td></tr>`
+    );
+    return;
+  }
 
-// Attach edit handlers: buka modal dan isi form untuk edit
-function attachEditHandlers() {
-  const table = document.getElementById('iniTabelKategori');
-  if (!table) return;
-
-  table.querySelectorAll('.btn-edit').forEach(btn => {
-    if ((btn.dataset && btn.dataset._hasHandlerEdit) || btn._hasHandlerEdit) return;
-    btn.addEventListener('click', (e) => {
-      const id = btn.getAttribute('data-id');
-      if (!id) return alert('ID kategori tidak ditemukan');
-
-      // Cari row dan ambil data nama & deskripsi dari atribut data
-      const row = btn.closest('tr');
-      const nama = row ? row.getAttribute('data-nama') : '';
-      const deskripsi = row ? row.getAttribute('data-deskripsi') : '';
-
-      const modal = document.getElementById('modal');
-      const namaInput = document.getElementById('nama_kategori');
-      const deskInput = document.getElementById('deskripsi');
-      if (!modal || !namaInput || !deskInput) return alert('Modal atau input tidak ditemukan');
-
-      // isi form
-      namaInput.value = nama || '';
-      deskInput.value = deskripsi || '';
-
-      // set edit id di modal dataset
-      modal.dataset.editId = id;
-
-      // ubah judul tombol/label jika mau (opsional)
-      modal.classList.remove('hidden');
-    });
-    btn._hasHandlerEdit = true;
-  });
-}
-
-// After rendering rows attach both handlers
-function attachDeleteHandlersAndEdit() {
+  results.forEach((item, index) => renderRow(item, index));
   attachDeleteHandlers();
   attachEditHandlers();
 }
 
+// ===================== ROW TEMPLATE =====================
+function renderRow(value, index) {
+  const id = value._id || value.id;
+  const nama = value.nama_kategori || "-";
+  const deskripsi = value.deskripsi || "-";
 
-// import { get } from "";
-// import { isiTabelKategori } from "../Temp/tabel_kategori.js";
-// import { API_URLS } from "../config/url_kategori.js";
+  let rowHTML = iniTabelKategori
+    .replace(/#ID#/g, id)
+    .replace(/#No#/g, index + 1)
+    .replace(/#Nama_Kategori#/g, nama)
+    .replace(/#Deskripsi#/g, deskripsi);
 
-// // Ganti pemanggilan dan nama fungsi agar tidak bentrok
-// get(API_URLS, tampilkanKategori);
+  addInner("iniTabelKategori", rowHTML);
+}
 
-// function tampilkanKategori(results) {
-//     results.forEach(isiRow);
-// }
+// ===================== DELETE HANDLER =====================
+function attachDeleteHandlers() {
+  document.querySelectorAll(".btn-delete").forEach(button => {
+    if (button.dataset.bindedDelete) return;
+    button.dataset.bindedDelete = true;
 
-// function isiRow(value) {
-//     let content = 
-//         isiTabelKategori
-//             .replace("#Nama_Kategori#", value.nama_kategori)
-//             .replace("#Deskripsi#", value.deskripsi);
+    button.addEventListener("click", async () => {
+      const id = button.getAttribute("data-id");
+      if (!confirm("Hapus kategori ini?")) return;
 
-//     addInner("iniTabelKategori", content);
-// }
+      try {
+        await deleteKategori(id);
+        button.closest("tr").remove();
+        alert("Kategori berhasil dihapus");
+      } catch (err) {
+        alert("Gagal menghapus kategori");
+      }
+    });
+  });
+}
+
+// ===================== EDIT HANDLER =====================
+function attachEditHandlers() {
+  document.querySelectorAll(".btn-edit").forEach(button => {
+    if (button.dataset.bindedEdit) return;
+    button.dataset.bindedEdit = true;
+
+    button.addEventListener("click", () => {
+      const row = button.closest("tr");
+
+      const id = row.dataset.rowId = button.getAttribute("data-id");
+      const nama = row.dataset.nama = row.children[1].innerText;
+      const deskripsi = row.dataset.deskripsi = row.children[2].innerText;
+
+      const modal = document.getElementById("modal");
+      document.getElementById("nama_kategori").value = nama;
+      document.getElementById("deskripsi").value = deskripsi;
+      modal.dataset.editId = id;
+      modal.classList.remove("hidden");
+    });
+  });
+}
