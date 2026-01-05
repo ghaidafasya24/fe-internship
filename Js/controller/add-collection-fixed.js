@@ -1,13 +1,5 @@
 import { BASE_URL } from "../utils/config.js";
 import { authFetch } from "../utils/auth.js";
-import { showAlert } from "../utils/modal.js";
-
-// Helper function: Convert URL to File
-async function urlToFile(url, filename, mimeType) {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return new File([blob], filename, { type: mimeType });
-}
 
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("🚀 add-collection loaded");
@@ -24,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let isEdit = false;
   let editId = null;
-  let previousFoto = ""; // Simpan path gambar lama saat edit
+  let oldGambar = null;  // Store old image for edit
 
   /* ================= LOAD KATEGORI ================= */
   const kategoriRes = await authFetch(`${BASE_URL}/api/kategori`);
@@ -100,12 +92,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* ================= EDIT KOLEKSI ================= */
   window.editKoleksi = async function(id) {
     try {
-      // Fetch koleksi by ID langsung
-      const resDetail = await authFetch(`${BASE_URL}/api/koleksi/${id}?populate=ukuran,kategori,tempat_penyimpanan`);
-      let data = resDetail?.data ?? resDetail;
-      if (data && data.data) data = data.data; // handle nested data
+      // Fetch all collections and find the one with matching ID
+      const res = await authFetch(`${BASE_URL}/api/koleksi?populate[]=ukuran&populate[]=kategori&populate[]=tempat_penyimpanan`);
+      const allData = res.data || res;
+      const data = Array.isArray(allData) ? allData.find(item => item._id === id) : (allData.data ? allData.data.find(item => item._id === id) : null);
 
-      if (!data || !(data._id || data.id)) {
+      if (!data) {
         throw new Error("Koleksi tidak ditemukan");
       }
 
@@ -141,7 +133,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("diameter").value = ukuran.diameter || "";
       document.getElementById("berat").value = ukuran.berat || data.berat || "";
       document.getElementById("satuan_ukuran").value = ukuran.satuan || "cm";
-      document.getElementById("satuan_berat").value = ukuran.satuan_berat || ukuran.satuanBerat || "kg";
 
       // Kategori
       kategoriSelect.value = data.kategori?.id || data.kategori?._id || "";
@@ -176,17 +167,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       updateLokasi();
 
-      // Gambar - tampilkan jika ada dan simpan path untuk di-preserve saat edit
+      // Gambar - tampilkan jika ada dan simpan path lama
       const gambarField = data.gambar || data.foto || data.image;
+      oldGambar = gambarField;  // Save old image path for later
       if (gambarField) {
         const gambarUrl = gambarField.startsWith('http') ? gambarField : `${BASE_URL}${gambarField}`;
         document.getElementById("preview").src = gambarUrl;
         document.getElementById("imagePreview").classList.remove("hidden");
-        previousFoto = gambarUrl; // 💾 Simpan path gambar lama
-        console.log("Simpan previousFoto:", previousFoto);
       } else {
         document.getElementById("imagePreview").classList.add("hidden");
-        previousFoto = ""; // Reset jika tidak ada gambar
       }
 
       // Change modal title
@@ -198,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (err) {
       console.error("Error loading koleksi for edit:", err);
-      showAlert("Gagal memuat data koleksi", "error");
+      Swal.fire("Error", "Gagal memuat data koleksi", "error");
     }
   };
 
@@ -224,7 +213,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const noReg = document.getElementById("no_reg").value;
 
     if (!kategori || !noReg) {
-      showAlert("Kategori & No Registrasi wajib diisi", "warning");
+      Swal.fire("Error", "Kategori & No Registrasi wajib diisi", "error");
       return;
     }
 
@@ -236,7 +225,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       diameter: document.getElementById("diameter").value || null,
       berat: document.getElementById("berat").value || null,
       satuan: document.getElementById("satuan_ukuran").value || null,
-      satuan_berat: document.getElementById("satuan_berat").value || null,
     };
 
     document.getElementById("json").value = JSON.stringify(ukuran);
@@ -258,31 +246,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const deskripsi = document.getElementById("deskripsi")?.value || "";
     if (deskripsi) formData.set("deskripsi", deskripsi);
 
-    // Handle foto field - preserve gambar lama jika tidak ada file baru
-    const fileInput = document.querySelector('input[name="foto"]');
-    const fotoFile = fileInput?.files?.[0];
-
-    if (fotoFile) {
-      // Ada file baru - gunakan file baru
-      console.log("Ada file baru, gunakan file baru");
-      formData.set("foto", fotoFile);
-    } else if (isEdit && previousFoto) {
-      // Edit mode tanpa file baru tapi ada gambar lama - fetch dan convert ke File
-      try {
-        console.log("Edit mode tanpa file baru, fetch gambar lama:", previousFoto);
-        const oldFotoFile = await urlToFile(previousFoto, "old_foto.jpg", "image/jpeg");
-        formData.set("foto", oldFotoFile);
-        console.log("✅ Gambar lama di-fetch dan di-set ke formData");
-      } catch (error) {
-        console.error("Failed to fetch old foto:", error);
-        // Jika gagal fetch, hapus field foto saja
-        formData.delete("foto");
-        console.warn("Gagal fetch gambar lama, field foto dihapus");
-      }
-    } else if (!isEdit) {
-      // Mode tambah tanpa gambar - hapus field foto
-      formData.delete("foto");
-      console.log("Mode tambah tanpa gambar");
+    // Handle gambar - keep old image if no new file selected (edit mode)
+    const fileInput = document.querySelector('input[name="gambar"]');
+    if (isEdit && fileInput && (!fileInput.files || fileInput.files.length === 0) && oldGambar) {
+      // No new file selected in edit mode, keep old image path
+      formData.set("gambar", oldGambar);
+      console.log("Using old gambar:", oldGambar);
     }
 
     console.log("📤 DATA DIKIRIM:");
@@ -304,40 +273,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
       }
 
-      showAlert(isEdit ? "Koleksi berhasil diupdate 🎉" : "Koleksi berhasil ditambahkan 🎉", "success");
-      
-      setTimeout(() => {
-        form.reset();
-        updateLokasi();
-        document.getElementById("modal").classList.add("hidden");
-
-        // Reset edit mode
-        isEdit = false;
-        editId = null;
-        previousFoto = ""; // 💾 Reset previousFoto
-        document.getElementById("modalTitle").textContent = "Tambah Koleksi";
-
-        // Refresh table
-        if (window.renderKoleksi) window.renderKoleksi();
-        else if (window.loadKoleksi) window.loadKoleksi();
-      }, 1500);
-
-    } catch (err) {
-      showAlert(err.message || "Gagal menyimpan koleksi", "error");
-    }
-  });
-
-  // Handler untuk close button
-  const closeBtn = document.getElementById("closeAddModal");
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      // Reset state ketika modal ditutup
-      isEdit = false;
-      editId = null;
-      previousFoto = "";
-      document.getElementById("modalTitle").textContent = "Tambah Koleksi";
+      Swal.fire("Berhasil 🎉", isEdit ? "Koleksi berhasil diupdate" : "Koleksi berhasil ditambahkan", "success");
       form.reset();
       updateLokasi();
-    });
-  }
+      document.getElementById("modal").classList.add("hidden");
+
+      // Reset edit mode
+      isEdit = false;
+      editId = null;
+      oldGambar = null;
+      document.getElementById("modalTitle").textContent = "Tambah Koleksi";
+
+      // Refresh table
+      if (window.renderKoleksi) window.renderKoleksi();
+      else if (window.loadKoleksi) window.loadKoleksi();
+
+    } catch (err) {
+      Swal.fire("Gagal", err.message, "error");
+    }
+  });
 });

@@ -1,6 +1,7 @@
 import { API_URLS } from "../config/url_kategori.js";
 // import { authFetch, getToken } from "../utils/auth.js";
 import { authFetch } from "../utils/auth.js";
+import { showAlert } from "../utils/modal.js";
 
 // Ambil semua kategori
 export async function getAllKategori() {
@@ -105,23 +106,23 @@ document.addEventListener("DOMContentLoaded", () => {
       if (editId) {
         console.log("[kategori] EDIT MODE", editId);
         await updateKategori(editId);
-        alert("📌 Kategori berhasil diperbarui");
+        showAlert("📌 Kategori berhasil diperbarui", "success");
         delete modal.dataset.editId;
       } else {
         console.log("[kategori] CREATE MODE");
         await createKategori();
-        alert("✅ Kategori berhasil ditambahkan!");
+        showAlert("✅ Kategori berhasil ditambahkan!", "success");
       }
 
       form.reset();
       modal.classList.add("hidden");
 
       // Reload tabel kategori
-      location.reload();
+      setTimeout(() => location.reload(), 1500);
 
     } catch (error) {
       console.error("kategori form error:", error);
-      alert("Error: " + error.message);
+      showAlert("Error: " + error.message, "error");
     }
   });
 

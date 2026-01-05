@@ -38,8 +38,16 @@ export function logout(message = "Sesi kamu telah habis. Silakan login kembali."
   document.cookie =
     "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
-  alert(message);
-  window.location.href = "/Template/login.html";
+  // Import modal dynamically
+  import('./modal.js').then(({ showAlert }) => {
+    showAlert(message, "warning");
+    setTimeout(() => {
+      window.location.href = "/Template/login.html";
+    }, 2000);
+  }).catch(() => {
+    alert(message);
+    window.location.href = "/Template/login.html";
+  });
 }
 
 // =========================

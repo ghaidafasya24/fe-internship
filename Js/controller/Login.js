@@ -1,4 +1,5 @@
 // File: /Js/controller/Login.js
+import { showAlert } from "../utils/modal.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
@@ -11,11 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("password").value.trim();
 
     if (!username || !password) {
-      Swal.fire({
-        icon: "warning",
-        title: "Oops...",
-        text: "Username dan Password harus diisi!",
-      });
+      showAlert("Username dan Password harus diisi!", "warning");
       return;
     }
 
@@ -49,33 +46,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        Swal.fire({
-          icon: "success",
-          title: "Login Berhasil!",
-          text: "Selamat datang kembali 👋",
-          timer: 2000,
-          showConfirmButton: false
-        });
+        showAlert("Login Berhasil! Selamat datang kembali 👋", "success");
 
         setTimeout(() => {
           window.location.href = "dasboard.html";
         }, 2000);
 
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Login gagal",
-          text: data.message || "Username atau Password salah.",
-        });
+        showAlert(data.message || "Username atau Password salah.", "error");
       }
 
     } catch (error) {
       console.error("Error:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Server Error",
-        text: "Gagal menghubungi server.",
-      });
+      showAlert("Gagal menghubungi server.", "error");
 
     } finally {
       loginButton.disabled = false;

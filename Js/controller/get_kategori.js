@@ -3,6 +3,7 @@ import { addInner } from "https://bukulapak.github.io/element/process.js";
 import { iniTabelKategori } from "../Temp/tabel_kategori.js";
 import { API_URLS } from "../config/url_kategori.js";
 import { deleteKategori } from "./kategori.js";
+import { showAlert, showConfirm } from "../utils/modal.js";
 
 console.log("[get_kategori] loaded, API_URLS:", API_URLS);
 
@@ -15,15 +16,13 @@ function renderKategori(response) {
 
   const results = Array.isArray(response.data) ? response.data : [];
 
-  const table = document.getElementById("iniTabelKategori");
-  if (!table) return console.error("❌ Element #iniTabelKategori tidak ditemukan");
+  const tbody = document.querySelector("#iniTabelKategori tbody");
+  if (!tbody) return console.error("❌ Element tbody tidak ditemukan");
 
-  while (table.rows.length > 0) table.deleteRow(0);
+  tbody.innerHTML = "";
 
   if (results.length === 0) {
-    addInner("iniTabelKategori",
-      `<tr><td colspan="4" class="text-center py-3">Tidak ada data kategori</td></tr>`
-    );
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-primary/60">Tidak ada data kategori</td></tr>`;
     return;
   }
 
@@ -44,7 +43,8 @@ function renderRow(value, index) {
     .replace(/#Nama_Kategori#/g, nama)
     .replace(/#Deskripsi#/g, deskripsi);
 
-  addInner("iniTabelKategori", rowHTML);
+  const tbody = document.querySelector("#iniTabelKategori tbody");
+  tbody.insertAdjacentHTML("beforeend", rowHTML);
 }
 
 // ===================== DELETE HANDLER =====================
@@ -55,14 +55,15 @@ function attachDeleteHandlers() {
 
     button.addEventListener("click", async () => {
       const id = button.getAttribute("data-id");
-      if (!confirm("Hapus kategori ini?")) return;
+      const confirmed = await showConfirm("Hapus kategori ini?");
+      if (!confirmed) return;
 
       try {
         await deleteKategori(id);
         button.closest("tr").remove();
-        alert("Kategori berhasil dihapus");
+        showAlert("Kategori berhasil dihapus", "success");
       } catch (err) {
-        alert("Gagal menghapus kategori");
+        showAlert("Gagal menghapus kategori", "error");
       }
     });
   });

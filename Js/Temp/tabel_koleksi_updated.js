@@ -1,5 +1,6 @@
 import { BASE_URL } from "../utils/config.js";
 import { authFetch } from "../utils/auth.js";
+import { showAlert, showConfirm } from "../utils/modal.js";
 
 export { renderKoleksi, attachActionListeners };
 
@@ -15,25 +16,43 @@ let currentSearch = '';
 export function rowKoleksi(index, item) {
   const gambarField = item.gambar || item.foto || item.image;
   const gambarSrc = gambarField ? (gambarField.startsWith('http') ? gambarField : `${BASE_URL}${gambarField}`) : null;
-  const gambar = gambarSrc ? `<img src="${gambarSrc}" alt="Gambar Koleksi" class="w-16 h-16 object-cover">` : "-";
+  const gambar = gambarSrc 
+    ? `<img src="${gambarSrc}" alt="${item.nama_benda || 'Koleksi'}" class="w-20 h-20 object-cover rounded-lg border border-primary/10 shadow-sm mx-auto">` 
+    : `<div class="w-20 h-20 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center mx-auto">
+         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+         </svg>
+       </div>`;
 
   return `
-    <tr class="hover:bg-gray-100">
-      <td class="px-4 py-2 border-b">${index}</td>
-      <td class="px-4 py-2 border-b">${item.nama_benda || "-"}</td>
-      <td class="px-4 py-2 border-b">${item.no_reg || "-"}</td>
-      <td class="px-4 py-2 border-b">${item.no_inv || "-"}</td>
-      <td class="px-4 py-2 border-b">${gambar}</td>
-      <td class="px-4 py-2 border-b text-center">
-        <button class="detail-btn bg-green-500 text-white px-3 py-1 rounded mr-2" data-id="${item._id}">
-          Detail
-        </button>
-        <button class="edit-btn bg-blue-500 text-white px-3 py-1 rounded mr-2" data-id="${item._id}">
-          Edit
-        </button>
-        <button class="hapus-btn bg-red-500 text-white px-3 py-1 rounded" data-id="${item._id}">
-          Hapus
-        </button>
+    <tr class="hover:bg-primary/[0.02] ease-soft border-b border-gray-100">
+      <td class="px-6 py-4 text-center text-sm font-medium text-gray-700">${index}</td>
+      <td class="px-6 py-4 text-sm text-gray-900 font-medium">${item.nama_benda || "-"}</td>
+      <td class="px-6 py-4 text-sm text-gray-600">${item.no_reg || "-"}</td>
+      <td class="px-6 py-4 text-sm text-gray-600">${item.no_inv || "-"}</td>
+      <td class="px-6 py-4">${gambar}</td>
+      <td class="px-6 py-4">
+        <div class="flex items-center justify-center gap-2">
+          <button class="detail-btn bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-semibold ease-soft shadow-sm flex items-center gap-1" data-id="${item._id}" title="Lihat Detail">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            Detail
+          </button>
+          <button class="edit-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-semibold ease-soft shadow-sm flex items-center gap-1" data-id="${item._id}" title="Edit Koleksi">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit
+          </button>
+          <button class="hapus-btn bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-semibold ease-soft shadow-sm flex items-center gap-1" data-id="${item._id}" title="Hapus Koleksi">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Hapus
+          </button>
+        </div>
       </td>
     </tr>
   `;
@@ -124,7 +143,7 @@ function populateGudangSubmenu() {
   // Add gudang options
   sortedGudang.forEach(gudang => {
     const button = document.createElement('button');
-    button.className = 'filter-gudang block w-full text-left py-1 px-2 rounded text-sm hover:bg-blue-100';
+    button.className = 'filter-gudang block w-full text-left py-1.5 px-3 rounded text-sm text-primary/70 hover:bg-primary/10 hover:text-primary ease-soft';
     button.setAttribute('data-gudang', gudang._id || gudang.id);
     button.textContent = gudang.nama_gudang || gudang.name;
     gudangContainer.appendChild(button);
@@ -287,21 +306,21 @@ function renderKoleksi(data = null) {
 function attachActionListeners() {
   document.querySelectorAll('.detail-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const id = e.target.getAttribute('data-id');
+      const id = e.currentTarget.getAttribute('data-id');
       detailKoleksi(id);
     });
   });
 
   document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const id = e.target.getAttribute('data-id');
+      const id = e.currentTarget.getAttribute('data-id');
       editKoleksi(id);
     });
   });
 
   document.querySelectorAll('.hapus-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const id = e.target.getAttribute('data-id');
+      const id = e.currentTarget.getAttribute('data-id');
       deleteKoleksi(id);
     });
   });
@@ -314,7 +333,7 @@ function detailKoleksi(id) {
       const data = Array.isArray(allData) ? allData.find(item => item._id === id) : (allData.data ? allData.data.find(item => item._id === id) : null);
 
       if (!data) {
-        alert("Data koleksi tidak ditemukan");
+        showAlert("Data koleksi tidak ditemukan", "error");
         return;
       }
 
@@ -352,14 +371,18 @@ function detailKoleksi(id) {
         : "-";
       document.getElementById('detail_tempat_penyimpanan').textContent = tempatPenyimpanan;
 
-      // Ukuran - jika ada di item langsung
-      if (item.ukuran) {
-        const u = item.ukuran;
-        const ukuranStr = `${u.panjang_keseluruhan ?? "-"} x ${u.lebar ?? "-"} x ${u.tinggi ?? "-"} ${u.satuan ?? "cm"}`;
-        document.getElementById('detail_ukuran').textContent = ukuranStr;
-      } else {
-        document.getElementById('detail_ukuran').textContent = '-';
-      }
+      // Ukuran detail
+      const u = item.ukuran || {};
+      const satuan = u.satuan || "cm";
+      const satuanBerat = u.satuan_berat || u.satuanBerat || "kg";
+      const fmt = (val, unit) => val !== undefined && val !== null && val !== "" ? `${val} ${unit}` : "-";
+
+      document.getElementById('detail_panjang').textContent = fmt(u.panjang_keseluruhan, satuan);
+      document.getElementById('detail_lebar').textContent = fmt(u.lebar, satuan);
+      document.getElementById('detail_tebal').textContent = fmt(u.tebal, satuan);
+      document.getElementById('detail_tinggi').textContent = fmt(u.tinggi ?? item.tinggi, satuan);
+      document.getElementById('detail_diameter').textContent = fmt(u.diameter, satuan);
+      document.getElementById('detail_berat').textContent = fmt(u.berat ?? item.berat, satuanBerat);
 
       // Gambar
       const imgElement = document.getElementById('detail_gambar');
@@ -381,7 +404,7 @@ function detailKoleksi(id) {
     })
     .catch(err => {
       console.error("Error fetching detail:", err);
-      alert("Gagal mengambil data detail");
+      showAlert("Gagal mengambil data detail", "error");
     });
 }
 
@@ -389,22 +412,23 @@ function editKoleksi(id) {
   if (window.editKoleksi) {
     window.editKoleksi(id);
   } else {
-    alert("Fitur edit belum tersedia");
+    showAlert("Fitur edit belum tersedia", "info");
   }
 }
 
 async function deleteKoleksi(id) {
-  if (!confirm("Apakah Anda yakin ingin menghapus koleksi ini?")) return;
+  const confirmed = await showConfirm("Apakah Anda yakin ingin menghapus koleksi ini?");
+  if (!confirmed) return;
 
   try {
     await authFetch(`${BASE_URL}/api/koleksi/${id}`, { method: "DELETE" });
-    alert("Koleksi berhasil dihapus");
+    showAlert("Koleksi berhasil dihapus", "success");
 
     // Remove from allKoleksiData and re-filter
     allKoleksiData = allKoleksiData.filter(item => item._id !== id);
-    filterByGudang(currentFilter);
+    setTimeout(() => filterByGudang(currentFilter), 1500);
   } catch {
-    alert("Gagal menghapus koleksi");
+    showAlert("Gagal menghapus koleksi", "error");
   }
 }
 
