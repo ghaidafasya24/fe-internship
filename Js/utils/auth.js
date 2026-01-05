@@ -34,21 +34,30 @@ export function isTokenExpired() {
 // =========================
 // 3. logout
 // =========================
-export function logout() {
-  document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+export function logout(message = "Sesi kamu telah habis. Silakan login kembali.") {
+  document.cookie =
+    "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+  alert(message);
   window.location.href = "/Template/login.html";
 }
 
 // =========================
-// 4. authFetch (dipanggil paling terakhir)
+// 4. authFetch (FINAL FIX)
 // =========================
-export async function authFetch(url, options = {}) 
- {
-  const token = localStorage.getItem("token");
+export async function authFetch(url, options = {}) {
+  const token = getToken();
+
+  // ⛔ TOKEN EXPIRED (CEK SEBELUM REQUEST)
+  if (isTokenExpired()) {
+    console.warn("⚠️ Token expired (frontend check)");
+    logout();
+    throw new Error("Token expired");
+  }
 
   if (!options.headers) options.headers = {};
 
-  // ⛔ Jangan set Content-Type saat body adalah FormData
+  // ⛔ Jangan set Content-Type saat FormData
   if (!(options.body instanceof FormData)) {
     options.headers["Content-Type"] = "application/json";
   }
@@ -58,6 +67,13 @@ export async function authFetch(url, options = {})
   }
 
   const res = await fetch(url, options);
+
+  // 🔥 HANDLE TOKEN INVALID DARI SERVER
+  if (res.status === 401 || res.status === 403) {
+    console.warn("⚠️ Token invalid / expired (server)");
+    logout();
+    throw new Error("Unauthorized");
+  }
 
   if (!res.ok) {
     const body = await res.text();

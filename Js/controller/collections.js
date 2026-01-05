@@ -1,4 +1,4 @@
-import { isiKoleksi, rowKoleksi } from "../Temp/tabel_koleksi.js";
+import { rowKoleksi } from "../Temp/tabel_koleksi_updated.js";
 import { API_KOLEKSI } from "../config/url_koleksi.js";
 
 
@@ -8,7 +8,7 @@ async function loadKoleksi() {
   tableBody.innerHTML = isiKoleksi;
 
   try {
-   const res = await authFetch(API_KOLEKSI.GET_KOLEKSI, { method: "GET" });
+   const res = await authFetch(`${API_KOLEKSI.GET_KOLEKSI}?populate=ukuran`, { method: "GET" });
     const result = await res.json();
 
     if (!result.data) {
@@ -24,3 +24,4 @@ async function loadKoleksi() {
   }
 }
 document.addEventListener("DOMContentLoaded", loadKoleksi);
+
