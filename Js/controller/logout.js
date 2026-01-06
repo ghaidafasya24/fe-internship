@@ -47,6 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
     // (Opsional) panggil API logout kalau backend punya
+    // Clear localStorage data on logout
+    localStorage.removeItem("token");
+    localStorage.removeItem("token_expires");
+    localStorage.removeItem("username");
+    localStorage.removeItem("phone");
+
     /*
     fetch("https://inventorymuseum-de54c3e9b901.herokuapp.com/api/users/logout", {
       method: "POST",

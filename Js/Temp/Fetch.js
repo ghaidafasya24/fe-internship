@@ -32,7 +32,10 @@ class FetchService {
       }
 
       if (!response.ok) {
-        throw new Error(data.message || 'Terjadi kesalahan pada server');
+        // Log detail error untuk debugging
+        console.error('API Error Status:', response.status);
+        console.error('API Error Response:', data);
+        throw new Error(data.message || data.error || `Terjadi kesalahan pada server (${response.status})`);
       }
 
       return data;

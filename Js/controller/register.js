@@ -73,11 +73,24 @@ if (form) {
       );
       return;
     }
+
+    // Validasi format username (alphanumeric dan underscore)
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      showResultModal(false,
+        'Username Tidak Valid! ✍️',
+        'Username hanya boleh berisi huruf, angka, dan underscore (_)',
+        'Perbaiki'
+      );
+      return;
+    }
     
-    if (!/^[0-9+\-\s]{7,15}$/.test(phone)) {
+    // Validasi nomor telepon Indonesia (hanya digit setelah +62)
+    const phoneRegex = /^[0-9]{9,12}$/;
+    const cleanPhone = phone.replace(/[\s\-]/g, '');
+    if (!phoneRegex.test(cleanPhone)) {
       showResultModal(false,
         'Nomor HP Tidak Valid! 📱',
-        'Pastikan nomor HP kamu sudah benar ya',
+        'Ketik 9-12 digit nomor tanpa +62 atau 0',
         'Perbaiki'
       );
       return;
@@ -92,10 +105,26 @@ if (form) {
       return;
     }
 
-    const userData = { username, phone_number: phone, password };
+    // Tambahkan prefix +62 ke nomor telepon untuk disimpan di localStorage dan display
+    const formattedPhoneForStorage = '+62' + phone;
+    // Kirim ke API dengan format 62 (tanpa +)
+    const userData = { username, phone_number: '62' + phone, password };
 
     try {
+      // Log data yang akan dikirim untuk debugging
+      console.log('Mengirim data registrasi:', userData);
+      
       const result = await fetchService.register(userData);
+      
+      // Simpan username dan phone di localStorage (dengan format +62)
+      localStorage.setItem("username", username);
+      localStorage.setItem("phone", formattedPhoneForStorage);
+      
+      // Simpan token jika ada dari response
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+      }
+      
       showResultModal(true,
         '🎉 Selamat Bergabung!',
         `Hai ${username}, akun museum kamu sudah siap. Mari mulai petualangan budaya bersama!`,
@@ -103,6 +132,7 @@ if (form) {
         () => window.location.href = './login.html'
       );
     } catch (err) {
+      console.error('Register error detail:', err);
       showResultModal(false,
         'Ups, Ada Masalah! 😅',
         err.message || 'Gagal membuat akun. Silakan coba lagi ya.',
