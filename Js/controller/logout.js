@@ -53,6 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("username");
     localStorage.removeItem("phone");
 
+    // Prevent back button dari kembali ke dashboard
+    history.replaceState(null, null, "/index.html");
+
     /*
     fetch("https://inventorymuseum-de54c3e9b901.herokuapp.com/api/users/logout", {
       method: "POST",
@@ -68,11 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         modal.classList.add('hidden');
         // redirect after modal hides
-        window.location.href = "/../../index.html";
+        window.location.href = "/index.html";
       }, 220);
     } else {
       modal.classList.add('hidden');
-      window.location.href = "/../../index.html";
+      window.location.href = "/index.html";
     }
   });
 });

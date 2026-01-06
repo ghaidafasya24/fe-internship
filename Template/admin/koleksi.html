@@ -74,6 +74,30 @@
         <a href="profil.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Profil</a>
         <a id="logoutButton" href="#" class="block py-2.5 px-4 rounded-lg text-red-600/70 hover:bg-red-50 hover:text-red-700 font-medium ease-soft">Logout</a>
       </nav>
+      <!-- Modal Konfirmasi Logout -->
+      <div id="logoutModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div id="logoutCard" class="bg-surface border border-primary/10 p-6 rounded-xl shadow-lg text-center max-w-md w-full transform transition-all duration-300 scale-95 opacity-0">
+          <div class="flex items-center justify-center mb-4">
+            <svg class="w-12 h-12 text-primary" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C10.343 2 9 3.343 9 5s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm6 13v4H6v-4a6 6 0 0 1 12 0zM4 20h16v2H4z" />
+            </svg>
+          </div>
+          <h2 class="text-xl font-bold text-primary mb-2">Yakin ingin logout?</h2>
+          <p class="text-primary/70 mb-6 text-sm">Anda akan meninggalkan area admin Museum Sri Baduga.</p>
+
+          <div class="flex justify-center gap-3">
+            <button id="cancelLogout" class="px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 font-medium ease-soft">Batal</button>
+            <button id="confirmLogout" class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium ease-soft flex items-center gap-2 justify-center">
+              <span>Logout</span>
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
+              </svg>
+            </button>
+          </div>
+
+          <p class="mt-4 text-sm text-gray-600 dark:text-neutral-400">Bay Bay</p>
+        </div>
+      </div>
     </aside>
 
     <!-- Main Content Area - Full Width -->
@@ -322,30 +346,116 @@
   </div>
 
   <!-- ================= MODAL DETAIL ================= -->
-  <div id="detailModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
-    <div class="bg-surface w-full max-w-3xl rounded-xl shadow-lg p-6 relative border border-primary/10">
-      <button id="closeDetailModal" class="absolute top-4 right-4 text-primary/50 hover:text-primary/80 text-2xl ease-soft">✕</button>
-      <h2 class="text-2xl font-serif font-bold text-primary mb-6">Detail Koleksi</h2>
-      <div id="modalContent" class="grid grid-cols-2 gap-4 text-sm text-accent/80">
-        <div><span class="font-semibold text-primary">Nama Koleksi:</span> <span id="detail_nama_benda" class="text-accent/70">-</span></div>
-        <div><span class="font-semibold text-primary">Kategori:</span> <span id="detail_kategori" class="text-accent/70">-</span></div>
-        <div><span class="font-semibold text-primary">No Registrasi:</span> <span id="detail_no_reg" class="text-accent/70">-</span></div>
-        <div><span class="font-semibold text-primary">No Inventaris:</span> <span id="detail_no_inv" class="text-accent/70">-</span></div>
-        <div><span class="font-semibold text-primary">Bahan:</span> <span id="detail_bahan" class="text-accent/70">-</span></div>
-        <div class="grid grid-cols-2 gap-2 col-span-2">
-          <div><span class="font-semibold text-primary">Panjang:</span> <span id="detail_panjang" class="text-accent/70">-</span></div>
-          <div><span class="font-semibold text-primary">Lebar:</span> <span id="detail_lebar" class="text-accent/70">-</span></div>
-          <div><span class="font-semibold text-primary">Tebal:</span> <span id="detail_tebal" class="text-accent/70">-</span></div>
-          <div><span class="font-semibold text-primary">Tinggi:</span> <span id="detail_tinggi" class="text-accent/70">-</span></div>
-          <div><span class="font-semibold text-primary">Diameter:</span> <span id="detail_diameter" class="text-accent/70">-</span></div>
-          <div><span class="font-semibold text-primary">Berat:</span> <span id="detail_berat" class="text-accent/70">-</span></div>
+  <div id="detailModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-surface w-full max-w-2xl rounded-2xl shadow-2xl p-8 relative border border-primary/10 max-h-[90vh] overflow-y-auto">
+      <button id="closeDetailModal" class="absolute top-6 right-6 text-primary/40 hover:text-primary/80 transition-colors ease-soft">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      
+      <h2 class="text-3xl font-serif font-bold text-primary mb-8">Detail Koleksi</h2>
+      
+      <div id="modalContent" class="space-y-6 text-sm">
+        <!-- Row 1: Nama & Kategori -->
+        <div class="grid grid-cols-2 gap-6">
+          <div class="border-b border-primary/10 pb-3">
+            <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">Nama Koleksi</span>
+            <span id="detail_nama_benda" class="text-base font-medium text-accent">-</span>
+          </div>
+          <div class="border-b border-primary/10 pb-3">
+            <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">Kategori</span>
+            <span id="detail_kategori" class="text-base font-medium text-accent">-</span>
+          </div>
         </div>
-        <div><span class="font-semibold text-primary">Kondisi:</span> <span id="detail_kondisi" class="text-accent/70">-</span></div>
-        <div><span class="font-semibold text-primary">Tanggal Perolehan:</span> <span id="detail_tanggal_perolehan" class="text-accent/70">-</span></div>
-        <div><span class="font-semibold text-primary">Asal Koleksi:</span> <span id="detail_asal_koleksi" class="text-accent/70">-</span></div>
-        <div><span class="font-semibold text-primary">Tempat Penyimpanan:</span> <span id="detail_tempat_penyimpanan" class="text-accent/70">-</span></div>
-        <div class="col-span-2"><span class="font-semibold text-primary">Deskripsi:</span> <span id="detail_deskripsi" class="text-accent/70 block mt-1">-</span></div>
-        <div class="col-span-2"><span class="font-semibold text-primary">Gambar:</span><br><img id="detail_gambar" class="mt-3 max-h-48 rounded-lg border border-primary/10" style="display: none;"><span id="no_image" class="text-accent/60 text-sm">Tidak ada gambar</span></div>
+
+        <!-- Row 2: Nomor Registrasi & Inventaris -->
+        <div class="grid grid-cols-2 gap-6">
+          <div class="border-b border-primary/10 pb-3">
+            <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">No Registrasi</span>
+            <span id="detail_no_reg" class="text-base font-medium text-accent">-</span>
+          </div>
+          <div class="border-b border-primary/10 pb-3">
+            <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">No Inventaris</span>
+            <span id="detail_no_inv" class="text-base font-medium text-accent">-</span>
+          </div>
+        </div>
+
+        <!-- Row 3: Bahan -->
+        <div class="border-b border-primary/10 pb-3">
+          <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">Bahan</span>
+          <span id="detail_bahan" class="text-base font-medium text-accent">-</span>
+        </div>
+
+        <!-- Row 4: Dimensi -->
+        <div>
+          <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-4">Dimensi</span>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="border-l-2 border-primary/20 pl-3 py-2">
+              <span class="text-xs text-primary/60">Panjang</span>
+              <span id="detail_panjang" class="block text-sm font-medium text-accent mt-1">-</span>
+            </div>
+            <div class="border-l-2 border-primary/20 pl-3 py-2">
+              <span class="text-xs text-primary/60">Lebar</span>
+              <span id="detail_lebar" class="block text-sm font-medium text-accent mt-1">-</span>
+            </div>
+            <div class="border-l-2 border-primary/20 pl-3 py-2">
+              <span class="text-xs text-primary/60">Tebal</span>
+              <span id="detail_tebal" class="block text-sm font-medium text-accent mt-1">-</span>
+            </div>
+            <div class="border-l-2 border-primary/20 pl-3 py-2">
+              <span class="text-xs text-primary/60">Tinggi</span>
+              <span id="detail_tinggi" class="block text-sm font-medium text-accent mt-1">-</span>
+            </div>
+            <div class="border-l-2 border-primary/20 pl-3 py-2">
+              <span class="text-xs text-primary/60">Diameter</span>
+              <span id="detail_diameter" class="block text-sm font-medium text-accent mt-1">-</span>
+            </div>
+            <div class="border-l-2 border-primary/20 pl-3 py-2">
+              <span class="text-xs text-primary/60">Berat</span>
+              <span id="detail_berat" class="block text-sm font-medium text-accent mt-1">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 5: Kondisi & Tanggal -->
+        <div class="grid grid-cols-2 gap-6">
+          <div class="border-b border-primary/10 pb-3">
+            <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">Kondisi</span>
+            <span id="detail_kondisi" class="text-base font-medium text-accent">-</span>
+          </div>
+          <div class="border-b border-primary/10 pb-3">
+            <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">Tanggal Perolehan</span>
+            <span id="detail_tanggal_perolehan" class="text-base font-medium text-accent">-</span>
+          </div>
+        </div>
+
+        <!-- Row 6: Asal & Tempat Penyimpanan -->
+        <div class="grid grid-cols-2 gap-6">
+          <div class="border-b border-primary/10 pb-3">
+            <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">Asal Koleksi</span>
+            <span id="detail_asal_koleksi" class="text-base font-medium text-accent">-</span>
+          </div>
+          <div class="border-b border-primary/10 pb-3">
+            <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-1">Tempat Penyimpanan</span>
+            <span id="detail_tempat_penyimpanan" class="text-base font-medium text-accent">-</span>
+          </div>
+        </div>
+
+        <!-- Row 7: Deskripsi -->
+        <div class="border-b border-primary/10 pb-3">
+          <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-2">Deskripsi</span>
+          <span id="detail_deskripsi" class="text-sm text-accent leading-relaxed block">-</span>
+        </div>
+
+        <!-- Row 8: Gambar -->
+        <div>
+          <span class="block text-xs font-semibold text-primary/60 uppercase tracking-wide mb-3">Gambar</span>
+          <div class="bg-primary/5 rounded-lg p-4 flex items-center justify-center min-h-32">
+            <img id="detail_gambar" class="max-h-48 rounded-lg border border-primary/10 object-cover" style="display: none;">
+            <span id="no_image" class="text-accent/60 text-sm">Tidak ada gambar</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

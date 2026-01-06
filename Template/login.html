@@ -43,6 +43,99 @@
   <style>
     .ease-soft { transition: all .28s cubic-bezier(.2,.8,.2,1); }
     .auth-card { max-width: 420px; }
+    
+    /* Gradient background */
+    body {
+      background: linear-gradient(135deg, #f3f9fb 0%, #e6f2f6 100%);
+    }
+    
+    /* Logo enhancement */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2rem;
+      animation: slideDown 0.6s ease-soft;
+    }
+    
+    .logo-container img {
+      transition: transform 0.3s ease-soft, filter 0.3s ease-soft;
+      max-width: 140px;
+      height: auto;
+      filter: drop-shadow(0 4px 12px rgba(59, 110, 128, 0.1));
+    }
+    
+    .logo-container img:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 6px 16px rgba(59, 110, 128, 0.15));
+    }
+    
+    /* Card enhancement */
+    .auth-card {
+      animation: slideUp 0.6s ease-soft;
+      background: linear-gradient(135deg, #ffffff 0%, #f9fbfc 100%);
+      border: 1px solid rgba(59, 110, 128, 0.1);
+      box-shadow: 0 10px 30px rgba(59, 110, 128, 0.08);
+    }
+    
+    /* Input enhancements */
+    input {
+      transition: all 0.3s ease-soft;
+    }
+    
+    input:focus {
+      background-color: #f9fbfc;
+      box-shadow: 0 0 0 3px rgba(59, 110, 128, 0.1);
+      border-color: #3b6e80;
+    }
+    
+    /* Button enhancement */
+    button {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease-soft;
+      box-shadow: 0 4px 12px rgba(59, 110, 128, 0.2);
+    }
+    
+    button:hover {
+      box-shadow: 0 6px 20px rgba(59, 110, 128, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    /* Animations */
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Divider */
+    .divider {
+      position: relative;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59, 110, 128, 0.2), transparent);
+      margin: 1.5rem 0;
+    }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -50,11 +143,11 @@
 </head>
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col">
   <!-- Header -->
-  <header class="py-6 border-b border-primary/10">
+  <header class="py-4 border-b border-primary/10 bg-white/50 backdrop-blur-sm">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-      <a href="../index.html" class="flex items-center gap-x-3">
-        <img src="../assets/images/Logo_Real_SriBaduga.png" alt="Logo" class="h-12">
-      </a>
+      <!-- <a href="../index.html" class="flex items-center gap-x-3 hover:opacity-80 ease-soft">
+        <img src="../assets/images/Logo_Real_SriBaduga.png" alt="Logo" class="h-10">
+      </a> -->
       <div>
         <a href="../index.html" class="text-sm font-medium text-primary hover:text-primary/80 ease-soft">← Kembali</a>
       </div>
@@ -62,10 +155,21 @@
   </header>
 
   <!-- Auth Card -->
-  <main class="flex-grow flex items-center justify-center px-4">
-    <div class="auth-card w-full bg-surface rounded-xl shadow-sm border border-primary/10 p-8">
-  <h1 class="text-2xl font-serif font-bold text-primary mb-2">Masuk Akun</h1>
-  <p class="text-sm text-primary/70 mb-6">Selamat datang kembali — login dengan kredensial Anda untuk mengakses area admin.</p>
+  <main class="flex-grow flex items-center justify-center px-4 py-8">
+    <div class="auth-card w-full bg-surface rounded-2xl p-8">
+      <!-- Logo Prominent -->
+      <div class="logo-container">
+        <img src="../assets/images/Logo_Real_SriBaduga.png" alt="Museum Sri Baduga Logo" />
+      </div>
+
+      <!-- Title & Description -->
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-serif font-bold text-primary mb-2">Masuk Akun</h1>
+        <p class="text-sm text-primary/70">Selamat datang kembali — login dengan kredensial Anda untuk mengakses area admin.</p>
+      </div>
+
+      <!-- Divider -->
+      <div class="divider"></div>
 
       <form id="loginForm" class="space-y-4">
 
@@ -86,7 +190,6 @@
             <input type="checkbox" name="remember" class="w-4 h-4 rounded border-primary/20 bg-white text-primary accent-primary" />
             Ingat saya
           </label>
-          <a href="#" class="text-sm text-primary hover:text-primary/80 ease-soft font-medium">Lupa password?</a>
         </div>
         
         <div>
