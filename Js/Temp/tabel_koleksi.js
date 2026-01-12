@@ -1,29 +1,40 @@
+// Konfigurasi base URL API dan helper fetch dengan token
 import { BASE_URL } from "../utils/config.js";
 import { authFetch } from "../utils/auth.js";
 
 // ================= HELPER =================
 function formatUkuran(u) {
   if (!u) return "-";
-  const row = (label, value, unit = "cm") => `
+
+  const unitPanjang = u.satuan || u.satuan_ukuran || "cm";
+  const unitBerat = u.satuan_berat || u.satuanBerat || "kg";
+
+  // Template kecil untuk tiap baris ukuran
+  const row = (label, value, unit) => `
     <div class="grid grid-cols-[90px_1fr] gap-2">
       <span class="text-gray-500">${label}</span>
-      <span class="text-gray-800 whitespace-nowrap">${value ? value + " " + unit : "-"}</span>
+      <span class="text-gray-800 whitespace-nowrap">
+        ${value !== null && value !== undefined ? value + " " + unit : "-"}
+      </span>
     </div>
   `;
+
   return `
     <div class="text-sm leading-relaxed space-y-1">
-      ${row("Panjang", u.panjang_keseluruhan)}
-      ${row("Lebar", u.lebar)}
-      ${row("Tinggi", u.tinggi)}
-      ${row("Tebal", u.tebal)}
-      ${row("Diameter", u.diameter)}
-      ${row("Berat", u.berat, "kg")}
+      ${row("Panjang", u.panjang_keseluruhan, unitPanjang)}
+      ${row("Lebar", u.lebar, unitPanjang)}
+      ${row("Tinggi", u.tinggi, unitPanjang)}
+      ${row("Tebal", u.tebal, unitPanjang)}
+      ${row("Diameter", u.diameter, unitPanjang)}
+      ${row("Berat", u.berat, unitBerat)}
     </div>
   `;
 }
 
+
 // ================= ROW =================
 export function rowKoleksi(index, item) {
+  // Teks tempat penyimpanan disusun per gudang/rak/tahap
   const tempatPenyimpanan = `
     <div class="space-y-0.5 text-sm">
       <div>🏢 ${item.tempat_penyimpanan?.gudang?.nama_gudang || "-"}</div>
@@ -73,15 +84,16 @@ export async function renderKoleksi() {
   tbody.innerHTML = "";
 
   try {
-    const res = await fetch(`${BASE_URL}/api/koleksi`);
-    const json = await res.json();
-    const items = json.data || [];
+    // Ambil data koleksi (dengan populate) memakai authFetch agar token dikirim
+    const json = await authFetch(`${BASE_URL}/api/koleksi?populate=ukuran,kategori,tempat_penyimpanan`);
+    const items = Array.isArray(json) ? json : (json.data || []);
 
+    // Render setiap item menjadi baris tabel
     items.forEach((item, i) => {
       tbody.innerHTML += rowKoleksi(i + 1, item);
     });
 
-    // event klik row → modal detail
+    // Klik baris (kecuali tombol) membuka modal detail sederhana
     tbody.querySelectorAll(".koleksi-row").forEach(row => {
       row.addEventListener("click", e => {
         if (e.target.tagName === "BUTTON") return;
@@ -89,7 +101,7 @@ export async function renderKoleksi() {
       });
     });
 
-    // Attach action listeners
+    // Pasang event pada tombol detail/edit/hapus
     attachActionListeners();
 
   } catch (err) {
@@ -105,6 +117,7 @@ function openModalDetail(item) {
   const content = document.getElementById("modalContent");
   if (!modal || !content) return;
 
+  // Isi modal detail singkat (versi sederhana)
   content.innerHTML = `
     <div><b>Nama</b><br>${item.nama_benda || "-"}</div>
     <div><b>Kategori</b><br>${item.kategori?.nama_kategori || "-"}</div>
@@ -130,6 +143,7 @@ function closeModalDetail() {
 
 // ================= ACTION LISTENERS =================
 function attachActionListeners() {
+  // Tombol detail: buka modal detail sederhana
   document.querySelectorAll('.detail-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const row = e.target.closest('tr');
@@ -138,6 +152,7 @@ function attachActionListeners() {
     });
   });
 
+  // Tombol edit: panggil handler global editKoleksi
   document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = e.target.getAttribute('data-id');
@@ -145,6 +160,7 @@ function attachActionListeners() {
     });
   });
 
+  // Tombol hapus: konfirmasi lalu hapus
   document.querySelectorAll('.hapus-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = e.target.getAttribute('data-id');
@@ -165,6 +181,7 @@ async function deleteKoleksi(id) {
   if (!confirm("Apakah Anda yakin ingin menghapus koleksi ini?")) return;
 
   try {
+    // Hapus lewat API, lalu refresh tabel
     await authFetch(`${BASE_URL}/api/koleksi/${id}`, { method: "DELETE" });
     alert("Koleksi berhasil dihapus");
     renderKoleksi();
@@ -175,6 +192,7 @@ async function deleteKoleksi(id) {
 
 // ================= DOM READY =================
 document.addEventListener("DOMContentLoaded", () => {
+  // Render tabel saat halaman siap
   renderKoleksi();
 
   const closeDetailBtn = document.getElementById("closeDetailModal");

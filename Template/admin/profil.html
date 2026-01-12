@@ -42,6 +42,13 @@
   </script>
   <style>
     .ease-soft { transition: all .28s cubic-bezier(.2,.8,.2,1); }
+    /* Error styling untuk input validation */
+    input.border-red-500, textarea.border-red-500 {
+      @apply border-red-500 bg-red-50 focus:ring-red-500;
+    }
+    .error-message {
+      @apply text-red-600 text-sm font-medium mt-1.5 px-2 py-1 bg-red-50 rounded;
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans">

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Reporting - Museum Sri Baduga</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3b6e80',
+              50: '#f3f9fb',
+              100: '#e6f2f6',
+              200: '#bfdde8',
+              300: '#99c9da',
+              400: '#72b4cc',
+              500: '#3b6e80',
+              600: '#335b69',
+              700: '#2a4851',
+              800: '#21363a',
+              900: '#172425'
+            },
+            surface: '#ffffff',
+            accent: '#0b0b0b',
+            museumgold: '#caaa64'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .ease-soft { transition: all .28s cubic-bezier(.2,.8,.2,1); }
+  </style>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-gray-50 font-sans h-screen overflow-hidden">
+
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-surface shadow-lg flex flex-col border-r border-primary/10 flex-shrink-0">
+      <div class="p-6 text-center border-b border-primary/10 bg-gradient-to-br from-primary/5 to-primary/10">
+        <h1 class="text-xl font-bold font-serif text-primary">Museum Sri Baduga</h1>
+        <p class="text-sm text-primary/60 mt-1">Admin Dashboard</p>
+      </div>
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+        <a href="../dasboard.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Dashboard</a>
+        <a href="koleksi.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Koleksi</a>
+        <a href="kategori.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Kategori</a>
+        <a href="laporan.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Laporan</a>
+        <a href="profil.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Profil</a>
+        <a id="logoutButton" href="#" class="block py-2.5 px-4 rounded-lg text-red-600/70 hover:bg-red-50 hover:text-red-700 font-medium ease-soft">Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="h-16 bg-white border-b border-gray-200 flex items-center px-8 shadow-sm">
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-gray-900 font-serif">Advanced Reporting & Analisis</h2>
+          <p class="text-sm text-gray-600 mt-1">Laporan komprehensif, filter tanggal, nilai aset, dan export data</p>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto p-8">
+        <!-- Tabs -->
+        <div class="bg-white rounded-lg shadow">
+          <div class="border-b border-gray-200 flex flex-wrap">
+            <button onclick="switchTab('laporan-gudang')" class="px-6 py-4 font-semibold text-primary border-b-2 border-primary ease-soft active-tab">Laporan Per Gudang</button>
+            <button onclick="switchTab('laporan-nilai')" class="px-6 py-4 font-semibold text-gray-600 hover:text-primary ease-soft">Laporan Nilai Aset</button>
+            <button onclick="switchTab('laporan-tanggal')" class="px-6 py-4 font-semibold text-gray-600 hover:text-primary ease-soft">Laporan Berdasarkan Tanggal</button>
+            <button onclick="switchTab('export')" class="px-6 py-4 font-semibold text-gray-600 hover:text-primary ease-soft">Export & Tools</button>
+          </div>
+
+          <!-- Tab 1: Laporan Per Gudang -->
+          <div id="laporan-gudang" class="tab-content p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Distribusi Koleksi Per Gudang</h3>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p class="text-sm text-blue-800">
+                <strong>Info:</strong> Laporan ini menunjukkan jumlah item, total nilai aset, dan status kondisi untuk setiap gudang.
+              </p>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">No</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Nama Gudang</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Jumlah Item</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Total Nilai Aset</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Status Kondisi</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="tableReportPerGudang">
+                  <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-500">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 2: Laporan Nilai Aset -->
+          <div id="laporan-nilai" class="tab-content p-6 hidden">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Top 30 Koleksi dengan Nilai Aset Tertinggi</h3>
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+              <p class="text-sm text-green-800">
+                <strong>Info:</strong> Laporan ini menunjukkan item dengan nilai aset tertinggi untuk monitoring aset berharga.
+              </p>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Ranking</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Nama Koleksi</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Kategori</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">No. Inventaris</th>
+                    <th class="text-right px-4 py-2 font-semibold text-gray-700">Nilai Aset</th>
+                  </tr>
+                </thead>
+                <tbody id="tableReportNilaiAset">
+                  <tr>
+                    <td colspan="5" class="text-center py-4 text-gray-500">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 3: Laporan Berdasarkan Tanggal -->
+          <div id="laporan-tanggal" class="tab-content p-6 hidden">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Laporan Koleksi Berdasarkan Periode</h3>
+            
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <p class="text-sm text-yellow-800">
+                <strong>Info:</strong> Filter berdasarkan tanggal akuisisi koleksi untuk laporan berdasarkan periode tertentu.
+              </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg border border-gray-200 mb-6">
+              <h4 class="font-semibold text-gray-900 mb-4">Filter Tanggal</h4>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Mulai</label>
+                  <input type="date" id="filterStartDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Akhir</label>
+                  <input type="date" id="filterEndDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+              </div>
+              <button id="btnApplyDateFilter" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-semibold">
+                Terapkan Filter
+              </button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">No</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Tanggal Akuisisi</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Nama Koleksi</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Kategori</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Kondisi</th>
+                    <th class="text-right px-4 py-2 font-semibold text-gray-700">Nilai</th>
+                  </tr>
+                </thead>
+                <tbody id="tableReportByDate">
+                  <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-500">Pilih tanggal dan klik "Terapkan Filter"</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 4: Export & Tools -->
+          <div id="export" class="tab-content p-6 hidden">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Export & Tools</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Export Options -->
+              <div class="bg-white p-6 rounded-lg border border-gray-200">
+                <h4 class="font-semibold text-gray-900 mb-4">📊 Export Laporan</h4>
+                <div class="space-y-3">
+                  <button onclick="exportReportToPDF('gudang')" class="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold flex items-center justify-center gap-2">
+                    <span>📄</span> Export Laporan Gudang ke PDF
+                  </button>
+                  <button onclick="exportReportToPDF('nilai')" class="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 font-semibold flex items-center justify-center gap-2">
+                    <span>💰</span> Export Laporan Nilai Aset ke PDF
+                  </button>
+                  <button onclick="window.print()" class="w-full px-4 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold flex items-center justify-center gap-2">
+                    <span>🖨️</span> Print Semua Data (Ctrl+P)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Info & Tips -->
+              <div class="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-lg border border-primary/20">
+                <h4 class="font-semibold text-primary mb-4">💡 Tips & Informasi</h4>
+                <ul class="space-y-3 text-sm text-gray-700">
+                  <li class="flex gap-2">
+                    <span class="text-primary font-bold">•</span>
+                    <span><strong>Filter Tanggal:</strong> Gunakan untuk laporan periode tertentu</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <span class="text-primary font-bold">•</span>
+                    <span><strong>Export PDF:</strong> Tekan Ctrl+P untuk export ke PDF dengan better formatting</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <span class="text-primary font-bold">•</span>
+                    <span><strong>Print View:</strong> Gunakan print view untuk export ke berbagai format</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <span class="text-primary font-bold">•</span>
+                    <span><strong>Laporan Nilai:</strong> Monitoring aset berharga dengan Top 30 tertinggi</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Quick Summary -->
+            <div class="bg-white p-6 rounded-lg border border-gray-200 mt-6">
+              <h4 class="font-semibold text-gray-900 mb-4">📈 Ringkasan Data</h4>
+              <div class="grid grid-cols-3 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                  <p class="text-gray-600 text-sm">Total Laporan</p>
+                  <p class="text-2xl font-bold text-blue-600 mt-2">3</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                  <p class="text-gray-600 text-sm">Format Export</p>
+                  <p class="text-2xl font-bold text-green-600 mt-2">PDF</p>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg">
+                  <p class="text-gray-600 text-sm">Last Update</p>
+                  <p class="text-sm font-bold text-orange-600 mt-2" id="lastUpdate">Real-time</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Logout -->
+  <div id="logoutModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div id="logoutCard" class="bg-surface border border-primary/10 p-6 rounded-xl shadow-lg text-center max-w-md w-full transform transition-all duration-300 scale-95 opacity-0">
+      <h3 class="text-lg font-bold text-gray-900 mb-2">Logout</h3>
+      <p class="text-gray-600 mb-6">Apakah Anda yakin ingin keluar dari sistem?</p>
+      <div class="flex gap-3">
+        <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold">Batal</button>
+        <button onclick="confirmLogout()" class="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-semibold">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadReportPerGudang, detailReportGudang, loadReportNilaiAset, loadReportByDateRange, exportReportToPDF } from "../Js/controller/reporting.js";
+    import logout from "../Js/controller/logout.js";
+
+    // Tab switching
+    window.switchTab = (tabName) => {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      document.getElementById(tabName).classList.remove('hidden');
+      
+      document.querySelectorAll('.active-tab').forEach(btn => {
+        btn.classList.remove('active-tab', 'text-primary', 'border-b-2', 'border-primary');
+        btn.classList.add('text-gray-600');
+      });
+      event.target.classList.add('active-tab', 'text-primary', 'border-b-2', 'border-primary');
+    };
+
+    // Global functions
+    window.detailReportGudang = detailReportGudang;
+    window.exportReportToPDF = exportReportToPDF;
+
+    // Logout handling
+    document.getElementById('logoutButton').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('logoutModal').classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('logoutCard').classList.remove('scale-95', 'opacity-0');
+      }, 10);
+    });
+
+    window.closeLogoutModal = () => {
+      document.getElementById('logoutCard').classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        document.getElementById('logoutModal').classList.add('hidden');
+      }, 300);
+    };
+
+    window.confirmLogout = async () => {
+      await logout();
+    };
+
+    // Update last update time
+    document.getElementById('lastUpdate').textContent = new Date().toLocaleDateString('id-ID');
+  </script>
+</body>
+
+</html>

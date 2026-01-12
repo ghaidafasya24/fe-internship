@@ -1,4 +1,6 @@
+// File register: handle form pendaftaran user baru
 import { fetchService } from '../Temp/Fetch.js';
+import { validateText, validatePassword, validateNumber, showInputError, clearInputError } from '../utils/validation.js';
 
 // Show themed result modal
 function showResultModal(success, title, message, buttonText = 'OK', onClose = null) {
@@ -50,7 +52,7 @@ if (toggle && pwd) {
   toggle.addEventListener('click', () => {
     const isHidden = pwd.type === 'password';
     pwd.type = isHidden ? 'text' : 'password';
-    toggle.textContent = isHidden ? 'Hide' : 'Show';
+    toggle.textContent = isHidden ? 'Sembunyikan' : 'Tampilkan';
   });
 }
 
@@ -60,55 +62,67 @@ if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const username = document.getElementById('username').value.trim();
-    const phone = document.getElementById('phone_number').value.trim();
-    const password = document.getElementById('password').value;
+    const usernameInput = document.getElementById('username');
+    const phoneInput = document.getElementById('phone_number');
+    const passwordInput = document.getElementById('password');
 
-    // Validation with themed modals
-    if (username.length < 3) {
-      showResultModal(false, 
-        'Username Terlalu Pendek! 📏',
-        'Nama panggilan kamu minimal 3 karakter ya',
-        'Coba Lagi'
-      );
+    const username = usernameInput.value;
+    const phone = phoneInput.value;
+    const password = passwordInput.value;
+
+    // Validasi username dengan escaping
+    const usernameResult = validateText(username, {
+      min: 3,
+      max: 50,
+      allowedPattern: /^[a-z0-9._-]+$/,
+      allowedMessage: "Username hanya boleh huruf kecil, angka, titik, underscore, atau minus",
+    });
+    if (!usernameResult.valid) {
+      showInputError(usernameInput, usernameResult.error);
+      showResultModal(false, 'Username Tidak Valid! ✍️', usernameResult.error, 'Perbaiki');
+      return;
+    } else {
+      clearInputError(usernameInput);
+    }
+
+    // Extra safeguard: if input mengandung pola berbahaya, langsung tolak dengan pesan jelas
+    if (usernameResult.error && usernameResult.error.includes('pola')) {
+      showInputError(usernameInput, usernameResult.error);
+      showResultModal(false, 'Input Berbahaya 🚫', usernameResult.error, 'Perbaiki');
       return;
     }
 
-    // Validasi format username (alphanumeric dan underscore)
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      showResultModal(false,
-        'Username Tidak Valid! ✍️',
-        'Username hanya boleh berisi huruf, angka, dan underscore (_)',
-        'Perbaiki'
-      );
+    const normalizedUsername = usernameResult.value.toLowerCase();
+    if (usernameResult.value !== normalizedUsername) {
+      showInputError(usernameInput, 'Username harus lowercase');
+      showResultModal(false, 'Username Harus Lowercase', 'Gunakan huruf kecil semua tanpa huruf besar.', 'Perbaiki');
       return;
+    }
+
+    // Validasi nomor telepon
+    const phoneResult = validateNumber(phone, { allowHyphen: false });
+    if (!phoneResult.valid) {
+      showInputError(phoneInput, phoneResult.error);
+      showResultModal(false, 'Nomor HP Tidak Valid! 📱', phoneResult.error, 'Perbaiki');
+      return;
+    } else {
+      clearInputError(phoneInput);
     }
     
-    // Validasi nomor telepon Indonesia (hanya digit setelah +62)
-    const phoneRegex = /^[0-9]{9,12}$/;
-    const cleanPhone = phone.replace(/[\s\-]/g, '');
-    if (!phoneRegex.test(cleanPhone)) {
-      showResultModal(false,
-        'Nomor HP Tidak Valid! 📱',
-        'Ketik 9-12 digit nomor tanpa +62 atau 0',
-        'Perbaiki'
-      );
+    // Validasi password
+    const passwordResult = validatePassword(password);
+    if (!passwordResult.valid) {
+      showInputError(passwordInput, passwordResult.error);
+      showResultModal(false, 'Password Tidak Valid! 🔑', passwordResult.error, 'Perbaiki');
       return;
-    }
-    
-    if (password.length < 6) {
-      showResultModal(false,
-        'Password Terlalu Pendek! 🔑',
-        'Demi keamanan, password minimal 6 karakter ya',
-        'Mengerti'
-      );
-      return;
+    } else {
+      clearInputError(passwordInput);
     }
 
     // Tambahkan prefix +62 ke nomor telepon untuk disimpan di localStorage dan display
     const formattedPhoneForStorage = '+62' + phone;
     // Kirim ke API dengan format 62 (tanpa +)
-    const userData = { username, phone_number: '62' + phone, password };
+    const userData = { username: normalizedUsername, phone_number: '62' + phone, password };
 
     try {
       // Log data yang akan dikirim untuk debugging
@@ -117,7 +131,7 @@ if (form) {
       const result = await fetchService.register(userData);
       
       // Simpan username dan phone di localStorage (dengan format +62)
-      localStorage.setItem("username", username);
+      localStorage.setItem("username", normalizedUsername);
       localStorage.setItem("phone", formattedPhoneForStorage);
       
       // Simpan token jika ada dari response

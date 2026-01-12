@@ -1,3 +1,4 @@
+// Endpoint koleksi + kategori untuk dropdown
 export const API_KOLEKSI = {
     GET_KOLEKSI: "https://inventorymuseum-de54c3e9b901.herokuapp.com/api/koleksi",
     ADD_KOLEKSI: "https://inventorymuseum-de54c3e9b901.herokuapp.com/api/koleksi",

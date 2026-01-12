@@ -1,8 +1,10 @@
+// Form tambah/edit koleksi (versi utama)
 import { BASE_URL } from "../utils/config.js";
 import { authFetch } from "../utils/auth.js";
 import { showAlert } from "../utils/modal.js";
+import { validateText, validateDate, validateDecimal, escapeHTML, showInputError, clearInputError } from "../utils/validation.js";
 
-// Helper function: Convert URL to File
+// Helper function: ambil gambar lama via URL lalu ubah jadi File untuk FormData
 async function urlToFile(url, filename, mimeType) {
   const response = await fetch(url);
   const blob = await response.blob();
@@ -25,6 +27,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   let isEdit = false;
   let editId = null;
   let previousFoto = ""; // Simpan path gambar lama saat edit
+
+  // Cek duplikasi nomor registrasi & inventaris
+  async function checkDuplicateNumbers(noReg, noInv, ignoreId = null) {
+    const res = await authFetch(`${BASE_URL}/api/koleksi`);
+    const raw = res?.data ?? res;
+    const list = Array.isArray(raw) ? raw : (raw?.data ?? []);
+    const normalizedReg = String(noReg || "").trim().toLowerCase();
+    const normalizedInv = String(noInv || "").trim().toLowerCase();
+
+    for (const item of list) {
+      const id = item._id || item.id;
+      if (ignoreId && id === ignoreId) continue;
+
+      const itemReg = String(item.no_reg || "").trim().toLowerCase();
+      if (normalizedReg && itemReg === normalizedReg) {
+        return { exists: true, field: "no_reg" };
+      }
+
+      const itemInv = String(item.no_inv || "").trim().toLowerCase();
+      if (normalizedInv && itemInv === normalizedInv) {
+        return { exists: true, field: "no_inv" };
+      }
+    }
+
+    return { exists: false };
+  }
 
   /* ================= LOAD KATEGORI ================= */
   const kategoriRes = await authFetch(`${BASE_URL}/api/kategori`);
@@ -221,11 +249,126 @@ document.addEventListener("DOMContentLoaded", async () => {
     const gudang = gudangSelect.value;
     const rak = rakSelect.value;
     const tahap = tahapSelect.value;
-    const noReg = document.getElementById("no_reg").value;
+    const namaBeInput = document.getElementById("nama_benda");
+    const noRegInput = document.getElementById("no_reg");
+    const noInvInput = document.getElementById("no_inv");
 
-    if (!kategori || !noReg) {
-      showAlert("Kategori & No Registrasi wajib diisi", "warning");
+    // Validasi nama benda dengan escaping
+    const namaBeResult = validateText(namaBeInput.value, {
+      min: 3,
+      max: 200,
+      allowedPattern: /^[A-Za-z0-9\s.,()\-_'"/]+$/,
+      allowedMessage: "Nama hanya boleh huruf, angka, spasi, dan tanda baca umum",
+    });
+    if (!namaBeResult.valid) {
+      showInputError(namaBeInput, namaBeResult.error);
+      showAlert(namaBeResult.error, "warning");
       return;
+    } else {
+      clearInputError(namaBeInput);
+    }
+
+    // Validasi no registrasi dengan escaping
+    const noRegResult = validateText(noRegInput.value, {
+      min: 1,
+      max: 50,
+      allowedPattern: /^[A-Za-z0-9\s./_-]+$/,
+      allowedMessage: "No. registrasi hanya boleh huruf, angka, spasi, titik, slash, underscore, atau minus",
+    });
+    if (!noRegResult.valid) {
+      showInputError(noRegInput, noRegResult.error);
+      showAlert(noRegResult.error, "warning");
+      return;
+    } else {
+      clearInputError(noRegInput);
+    }
+
+    // Validasi no inventaris
+    const noInvResult = validateText(noInvInput.value, {
+      min: 1,
+      max: 50,
+      allowedPattern: /^[A-Za-z0-9\s./_-]+$/,
+      allowedMessage: "No. inventaris hanya boleh huruf, angka, spasi, titik, slash, underscore, atau minus",
+    });
+    if (!noInvResult.valid) {
+      showInputError(noInvInput, noInvResult.error);
+      showAlert(noInvResult.error, "warning");
+      return;
+    } else {
+      clearInputError(noInvInput);
+    }
+
+    // Pastikan nomor unik (abaikan id yang sedang diedit)
+    const duplicateCheck = await checkDuplicateNumbers(
+      noRegResult.value,
+      noInvResult.value,
+      isEdit ? editId : null
+    );
+
+    if (duplicateCheck.exists) {
+      const msg = duplicateCheck.field === "no_reg"
+        ? "Nomor registrasi sudah terdaftar"
+        : "Nomor inventaris sudah terdaftar";
+
+      const target = duplicateCheck.field === "no_reg" ? noRegInput : noInvInput;
+      showInputError(target, msg);
+      showAlert(msg, "warning");
+      return;
+    }
+
+    if (!kategori) {
+      showAlert("Kategori wajib dipilih", "warning");
+      return;
+    }
+
+    // Build ukuran with canonical + alias keys for best compatibility
+    const unitUkuran = document.getElementById("satuan_ukuran").value || null;
+    const unitBerat = document.getElementById("satuan_berat").value || null;
+    
+    // Validasi ukuran fields
+    const panjangInput = document.getElementById("panjang_keseluruhan");
+    const lebarInput = document.getElementById("lebar");
+    const tinggiInput = document.getElementById("tinggi");
+    const beratInput = document.getElementById("berat");
+
+    if (panjangInput.value) {
+      const panjangResult = validateDecimal(panjangInput.value, { min: 0, max: 9999, decimals: 2, required: false });
+      if (!panjangResult.valid) {
+        showInputError(panjangInput, panjangResult.error);
+        return;
+      } else {
+        clearInputError(panjangInput);
+      }
+    }
+
+    if (lebarInput.value) {
+      const lebarResult = validateDecimal(lebarInput.value, { min: 0, max: 9999, decimals: 2, required: false });
+      if (!lebarResult.valid) {
+        showInputError(lebarInput, lebarResult.error);
+        return;
+      } else {
+        clearInputError(lebarInput);
+      }
+    }
+
+    if (tinggiInput.value) {
+      const tinggiResult = validateDecimal(tinggiInput.value, { min: 0, max: 9999, decimals: 2, required: false });
+      if (!tinggiResult.valid) {
+        showInputError(tinggiInput, tinggiResult.error);
+        return;
+      } else {
+        clearInputError(tinggiInput);
+      }
+    }
+
+    if (beratInput.value) {
+      const beratResult = validateDecimal(beratInput.value, { min: 0, max: 9999, decimals: 2, required: false });
+      if (!beratResult.valid) {
+        showInputError(beratInput, beratResult.error);
+        return;
+      } else {
+        clearInputError(beratInput);
+      }
     }
 
     const ukuran = {
@@ -235,10 +378,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       tinggi: document.getElementById("tinggi").value || null,
       diameter: document.getElementById("diameter").value || null,
       berat: document.getElementById("berat").value || null,
-      satuan: document.getElementById("satuan_ukuran").value || null,
-      satuan_berat: document.getElementById("satuan_berat").value || null,
+      // length units
+      satuan: unitUkuran,
+      satuan_ukuran: unitUkuran,
+      // weight units
+      satuan_berat: unitBerat,
+      satuanBerat: unitBerat,
     };
 
+    // Ensure hidden JSON mirrors the latest ukuran payload
     document.getElementById("json").value = JSON.stringify(ukuran);
 
     const formData = new FormData(form);
@@ -246,13 +394,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     formData.set("gudang_id", gudang);
     formData.set("rak_id", rak);
     formData.set("tahap_id", tahap);
+    formData.set("no_reg", noRegResult.value);
+    formData.set("no_inv", noInvResult.value);
 
-    // Send ukuran fields separately
-    Object.keys(ukuran).forEach(key => {
+    // Set ukuran fields explicitly (including both unit key variants)
+    [
+      "panjang_keseluruhan","lebar","tebal","tinggi","diameter","berat","satuan","satuan_ukuran","satuan_berat","satuanBerat"
+    ].forEach(key => {
       if (ukuran[key] !== null && ukuran[key] !== "") {
         formData.set(key, ukuran[key]);
       }
     });
+
+    // Keep nested ukuran JSON for any backend that reads the object form
+    formData.set("ukuran", JSON.stringify(ukuran));
 
     // Ensure deskripsi is sent
     const deskripsi = document.getElementById("deskripsi")?.value || "";
@@ -305,7 +460,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       showAlert(isEdit ? "Koleksi berhasil diupdate 🎉" : "Koleksi berhasil ditambahkan 🎉", "success");
-      
+
+      // Immediately refresh the list so new/updated item appears without manual reload
+      if (window.reloadKoleksiData) {
+        window.reloadKoleksiData();
+      } else if (window.loadKoleksi) {
+        // fallback to older global method if available
+        window.loadKoleksi();
+      } else if (window.renderKoleksi) {
+        window.renderKoleksi();
+      }
+
       setTimeout(() => {
         form.reset();
         updateLokasi();
@@ -316,11 +481,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         editId = null;
         previousFoto = ""; // 💾 Reset previousFoto
         document.getElementById("modalTitle").textContent = "Tambah Koleksi";
-
-        // Refresh table
-        if (window.renderKoleksi) window.renderKoleksi();
-        else if (window.loadKoleksi) window.loadKoleksi();
-      }, 1500);
+      }, 800);
 
     } catch (err) {
       showAlert(err.message || "Gagal menyimpan koleksi", "error");

@@ -12,6 +12,12 @@ let currentFilter = 'all';
 let currentCategory = 'all';
 let currentSearch = '';
 
+// Capitalize first letter for display purposes
+const capFirst = (text = '') => {
+  const trimmed = String(text).trim();
+  return trimmed ? `${trimmed.charAt(0).toUpperCase()}${trimmed.slice(1)}` : '';
+};
+
 // ======================= ROW =======================
 export function rowKoleksi(index, item) {
   const gambarField = item.gambar || item.foto || item.image;
@@ -27,7 +33,7 @@ export function rowKoleksi(index, item) {
   return `
     <tr class="hover:bg-primary/[0.02] ease-soft border-b border-gray-100">
       <td class="px-6 py-4 text-center text-sm font-medium text-gray-700">${index}</td>
-      <td class="px-6 py-4 text-sm text-gray-900 font-medium">${item.nama_benda || "-"}</td>
+      <td class="px-6 py-4 text-sm text-gray-900 font-medium">${capFirst(item.nama_benda || "-")}</td>
       <td class="px-6 py-4 text-sm text-gray-600">${item.no_reg || "-"}</td>
       <td class="px-6 py-4 text-sm text-gray-600">${item.no_inv || "-"}</td>
       <td class="px-6 py-4">${gambar}</td>
@@ -176,7 +182,7 @@ function populateKategoriOptions(sourceKategori = []) {
   categories.forEach(([id, name]) => {
     const opt = document.createElement('option');
     opt.value = id;
-    opt.textContent = name;
+    opt.textContent = capFirst(name);
     select.appendChild(opt);
   });
 
@@ -286,6 +292,18 @@ function applyFilters() {
   }
 }
 
+// Reload koleksi data from server and re-apply current filters
+async function reloadKoleksiData() {
+  try {
+    const koleksiRes = await authFetch(`${BASE_URL}/api/koleksi?populate[]=ukuran&populate[]=kategori&populate[]=tempat_penyimpanan`);
+    const koleksiData = koleksiRes.data || koleksiRes;
+    allKoleksiData = Array.isArray(koleksiData) ? koleksiData : (koleksiData.data || []);
+    applyFilters();
+  } catch (err) {
+    console.error("Failed to reload koleksi data:", err);
+  }
+}
+
 // ======================= RENDER =======================
 function renderKoleksi(data = null) {
   const tableBody = document.getElementById("tableKoleksi");
@@ -371,10 +389,10 @@ function detailKoleksi(id) {
         : "-";
       document.getElementById('detail_tempat_penyimpanan').textContent = tempatPenyimpanan;
 
-      // Ukuran detail
+      // Ukuran detail (use dynamic units with robust fallbacks)
       const u = item.ukuran || {};
-      const satuan = u.satuan || "cm";
-      const satuanBerat = u.satuan_berat || u.satuanBerat || "kg";
+      const satuan = u.satuan || u.satuan_ukuran || item.satuan || item.satuan_ukuran || "cm";
+      const satuanBerat = u.satuan_berat || u.satuanBerat || item.satuan_berat || item.satuanBerat || "kg";
       const fmt = (val, unit) => val !== undefined && val !== null && val !== "" ? `${val} ${unit}` : "-";
 
       document.getElementById('detail_panjang').textContent = fmt(u.panjang_keseluruhan, satuan);
@@ -438,3 +456,7 @@ async function deleteKoleksi(id) {
 document.addEventListener("DOMContentLoaded", () => {
   loadInitialData();
 });
+
+// Expose minimal public API for other modules
+window.reloadKoleksiData = reloadKoleksiData;
+window.renderKoleksi = renderKoleksi;

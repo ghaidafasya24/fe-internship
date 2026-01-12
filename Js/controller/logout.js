@@ -1,4 +1,4 @@
-// File: /Js/controller/logout.js
+// File: /Js/controller/logout.js — modal konfirmasi logout dan pembersihan token
 
 document.addEventListener("DOMContentLoaded", () => {
   const logoutButton = document.getElementById("logoutButton");

@@ -1,15 +1,8 @@
 import { API_URLS } from '../config/url.js';
 
-/**
- * Kelas untuk mengelola permintaan HTTP ke API
- */
+// Mini wrapper fetch dengan header JSON + bearer token
 class FetchService {
-  /**
-   * Melakukan request ke API dengan konfigurasi default
-   * @param {string} url - URL endpoint
-   * @param {object} options - Opsi fetch tambahan
-   * @returns {Promise} Promise hasil fetch
-   */
+  // Request dengan header default + error handling ringan
   async fetchWithConfig(url, options = {}) {
     const defaultOptions = {
       headers: {
@@ -23,7 +16,6 @@ class FetchService {
     try {
       const response = await fetch(url, { ...defaultOptions, ...options });
 
-      // Coba parse JSON, atau tangani jika tidak bisa
       let data;
       try {
         data = await response.json();
@@ -32,7 +24,6 @@ class FetchService {
       }
 
       if (!response.ok) {
-        // Log detail error untuk debugging
         console.error('API Error Status:', response.status);
         console.error('API Error Response:', data);
         throw new Error(data.message || data.error || `Terjadi kesalahan pada server (${response.status})`);
@@ -45,11 +36,7 @@ class FetchService {
     }
   }
 
-  /**
-   * Register user baru
-   * @param {object} userData - Data registrasi (username, password, phone_number)
-   * @returns {Promise} Promise dengan data user baru
-   */
+  // Helper registrasi user + auto simpan token jika ada
   async register(userData) {
     try {
       const data = await this.fetchWithConfig(API_URLS.register, {
@@ -57,7 +44,6 @@ class FetchService {
         body: JSON.stringify(userData),
       });
 
-      // Jika backend mengembalikan token, simpan otomatis
       if (data.token) {
         localStorage.setItem('token', data.token);
       }

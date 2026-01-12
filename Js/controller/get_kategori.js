@@ -1,3 +1,4 @@
+// Fetch & render kategori menggunakan helper eksternal (versi lama)
 import { get } from "https://bukulapak.github.io/api/process.js";
 import { addInner } from "https://bukulapak.github.io/element/process.js";
 import { iniTabelKategori } from "../Temp/tabel_kategori.js";
@@ -7,7 +8,7 @@ import { showAlert, showConfirm } from "../utils/modal.js";
 
 console.log("[get_kategori] loaded, API_URLS:", API_URLS);
 
-// Ambil data kategori
+// Ambil data kategori dari API lalu render
 get(API_URLS.kategori, renderKategori);
 
 // ===================== RENDER TABLE =====================

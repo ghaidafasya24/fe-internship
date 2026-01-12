@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance/Pemeliharaan - Museum Sri Baduga</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3b6e80',
+              50: '#f3f9fb',
+              100: '#e6f2f6',
+              200: '#bfdde8',
+              300: '#99c9da',
+              400: '#72b4cc',
+              500: '#3b6e80',
+              600: '#335b69',
+              700: '#2a4851',
+              800: '#21363a',
+              900: '#172425'
+            },
+            surface: '#ffffff',
+            accent: '#0b0b0b',
+            museumgold: '#caaa64'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .ease-soft { transition: all .28s cubic-bezier(.2,.8,.2,1); }
+  </style>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-gray-50 font-sans h-screen overflow-hidden">
+
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-surface shadow-lg flex flex-col border-r border-primary/10 flex-shrink-0">
+      <div class="p-6 text-center border-b border-primary/10 bg-gradient-to-br from-primary/5 to-primary/10">
+        <h1 class="text-xl font-bold font-serif text-primary">Museum Sri Baduga</h1>
+        <p class="text-sm text-primary/60 mt-1">Admin Dashboard</p>
+      </div>
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+        <a href="../dasboard.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Dashboard</a>
+        <a href="koleksi.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Koleksi</a>
+        <a href="kategori.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Kategori</a>
+        <a href="laporan.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Laporan</a>
+        <a href="profil.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Profil</a>
+        <a id="logoutButton" href="#" class="block py-2.5 px-4 rounded-lg text-red-600/70 hover:bg-red-50 hover:text-red-700 font-medium ease-soft">Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="h-16 bg-white border-b border-gray-200 flex items-center px-8 shadow-sm">
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-gray-900 font-serif">Maintenance & Pemeliharaan Koleksi</h2>
+          <p class="text-sm text-gray-600 mt-1">Kelola perawatan, jadwal, dan riwayat pemeliharaan barang koleksi</p>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto p-8">
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+          <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+            <p class="text-gray-600 text-sm font-medium">Total Items</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2" id="statsMaintenanceTotalItems">-</p>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+            <p class="text-gray-600 text-sm font-medium">Items Dirawat</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2" id="statsMaintenanceItemsDirawat">-</p>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+            <p class="text-gray-600 text-sm font-medium">Perlu Perhatian</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2" id="statsMaintenanceItemsNeedAttention">-</p>
+          </div>
+          <!-- <div class="bg-white rounded-lg shadow p-6 border-l-4 border-orange-500">
+            <p class="text-gray-600 text-sm font-medium">Total Biaya</p>
+            <p class="text-lg font-bold text-gray-900 mt-2" id="statsMaintenanceTotalCost">-</p>
+          </div> -->
+        </div>
+
+        <!-- Notifications Section -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+          <h3 class="text-lg font-bold text-gray-900 mb-4">🔔 Notifikasi Barang yang Perlu Dirawat</h3>
+          <div id="maintenanceNotifications">
+            <div class="text-gray-500">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-lg shadow">
+          <div class="border-b border-gray-200 flex">
+            <button onclick="switchTab('maintenance-list')" class="px-6 py-4 font-semibold text-primary border-b-2 border-primary ease-soft active-tab">Daftar Maintenance</button>
+            <button onclick="switchTab('schedule')" class="px-6 py-4 font-semibold text-gray-600 hover:text-primary ease-soft">Jadwal Perawatan</button>
+            <!-- <button onclick="switchTab('cost-report')" class="px-6 py-4 font-semibold text-gray-600 hover:text-primary ease-soft">Laporan Biaya</button> -->
+          </div>
+
+          <!-- Tab 1: Daftar Maintenance -->
+          <div id="maintenance-list" class="tab-content p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Riwayat Pemeliharaan</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">No</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Nama Item</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Kondisi</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Jenis Perawatan</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Tanggal</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Jadwal Berikutnya</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="tableMaintenanceList">
+                  <tr>
+                    <td colspan="7" class="text-center py-4 text-gray-500">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 2: Jadwal Perawatan -->
+          <div id="schedule" class="tab-content p-6 hidden">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Jadwal Perawatan Mendatang</h3>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p class="text-sm text-blue-800">
+                <strong>Info:</strong> Jadwal perawatan berikutnya dapat diatur saat menambah log pemeliharaan. Sistem akan mengingatkan Anda untuk item dengan jadwal yang sudah melewati hari ini.
+              </p>
+            </div>
+            <div id="scheduleList" class="space-y-3">
+              <p class="text-gray-500">Memuat jadwal...</p>
+            </div>
+          </div>
+
+          <!-- Tab 3: Laporan Biaya -->
+          <!-- <div id="cost-report" class="tab-content p-6 hidden">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Laporan Biaya Pemeliharaan</h3>
+            <div class="space-y-4">
+              <div class="grid grid-cols-3 gap-4">
+                <div class="bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-4">
+                  <p class="text-gray-600 text-sm">Total Biaya</p>
+                  <p id="costReportTotal" class="text-2xl font-bold text-primary mt-2">Rp -</p>
+                </div>
+                <div class="bg-gradient-to-br from-green-100/50 to-green-50 rounded-lg p-4">
+                  <p class="text-gray-600 text-sm">Rata-rata per Item</p>
+                  <p id="costReportAverage" class="text-2xl font-bold text-green-600 mt-2">Rp -</p>
+                </div>
+                <div class="bg-gradient-to-br from-orange-100/50 to-orange-50 rounded-lg p-4">
+                  <p class="text-gray-600 text-sm">Total Perawatan</p>
+                  <p id="costReportCount" class="text-2xl font-bold text-orange-600 mt-2">-</p>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm mt-6">
+                  <thead class="bg-gray-100">
+                    <tr>
+                      <th class="text-left px-4 py-2 font-semibold text-gray-700">Item</th>
+                      <th class="text-left px-4 py-2 font-semibold text-gray-700">Jenis Perawatan</th>
+                      <th class="text-left px-4 py-2 font-semibold text-gray-700">Tanggal</th>
+                      <th class="text-right px-4 py-2 font-semibold text-gray-700">Biaya</th>
+                    </tr>
+                  </thead>
+                  <tbody id="costReportTable">
+                    <tr>
+                      <td colspan="4" class="text-center py-4 text-gray-500">Loading...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div> -->
+
+  <!-- Modal Logout -->
+  <div id="logoutModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div id="logoutCard" class="bg-surface border border-primary/10 p-6 rounded-xl shadow-lg text-center max-w-md w-full transform transition-all duration-300 scale-95 opacity-0">
+      <h3 class="text-lg font-bold text-gray-900 mb-2">Logout</h3>
+      <p class="text-gray-600 mb-6">Apakah Anda yakin ingin keluar dari sistem?</p>
+      <div class="flex gap-3">
+        <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold">Batal</button>
+        <button onclick="confirmLogout()" class="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-semibold">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadMaintenanceList, viewMaintenanceDetail, addMaintenanceLog, loadMaintenanceNotifications, renderMaintenanceStats } from "../Js/controller/maintenance.js";
+    import logout from "../Js/controller/logout.js";
+
+    // Tab switching
+    window.switchTab = (tabName) => {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      document.getElementById(tabName).classList.remove('hidden');
+      
+      document.querySelectorAll('.active-tab').forEach(btn => {
+        btn.classList.remove('active-tab', 'text-primary', 'border-b-2', 'border-primary');
+        btn.classList.add('text-gray-600');
+      });
+      event.target.classList.add('active-tab', 'text-primary', 'border-b-2', 'border-primary');
+    };
+
+    // Global functions
+    window.viewMaintenanceDetail = viewMaintenanceDetail;
+    window.addMaintenanceLog = addMaintenanceLog;
+
+    // Logout handling
+    document.getElementById('logoutButton').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('logoutModal').classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('logoutCard').classList.remove('scale-95', 'opacity-0');
+      }, 10);
+    });
+
+    window.closeLogoutModal = () => {
+      document.getElementById('logoutCard').classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        document.getElementById('logoutModal').classList.add('hidden');
+      }, 300);
+    };
+
+    window.confirmLogout = async () => {
+      await logout();
+    };
+  </script>
+</body>
+
+</html>

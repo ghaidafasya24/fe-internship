@@ -1,3 +1,4 @@
+// Template baris tabel kategori (diganti placeholder dengan data kategori)
 export let iniTabelKategori =
   `  <tr data-row-id="#ID#" data-nama="#Nama_Kategori#" data-deskripsi="#Deskripsi#" class="hover:bg-gray-50/50 ease-soft">
                 <td class="px-6 py-4 text-center text-sm font-semibold text-primary/90">#No#</td>

@@ -1,38 +1,50 @@
-// File: /Js/controller/Login.js
+// File: /Js/controller/Login.js — handle login form and token storage
 import { showAlert } from "../utils/modal.js";
+import { validateText, validatePassword, showInputError, clearInputError } from "../utils/validation.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
   const loginButton = document.getElementById("loginButton");
+  const togglePwd = document.getElementById("togglePwd");
+  const passwordInput = document.getElementById("password");
 
+  if (togglePwd && passwordInput) {
+    togglePwd.addEventListener("click", () => {
+      const isHidden = passwordInput.type === "password";
+      passwordInput.type = isHidden ? "text" : "password";
+      togglePwd.textContent = isHidden ? "Sembunyikan" : "Tampilkan";
+    });
+  }
+
+  // Submit login form
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const usernameInput = document.getElementById("username");
+    const username = usernameInput.value;
+    const password = passwordInput.value;
 
-    // Validasi username tidak kosong
-    if (!username || !password) {
-      showAlert("Username dan Password harus diisi!", "warning");
+    // Validasi username dengan escaping
+    const usernameResult = validateText(username, {
+      min: 3,
+      max: 50,
+      allowedPattern: /^[a-z0-9._-]+$/,
+      allowedMessage: "Username hanya boleh huruf kecil, angka, titik, underscore, atau minus",
+    });
+    if (!usernameResult.valid) {
+      showInputError(usernameInput, usernameResult.error);
       return;
+    } else {
+      clearInputError(usernameInput);
     }
 
-    // Validasi panjang username
-    if (username.length < 3) {
-      showAlert("Username minimal 3 karakter!", "warning");
+    // Validasi password
+    const passwordResult = validatePassword(password);
+    if (!passwordResult.valid) {
+      showInputError(passwordInput, passwordResult.error);
       return;
-    }
-
-    // Validasi format username (alphanumeric dan underscore)
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      showAlert("Username hanya boleh berisi huruf, angka, dan underscore!", "warning");
-      return;
-    }
-
-    // Validasi panjang password
-    if (password.length < 6) {
-      showAlert("Password minimal 6 karakter!", "warning");
-      return;
+    } else {
+      clearInputError(passwordInput);
     }
 
     loginButton.disabled = true;
@@ -46,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username, password })
+          body: JSON.stringify({ username: usernameResult.value, password: passwordResult.value })
         }
       );
 

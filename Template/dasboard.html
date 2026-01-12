@@ -142,6 +142,65 @@
           </div>
         </div>
 
+        <!-- Fitur Baru Cards -->
+        <div class="mb-6">
+          <!-- <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+            <span class="bg-gradient-to-r from-primary to-primary/70 text-white px-3 py-1 rounded-lg text-sm font-semibold mr-2">BARU</span>
+            Fitur Terbaru
+          </h3> -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            <!-- Analytics Card -->
+            <a href="admin/dashboard_analytics.html" class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-md p-6 hover:shadow-xl ease-soft border-l-4 border-blue-500 cursor-pointer transform hover:scale-105">
+              <div class="flex items-start justify-between mb-3">
+                <div class="text-4xl">📊</div>
+                <!-- <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">NEW</span> -->
+              </div>
+              <h4 class="text-lg font-bold text-gray-900 mb-2">Dashboard Analytics</h4>
+              <p class="text-sm text-gray-600 mb-3">Lihat statistik kondisi barang dan distribusi koleksi per kategori & gudang</p>
+              <div class="flex items-center text-blue-600 font-semibold text-sm">
+                <span>Buka Analytics</span>
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </a>
+
+            <!-- Maintenance Card -->
+            <a href="admin/maintenance.html" class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-md p-6 hover:shadow-xl ease-soft border-l-4 border-green-500 cursor-pointer transform hover:scale-105">
+              <div class="flex items-start justify-between mb-3">
+                <div class="text-4xl">🔧</div>
+                <!-- <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">NEW</span> -->
+              </div>
+              <h4 class="text-lg font-bold text-gray-900 mb-2">Maintenance</h4>
+              <p class="text-sm text-gray-600 mb-3">Kelola jadwal perawatan, catat riwayat pemeliharaan, dan monitor barang yang perlu dirawat</p>
+              <div class="flex items-center text-green-600 font-semibold text-sm">
+                <span>Buka Maintenance</span>
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </a>
+
+            <!-- Advanced Reporting Card -->
+            <a href="admin/laporan_advanced.html" class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-md p-6 hover:shadow-xl ease-soft border-l-4 border-purple-500 cursor-pointer transform hover:scale-105">
+              <div class="flex items-start justify-between mb-3">
+                <div class="text-4xl">📋</div>
+                <!-- <span class="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full">NEW</span> -->
+              </div>
+              <h4 class="text-lg font-bold text-gray-900 mb-2">Laporan Advanced</h4>
+              <p class="text-sm text-gray-600 mb-3">Buat laporan per gudang, nilai aset tertinggi, filter berdasarkan tanggal, dan export ke PDF</p>
+              <div class="flex items-center text-purple-600 font-semibold text-sm">
+                <span>Buka Laporan</span>
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </a>
+
+          </div>
+        </div>
+
         
 
   <!-- Modal -->
@@ -174,6 +233,17 @@
   </script>
   <script type="module" src="../Js/controller/dashboard_stats.js"></script>
   <script type="module" src="../Js/controller/kategori.js"></script>
-  <script type="module"  src="../Js/controller/logout.js"></script>
+  <script type="module" src="../Js/controller/logout.js"></script>
+  
+  <!-- Activity Tracking & Token Management -->
+  <script type="module">
+    import { initActivityTracking, startTokenExpiryCheck } from "../Js/utils/auth.js";
+    
+    // Initialize activity tracking (auto logout after 30 min idle)
+    initActivityTracking();
+    
+    // Start periodic token expiry check
+    startTokenExpiryCheck();
+  </script>
 </body>
 </html>

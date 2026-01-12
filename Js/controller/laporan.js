@@ -1,3 +1,4 @@
+// Halaman laporan: ekspor CSV/PDF dan render tabel koleksi lengkap
 import { BASE_URL } from "../utils/config.js";
 import { authFetch } from "../utils/auth.js";
 import { showAlert } from "../utils/modal.js";
@@ -27,6 +28,7 @@ const HEADERS = [
   "Tahap"
 ];
 
+// Normalisasi bentuk respons API menjadi array data
 function normalizeResponse(resp) {
   if (!resp) return [];
   if (Array.isArray(resp)) return resp;
@@ -36,6 +38,7 @@ function normalizeResponse(resp) {
   return [];
 }
 
+// Render tabel laporan di DOM
 function renderTable(list = []) {
   const tbody = document.getElementById("laporanBody");
   if (!tbody) return;
@@ -52,7 +55,15 @@ function renderTable(list = []) {
     const asal = item.asal_koleksi || item.asal_perolehan || "-";
     const bahan = item.bahan || "-";
     const kondisi = item.kondisi || "-";
-    const tgl = item.tanggal_perolehan ? new Date(item.tanggal_perolehan).toISOString().split('T')[0] : "-";
+    // Format tanggal dengan validasi - hindari Invalid time value error
+    const tgl = item.tanggal_perolehan ? (() => {
+      try {
+        const d = new Date(item.tanggal_perolehan);
+        return d.getTime && isNaN(d.getTime()) ? "-" : d.toISOString().split('T')[0];
+      } catch {
+        return "-";
+      }
+    })() : "-";
     const desc = item.deskripsi || "-";
     const ukuran = item.ukuran || {};
 
@@ -83,6 +94,7 @@ function renderTable(list = []) {
   }).join("");
 }
 
+// Ekspor data ke CSV
 function exportCSV() {
   if (!allKoleksi.length) {
     showAlert("Tidak ada data untuk diekspor", "warning");
@@ -98,7 +110,15 @@ function exportCSV() {
     const asal = item.asal_koleksi || item.asal_perolehan || "";
     const bahan = item.bahan || "";
     const kondisi = item.kondisi || "";
-    const tgl = item.tanggal_perolehan ? new Date(item.tanggal_perolehan).toISOString().split('T')[0] : "";
+    // Format tanggal dengan validasi - hindari Invalid time value error
+    const tgl = item.tanggal_perolehan ? (() => {
+      try {
+        const d = new Date(item.tanggal_perolehan);
+        return d.getTime && isNaN(d.getTime()) ? "" : d.toISOString().split('T')[0];
+      } catch {
+        return "";
+      }
+    })() : "";
     const desc = item.deskripsi || "";
     const ukuran = item.ukuran || {};
 
@@ -138,6 +158,7 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
+// Ekspor data ke PDF (menggunakan jsPDF + autotable)
 function exportPDF() {
   if (!allKoleksi.length) {
     showAlert("Tidak ada data untuk diekspor", "warning");
@@ -162,7 +183,15 @@ function exportPDF() {
     const asal = item.asal_koleksi || item.asal_perolehan || "";
     const bahan = item.bahan || "";
     const kondisi = item.kondisi || "";
-    const tgl = item.tanggal_perolehan ? new Date(item.tanggal_perolehan).toISOString().split('T')[0] : "";
+    // Format tanggal dengan validasi - hindari Invalid time value error
+    const tgl = item.tanggal_perolehan ? (() => {
+      try {
+        const d = new Date(item.tanggal_perolehan);
+        return d.getTime && isNaN(d.getTime()) ? "" : d.toISOString().split('T')[0];
+      } catch {
+        return "";
+      }
+    })() : "";
     const desc = item.deskripsi || "";
     const ukuran = item.ukuran || {};
 
@@ -203,6 +232,7 @@ function exportPDF() {
   doc.save('laporan-koleksi.pdf');
 }
 
+// Ambil data koleksi dan isi tabel
 async function loadData() {
   try {
     const res = await authFetch(`${BASE_URL}/api/koleksi?populate=ukuran,kategori,tempat_penyimpanan`);
@@ -214,6 +244,7 @@ async function loadData() {
   }
 }
 
+// Pasang event listener tombol ekspor dan muat data
 function init() {
   const btnExcel = document.getElementById("exportExcel");
   const btnPdf = document.getElementById("exportPdf");

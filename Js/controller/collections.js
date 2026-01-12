@@ -1,3 +1,4 @@
+// Loader koleksi (versi ringkas) untuk halaman tertentu
 import { rowKoleksi } from "../Temp/tabel_koleksi_updated.js";
 import { API_KOLEKSI } from "../config/url_koleksi.js";
 
@@ -23,5 +24,6 @@ async function loadKoleksi() {
     console.error("Error saat load koleksi:", err);
   }
 }
+// Mulai load ketika DOM siap
 document.addEventListener("DOMContentLoaded", loadKoleksi);
 

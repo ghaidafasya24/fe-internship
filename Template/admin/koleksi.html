@@ -511,6 +511,13 @@
   <script type="module" src="../../Js/Temp/tabel_koleksi_updated.js"></script>
   <script type="module" src="../../Js/controller/logout.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Activity Tracking & Token Management -->
+  <script type="module">
+    import { initActivityTracking, startTokenExpiryCheck } from "../../Js/utils/auth.js";
+    initActivityTracking();
+    startTokenExpiryCheck();
+  </script>
 
 </body>
 

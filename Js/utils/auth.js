@@ -1,6 +1,4 @@
-// =========================
-// 1. getToken
-// =========================
+// Ambil token dari cookie (key: token)
 export function getToken() {
   const name = "token=";
   const decodedCookie = decodeURIComponent(document.cookie);
@@ -15,9 +13,7 @@ export function getToken() {
   return null;
 }
 
-// =========================
-// 2. isTokenExpired
-// =========================
+// Cek apakah token JWT sudah kedaluwarsa
 export function isTokenExpired() {
   const token = getToken();
   if (!token) return true;
@@ -31,9 +27,7 @@ export function isTokenExpired() {
   }
 }
 
-// =========================
-// 3. logout
-// =========================
+// Hapus token + redirect ke login dengan alert
 export function logout(message = "Sesi kamu telah habis. Silakan login kembali.") {
   document.cookie =
     "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -50,9 +44,7 @@ export function logout(message = "Sesi kamu telah habis. Silakan login kembali."
   });
 }
 
-// =========================
-// 4. authFetch (FINAL FIX)
-// =========================
+// Fetch dengan token + auto logout jika token invalid/expired
 export async function authFetch(url, options = {}) {
   const token = getToken();
 
@@ -90,4 +82,51 @@ export async function authFetch(url, options = {}) {
   }
 
   return res.json();
+}
+
+// ============================================
+// AUTO LOGOUT SAAT IDLE (NO ACTIVITY)
+// ============================================
+let idleTimer = null;
+let lastActivityTime = Date.now();
+const IDLE_TIMEOUT = 30 * 60 * 1000; // 30 menit idle = auto logout
+
+// Reset idle timer saat ada aktivitas
+function resetIdleTimer() {
+  lastActivityTime = Date.now();
+  
+  if (idleTimer) {
+    clearTimeout(idleTimer);
+  }
+  
+  idleTimer = setTimeout(() => {
+    logout("Sesi berakhir karena tidak ada aktivitas selama 30 menit.");
+  }, IDLE_TIMEOUT);
+}
+
+// Track user activity
+export function initActivityTracking() {
+  // Events yang dianggap sebagai aktivitas user
+  const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+  
+  events.forEach(event => {
+    document.addEventListener(event, resetIdleTimer, true);
+  });
+  
+  // Start idle timer
+  resetIdleTimer();
+  
+  console.log("✅ Activity tracking initialized (30 min idle timeout)");
+}
+
+// Cek token expiry secara periodik (setiap 1 menit)
+export function startTokenExpiryCheck() {
+  setInterval(() => {
+    if (isTokenExpired()) {
+      console.warn("⚠️ Token expired detected");
+      logout("Token Anda telah kedaluwarsa. Silakan login kembali.");
+    }
+  }, 60 * 1000); // Check every 1 minute
+  
+  console.log("✅ Token expiry check started");
 }

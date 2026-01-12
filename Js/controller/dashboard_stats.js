@@ -1,5 +1,7 @@
+// Hitung statistik ringkas untuk dashboard (jumlah koleksi, kategori, koleksi bergambar)
 import { API_KOLEKSI } from '../config/url_koleksi.js';
 
+// Ambil count fleksibel dari berbagai bentuk respons JSON
 async function fetchJsonCount(url) {
   try {
     const res = await fetch(url);
@@ -18,6 +20,7 @@ async function fetchJsonCount(url) {
   }
 }
 
+// Render angka statistik ke elemen dashboard
 export async function renderDashboardStats() {
   const elKoleksi = document.getElementById('statKoleksiCount');
   const elKategori = document.getElementById('statKategoriCount');

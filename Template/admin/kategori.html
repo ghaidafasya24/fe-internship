@@ -96,7 +96,7 @@
     <main class="flex-1 flex flex-col overflow-hidden">
       <!-- Header Section -->
       <div class="bg-surface border-b border-primary/10 px-8 py-6 flex-shrink-0">
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center mb-4">
           <div>
             <h2 class="text-3xl font-serif font-bold text-primary">Kelola Kategori</h2>
             <p class="text-sm text-primary/60 mt-1">Manajemen kategori koleksi museum</p>
@@ -107,6 +107,18 @@
             </svg>
             Tambah Kategori
           </button>
+        </div>
+        <!-- Search Bar -->
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input 
+            id="searchKategori" 
+            type="text" 
+            placeholder="Cari nama kategori atau deskripsi..." 
+            class="flex-1 px-4 py-2.5 border border-primary/20 rounded-lg bg-white text-primary placeholder-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/50 ease-soft"
+          >
         </div>
       </div>
 

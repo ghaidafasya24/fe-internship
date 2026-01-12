@@ -1,6 +1,34 @@
-// File: /Js/controller/profile.js
+// File: /Js/controller/profile.js — load & update profil user (username/phone/password)
 import { showAlert } from "../utils/modal.js";
 import { API_URLS } from "../config/url.js";
+import { validateText, validateNumber, showInputError, clearInputError } from "../utils/validation.js";
+
+const USER_BASE_URL = "https://inventorymuseum-de54c3e9b901.herokuapp.com/api/users";
+
+function extractProfile(data) {
+  const username = data?.username || data?.user?.username || null;
+  let phone =
+    data?.phone ||
+    data?.phone_number ||
+    data?.phoneNumber ||
+    data?.user?.phone ||
+    data?.user?.phone_number ||
+    null;
+
+  if (phone) {
+    const cleaned = String(phone).trim();
+    const normalized = cleaned.startsWith("+")
+      ? cleaned
+      : cleaned.startsWith("62")
+        ? "+" + cleaned
+        : cleaned.startsWith("0")
+          ? "+62" + cleaned.slice(1)
+          : cleaned;
+    phone = normalized;
+  }
+
+  return { username, phone };
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   loadUserProfile();
@@ -33,11 +61,45 @@ async function loadUserProfile() {
 
     if (response.ok) {
       const data = await response.json();
-      username = data.username || null;
-      phone = data.phone || null;
+      const parsed = extractProfile(data);
+      username = parsed.username;
+      phone = parsed.phone;
+
+      if (phone) localStorage.setItem("phone", phone);
+      if (username) localStorage.setItem("username", username);
+
       console.log("Profile loaded from API:", data);
     } else {
-      console.log("Profile endpoint returned error, will try localStorage");
+      console.log("Profile endpoint returned error, will try fallback by userId");
+      // Fallback: fetch user by ID if available
+      const storedUserId = localStorage.getItem("userId");
+      if (storedUserId) {
+        try {
+          const altRes = await fetch(`${USER_BASE_URL}/${storedUserId}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (altRes.ok) {
+            const altData = await altRes.json();
+            const parsedAlt = extractProfile(altData);
+            username = parsedAlt.username || username;
+            phone = parsedAlt.phone || phone;
+
+            if (phone) localStorage.setItem("phone", phone);
+            if (username) localStorage.setItem("username", username);
+
+            console.log("Profile loaded from fallback /users/:id", altData);
+          } else {
+            console.log("Fallback /users/:id also failed", altRes.status);
+          }
+        } catch (fallbackErr) {
+          console.error("Fallback fetch by userId failed", fallbackErr);
+        }
+      }
     }
   } catch (error) {
     console.error("Error loading profile from API:", error);
@@ -78,7 +140,13 @@ async function loadUserProfile() {
       let displayPhone = "";
       if (phone) {
         // Extract phone number without +62 prefix
-        displayPhone = phone.startsWith("+62") ? phone.substring(3) : phone;
+        if (phone.startsWith("+62")) {
+          displayPhone = phone.substring(3);
+        } else if (phone.startsWith("62")) {
+          displayPhone = phone.substring(2);
+        } else {
+          displayPhone = phone;
+        }
       }
       accountPhoneField.value = displayPhone;
       console.log("Phone field set to:", displayPhone, "(from original:", phone, ")");
@@ -91,41 +159,83 @@ function setupAccountInfoForm() {
   const formAccountInfo = document.getElementById("formAccountInfo");
   if (!formAccountInfo) return;
 
+  const usernameInput = document.getElementById("accountUsername");
+  const phoneInput = document.getElementById("accountPhone");
+
+  // Real-time validation on blur
+  if (usernameInput) {
+    usernameInput.addEventListener("blur", () => {
+      const result = validateText(usernameInput.value, {
+        min: 3,
+        max: 50,
+        allowedPattern: /^[a-z0-9._-]+$/,
+        allowedMessage: "Username hanya boleh huruf kecil, angka, titik, underscore, atau minus",
+      });
+      if (!result.valid) {
+        showInputError(usernameInput, result.error);
+      } else {
+        clearInputError(usernameInput);
+      }
+    });
+    usernameInput.addEventListener("focus", () => {
+      clearInputError(usernameInput);
+    });
+  }
+
+  if (phoneInput) {
+    phoneInput.addEventListener("blur", () => {
+      const result = validateNumber(phoneInput.value, { allowHyphen: true });
+      if (!result.valid) {
+        showInputError(phoneInput, result.error);
+      } else {
+        clearInputError(phoneInput);
+      }
+    });
+    phoneInput.addEventListener("focus", () => {
+      clearInputError(phoneInput);
+    });
+  }
+
   formAccountInfo.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const usernameInput = document.getElementById("accountUsername");
-    const phoneInput = document.getElementById("accountPhone");
-
-    const newUsername = usernameInput.value.trim().toLowerCase();
-    const rawPhone = phoneInput.value.trim();
+    const newUsername = usernameInput.value;
+    const rawPhone = phoneInput.value;
     const token = localStorage.getItem("token");
 
-    if (!newUsername || !rawPhone) {
-      showAlert("Username dan nomor telepon harus diisi!", "warning");
+    // Validasi username dengan escaping
+    const usernameResult = validateText(newUsername, {
+      min: 3,
+      max: 50,
+      allowedPattern: /^[a-z0-9._-]+$/,
+      allowedMessage: "Username hanya boleh huruf kecil, angka, titik, underscore, atau minus",
+    });
+    if (!usernameResult.valid) {
+      showInputError(usernameInput, usernameResult.error);
+      showAlert(usernameResult.error, "warning");
+      return;
+    } else {
+      clearInputError(usernameInput);
+    }
+
+    const normalizedUsername = usernameResult.value.toLowerCase();
+    if (usernameResult.value !== normalizedUsername) {
+      showInputError(usernameInput, "Username harus lowercase");
+      showAlert("Username harus lowercase", "warning");
       return;
     }
 
-    // Username validation (SESUI BE)
-    const usernameRegex = /^[a-z0-9_]{3,}$/;
-    if (!usernameRegex.test(newUsername)) {
-      showAlert(
-        "Username minimal 3 karakter dan hanya huruf kecil, angka, underscore",
-        "warning"
-      );
+    // Validasi nomor telepon
+    const phoneResult = validateNumber(rawPhone, { allowHyphen: true });
+    if (!phoneResult.valid) {
+      showInputError(phoneInput, phoneResult.error);
+      showAlert(phoneResult.error, "warning");
       return;
+    } else {
+      clearInputError(phoneInput);
     }
 
-    // Phone validation (SESUI BE)
-    const cleanPhone = rawPhone.replace(/[\s\-]/g, "");
-
-    if (!/^[1-9][0-9]{9,11}$/.test(cleanPhone)) {
-      showAlert(
-        "Nomor telepon harus 10–12 digit dan tidak boleh diawali 0",
-        "warning"
-      );
-      return;
-    }
+    const cleanPhone = phoneResult.value.replace(/[\s\-]/g, "");
 
     const phoneForApi = "62" + cleanPhone;
 
@@ -149,7 +259,7 @@ function setupAccountInfoForm() {
     }
 
     const formData = new FormData();
-    formData.append("username", newUsername);
+    formData.append("username", normalizedUsername);
     formData.append("phone_number", phoneForApi);
 
     try {
@@ -172,10 +282,10 @@ function setupAccountInfoForm() {
       }
 
       // Simpan lokal
-      localStorage.setItem("username", newUsername);
+      localStorage.setItem("username", normalizedUsername);
       localStorage.setItem("phone", "+62" + cleanPhone);
 
-      document.getElementById("currentUsername").textContent = newUsername;
+      document.getElementById("currentUsername").textContent = normalizedUsername;
 
       showAlert("Profil berhasil diperbarui 🎉", "success");
 

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Analytics - Museum Sri Baduga</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3b6e80',
+              50: '#f3f9fb',
+              100: '#e6f2f6',
+              200: '#bfdde8',
+              300: '#99c9da',
+              400: '#72b4cc',
+              500: '#3b6e80',
+              600: '#335b69',
+              700: '#2a4851',
+              800: '#21363a',
+              900: '#172425'
+            },
+            surface: '#ffffff',
+            accent: '#0b0b0b',
+            museumgold: '#caaa64'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .ease-soft { transition: all .28s cubic-bezier(.2,.8,.2,1); }
+    canvas {
+      max-width: 100%;
+    }
+  </style>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-gray-50 font-sans h-screen overflow-hidden">
+
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-surface shadow-lg flex flex-col border-r border-primary/10 flex-shrink-0">
+      <div class="p-6 text-center border-b border-primary/10 bg-gradient-to-br from-primary/5 to-primary/10">
+        <h1 class="text-xl font-bold font-serif text-primary">Museum Sri Baduga</h1>
+        <p class="text-sm text-primary/60 mt-1">Admin Dashboard</p>
+      </div>
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+        <a href="../dasboard.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Dashboard</a>
+        <a href="koleksi.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Koleksi</a>
+        <a href="kategori.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Kategori</a>
+        <a href="laporan.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Laporan</a>
+        <a href="profil.html" class="block py-2.5 px-4 rounded-lg text-primary/70 hover:bg-primary/10 hover:text-primary font-medium ease-soft">Profil</a>
+        <a id="logoutButton" href="#" class="block py-2.5 px-4 rounded-lg text-red-600/70 hover:bg-red-50 hover:text-red-700 font-medium ease-soft">Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="h-16 bg-white border-b border-gray-200 flex items-center px-8 shadow-sm">
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-gray-900 font-serif">Dashboard Analytics</h2>
+          <p class="text-sm text-gray-600 mt-1">Statistik Kondisi dan Distribusi Koleksi</p>
+        </div>
+        <button onclick="window.location.reload()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-semibold">
+          🔄 Refresh
+        </button>
+      </header>
+
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto p-6">
+        <!-- Section 1: Statistik Kondisi Barang -->
+        <div class="bg-white rounded-lg shadow p-5 mb-5">
+          <h3 class="text-lg font-bold text-gray-900 mb-3">📊 Statistik Kondisi Barang</h3>
+          
+          <div class="grid grid-cols-4 gap-3 mb-4">
+            <div class="bg-gradient-to-br from-emerald-100 to-emerald-50 p-3 rounded-lg border border-emerald-200">
+              <p class="text-gray-600 text-xs font-medium">Sangat Baik</p>
+              <p class="text-xl font-bold text-emerald-600 mt-1" id="statsSangatBaik">-</p>
+            </div>
+            <div class="bg-gradient-to-br from-green-100 to-green-50 p-3 rounded-lg border border-green-200">
+              <p class="text-gray-600 text-xs font-medium">Baik</p>
+              <p class="text-xl font-bold text-green-600 mt-1" id="statsBaik">-</p>
+            </div>
+            <div class="bg-gradient-to-br from-lime-100 to-lime-50 p-3 rounded-lg border border-lime-200">
+              <p class="text-gray-600 text-xs font-medium">Cukup Baik</p>
+              <p class="text-xl font-bold text-lime-600 mt-1" id="statsCukupBaik">-</p>
+            </div>
+            <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 p-3 rounded-lg border border-yellow-200">
+              <p class="text-gray-600 text-xs font-medium">Kurang Baik</p>
+              <p class="text-xl font-bold text-yellow-600 mt-1" id="statsKurangBaik">-</p>
+            </div>
+            <div class="bg-gradient-to-br from-orange-100 to-orange-50 p-3 rounded-lg border border-orange-200">
+              <p class="text-gray-600 text-xs font-medium">Rusak</p>
+              <p class="text-xl font-bold text-orange-600 mt-1" id="statsRusak">-</p>
+            </div>
+            <div class="bg-gradient-to-br from-red-100 to-red-50 p-3 rounded-lg border border-red-200">
+              <p class="text-gray-600 text-xs font-medium">Rusak Berat</p>
+              <p class="text-xl font-bold text-red-600 mt-1" id="statsRusakBerat">-</p>
+            </div>
+            <div class="bg-gradient-to-br from-gray-100 to-gray-50 p-3 rounded-lg border border-gray-200">
+              <p class="text-gray-600 text-xs font-medium">Ganti Rugi</p>
+              <p class="text-xl font-bold text-gray-600 mt-1" id="statsGantiRugi">-</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-100 to-blue-50 p-3 rounded-lg border border-blue-200">
+              <p class="text-gray-600 text-xs font-medium">Total Item</p>
+              <p class="text-xl font-bold text-blue-600 mt-1" id="statsKondisiTotal">-</p>
+            </div>
+          </div>
+
+          <!-- Chart Kondisi -->
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <canvas id="chartKondisi" width="640" height="420"></canvas>
+          </div>
+
+          <!-- Persentase -->
+          <div id="statsKondisiPercentage" class="mt-3"></div>
+        </div>
+
+        <!-- Section 2: Distribusi Per Kategori -->
+        <div class="bg-white rounded-lg shadow p-5 mb-5">
+          <h3 class="text-lg font-bold text-gray-900 mb-3">📂 Distribusi Koleksi Per Kategori</h3>
+          <div id="chartDistribusiKategori">
+            <p class="text-gray-500 text-center py-6">Loading...</p>
+          </div>
+        </div>
+
+        <!-- Section 4: Distribusi Per Gudang -->
+        <div class="bg-white rounded-lg shadow p-5">
+          <h3 class="text-lg font-bold text-gray-900 mb-3">🏭 Distribusi Koleksi Per Gudang</h3>
+          <div id="chartDistribusiGudang">
+            <p class="text-gray-500 text-center py-6">Loading...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Logout -->
+  <div id="logoutModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div id="logoutCard" class="bg-surface border border-primary/10 p-6 rounded-xl shadow-lg text-center max-w-md w-full transform transition-all duration-300 scale-95 opacity-0">
+      <h3 class="text-lg font-bold text-gray-900 mb-2">Logout</h3>
+      <p class="text-gray-600 mb-6">Apakah Anda yakin ingin keluar dari sistem?</p>
+      <div class="flex gap-3">
+        <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold">Batal</button>
+        <button onclick="confirmLogout()" class="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-semibold">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { renderAllAnalytics } from "../../Js/controller/dashboard_analytics.js";
+
+    // Load analytics data
+    renderAllAnalytics();
+
+    // Logout handling
+    document.getElementById('logoutButton').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('logoutModal').classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('logoutCard').classList.remove('scale-95', 'opacity-0');
+        document.getElementById('logoutCard').classList.add('scale-100', 'opacity-100');
+      }, 10);
+    });
+
+    window.closeLogoutModal = () => {
+      document.getElementById('logoutCard').classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        document.getElementById('logoutModal').classList.add('hidden');
+      }, 300);
+    };
+
+    window.confirmLogout = async () => {
+      // Clear token and redirect
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+      window.location.href = '../login.html';
+    };
+  </script>
+  
+  <!-- Activity Tracking & Token Management -->
+  <script type="module">
+    import { initActivityTracking, startTokenExpiryCheck } from "../../Js/utils/auth.js";
+    initActivityTracking();
+    startTokenExpiryCheck();
+  </script>
+</body>
+
+</html>
