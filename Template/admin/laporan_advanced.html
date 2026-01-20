@@ -46,6 +46,13 @@
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- jsPDF & AutoTable for PDF export -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+  
+  <!-- XLSX for Excel export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
 <body class="bg-gray-50 font-sans h-screen overflow-hidden">
@@ -83,7 +90,6 @@
         <div class="bg-white rounded-lg shadow">
           <div class="border-b border-gray-200 flex flex-wrap">
             <button onclick="switchTab('laporan-gudang')" class="px-6 py-4 font-semibold text-primary border-b-2 border-primary ease-soft active-tab">Laporan Per Gudang</button>
-            <button onclick="switchTab('laporan-nilai')" class="px-6 py-4 font-semibold text-gray-600 hover:text-primary ease-soft">Laporan Nilai Aset</button>
             <button onclick="switchTab('laporan-tanggal')" class="px-6 py-4 font-semibold text-gray-600 hover:text-primary ease-soft">Laporan Berdasarkan Tanggal</button>
             <button onclick="switchTab('export')" class="px-6 py-4 font-semibold text-gray-600 hover:text-primary ease-soft">Export & Tools</button>
           </div>
@@ -93,7 +99,7 @@
             <h3 class="text-lg font-bold text-gray-900 mb-4">Distribusi Koleksi Per Gudang</h3>
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p class="text-sm text-blue-800">
-                <strong>Info:</strong> Laporan ini menunjukkan jumlah item, total nilai aset, dan status kondisi untuk setiap gudang.
+                <strong>Info:</strong> Laporan ini menunjukkan jumlah item dan status kondisi untuk setiap gudang.
               </p>
             </div>
             <div class="overflow-x-auto">
@@ -103,40 +109,11 @@
                     <th class="text-left px-4 py-2 font-semibold text-gray-700">No</th>
                     <th class="text-left px-4 py-2 font-semibold text-gray-700">Nama Gudang</th>
                     <th class="text-left px-4 py-2 font-semibold text-gray-700">Jumlah Item</th>
-                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Total Nilai Aset</th>
                     <th class="text-left px-4 py-2 font-semibold text-gray-700">Status Kondisi</th>
                     <th class="text-left px-4 py-2 font-semibold text-gray-700">Aksi</th>
                   </tr>
                 </thead>
                 <tbody id="tableReportPerGudang">
-                  <tr>
-                    <td colspan="6" class="text-center py-4 text-gray-500">Loading...</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Tab 2: Laporan Nilai Aset -->
-          <div id="laporan-nilai" class="tab-content p-6 hidden">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Top 30 Koleksi dengan Nilai Aset Tertinggi</h3>
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-              <p class="text-sm text-green-800">
-                <strong>Info:</strong> Laporan ini menunjukkan item dengan nilai aset tertinggi untuk monitoring aset berharga.
-              </p>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-sm">
-                <thead class="bg-gray-100">
-                  <tr>
-                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Ranking</th>
-                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Nama Koleksi</th>
-                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Kategori</th>
-                    <th class="text-left px-4 py-2 font-semibold text-gray-700">No. Inventaris</th>
-                    <th class="text-right px-4 py-2 font-semibold text-gray-700">Nilai Aset</th>
-                  </tr>
-                </thead>
-                <tbody id="tableReportNilaiAset">
                   <tr>
                     <td colspan="5" class="text-center py-4 text-gray-500">Loading...</td>
                   </tr>
@@ -205,9 +182,6 @@
                   <button onclick="exportReportToPDF('gudang')" class="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold flex items-center justify-center gap-2">
                     <span>📄</span> Export Laporan Gudang ke PDF
                   </button>
-                  <button onclick="exportReportToPDF('nilai')" class="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 font-semibold flex items-center justify-center gap-2">
-                    <span>💰</span> Export Laporan Nilai Aset ke PDF
-                  </button>
                   <button onclick="window.print()" class="w-full px-4 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold flex items-center justify-center gap-2">
                     <span>🖨️</span> Print Semua Data (Ctrl+P)
                   </button>
@@ -275,7 +249,7 @@
   </div>
 
   <script type="module">
-    import { loadReportPerGudang, detailReportGudang, loadReportNilaiAset, loadReportByDateRange, exportReportToPDF } from "../Js/controller/reporting.js";
+    import { loadReportPerGudang, detailReportGudang, loadReportByDateRange, exportReportToPDF } from "../Js/controller/reporting.js";
     import logout from "../Js/controller/logout.js";
 
     // Tab switching

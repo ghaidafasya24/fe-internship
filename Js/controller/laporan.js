@@ -233,7 +233,7 @@ function exportPDF() {
 }
 
 // Ambil data koleksi dan isi tabel
-async function loadData() {
+export async function loadLaporan() {
   try {
     const res = await authFetch(`${BASE_URL}/api/koleksi?populate=ukuran,kategori,tempat_penyimpanan`);
     allKoleksi = normalizeResponse(res);
@@ -252,7 +252,7 @@ function init() {
   btnExcel?.addEventListener("click", exportCSV);
   btnPdf?.addEventListener("click", exportPDF);
 
-  loadData();
+  loadLaporan();
 }
 
 document.addEventListener("DOMContentLoaded", init);

@@ -83,46 +83,68 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await loadGudang();
 
-  /* ================= GUDANG → RAK ================= */
+  /* ================= GUDANG → RAK (OPSIONAL) ================= */
   gudangSelect.addEventListener("change", async () => {
     const gudangId = gudangSelect.value;
 
-    rakSelect.innerHTML = `<option value="">-- Pilih Rak --</option>`;
-    tahapSelect.innerHTML = `<option value="">-- Pilih Tahap --</option>`;
+    // Reset rak dan tahap saat gudang berubah
+    rakSelect.innerHTML = `<option value="">-- Pilih Rak (Opsional) --</option>`;
+    tahapSelect.innerHTML = `<option value="">-- Pilih Tahap (Opsional) --</option>`;
 
-    if (!gudangId) return;
+    if (!gudangId) {
+      updateLokasi();
+      return;
+    }
 
-    const res = await authFetch(`${BASE_URL}/api/rak?gudang_id=${gudangId}`);
-    const data = res.data || res;
+    try {
+      const res = await authFetch(`${BASE_URL}/api/rak?gudang_id=${gudangId}`);
+      const data = res.data || res || [];
 
-    data.forEach(r => {
-      rakSelect.innerHTML += `
-        <option value="${r.id || r._id}">${r.nama_rak}</option>
-      `;
-    });
+      if (data && data.length > 0) {
+        data.forEach(r => {
+          rakSelect.innerHTML += `
+            <option value="${r.id || r._id}">${r.nama_rak}</option>
+          `;
+        });
+      }
+    } catch (error) {
+      console.error("Gagal load rak:", error);
+    }
 
     updateLokasi();
   });
 
-  /* ================= RAK → TAHAP ================= */
+  /* ================= RAK → TAHAP (OPSIONAL) ================= */
   rakSelect.addEventListener("change", async () => {
     const rakId = rakSelect.value;
 
-    tahapSelect.innerHTML = `<option value="">-- Pilih Tahap --</option>`;
-    if (!rakId) return;
+    // Reset tahap saat rak berubah
+    tahapSelect.innerHTML = `<option value="">-- Pilih Tahap (Opsional) --</option>`;
 
-    const res = await authFetch(`${BASE_URL}/api/tahap?rak_id=${rakId}`);
-    const data = res.data || res;
+    if (!rakId) {
+      updateLokasi();
+      return;
+    }
 
-    data.forEach(t => {
-      tahapSelect.innerHTML += `
-        <option value="${t.id || t._id}">${t.nama_tahap}</option>
-      `;
-    });
+    try {
+      const res = await authFetch(`${BASE_URL}/api/tahap?rak_id=${rakId}`);
+      const data = res.data || res || [];
+
+      if (data && data.length > 0) {
+        data.forEach(t => {
+          tahapSelect.innerHTML += `
+            <option value="${t.id || t._id}">${t.nama_tahap}</option>
+          `;
+        });
+      }
+    } catch (error) {
+      console.error("Gagal load tahap:", error);
+    }
 
     updateLokasi();
   });
 
+  /* ================= TAHAP BERUBAH → UPDATE DISPLAY ================= */
   tahapSelect.addEventListener("change", updateLokasi);
 
   /* ================= EDIT KOLEKSI ================= */
@@ -188,6 +210,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         rakData.forEach(r => {
           rakSelect.innerHTML += `<option value="${r.id || r._id}">${r.nama_rak}</option>`;
         });
+        // Wait for DOM update before setting value
+        await new Promise(resolve => setTimeout(resolve, 10));
         rakSelect.value = rakId || "";
       }
 
@@ -199,6 +223,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         tahapData.forEach(t => {
           tahapSelect.innerHTML += `<option value="${t.id || t._id}">${t.nama_tahap}</option>`;
         });
+        // Wait for DOM update before setting value
+        await new Promise(resolve => setTimeout(resolve, 10));
         tahapSelect.value = tahapId || "";
       }
 
@@ -238,7 +264,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const lokasi = `${gudangText} / ${rakText} / ${tahapText}`;
     lokasiDisplay.textContent = lokasi;
-    tempatInput.value = lokasi;
+    // Don't set tempatInput.value to prevent it from being sent to backend
+    // tempatInput.value = lokasi;
   }
 
   /* ================= SUBMIT ================= */
@@ -321,6 +348,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    // Validasi gudang wajib, rak dan tahap opsional
+    if (!gudang) {
+      showAlert("Gudang wajib dipilih", "warning");
+      gudangSelect.focus();
+      return;
+    }
+
     // Build ukuran with canonical + alias keys for best compatibility
     const unitUkuran = document.getElementById("satuan_ukuran").value || null;
     const unitBerat = document.getElementById("satuan_berat").value || null;
@@ -389,13 +423,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Ensure hidden JSON mirrors the latest ukuran payload
     document.getElementById("json").value = JSON.stringify(ukuran);
 
-    const formData = new FormData(form);
+    // Create empty FormData and manually add only required fields
+    const formData = new FormData();
+    
+    // Add basic fields
+    formData.set("nama_benda", namaBeResult.value);
     formData.set("kategori_id", kategori);
-    formData.set("gudang_id", gudang);
-    formData.set("rak_id", rak);
-    formData.set("tahap_id", tahap);
     formData.set("no_reg", noRegResult.value);
     formData.set("no_inv", noInvResult.value);
+    
+    // Location fields - only add if they have values
+    if (gudang) formData.set("gudang_id", gudang);
+    if (rak) formData.set("rak_id", rak);
+    if (tahap) formData.set("tahap_id", tahap);
+    
+    // Other form fields
+    const asalPerolehan = document.getElementById("asal_perolehan")?.value;
+    if (asalPerolehan) formData.set("asal_koleksi", asalPerolehan);
+    
+    const bahan = document.getElementById("bahan")?.value;
+    if (bahan) formData.set("bahan", bahan);
+    
+    const kondisi = document.getElementById("kondisi")?.value;
+    if (kondisi) formData.set("kondisi", kondisi);
+    
+    const tanggalPerolehan = document.getElementById("tahun_perolehan")?.value;
+    if (tanggalPerolehan) formData.set("tanggal_perolehan", tanggalPerolehan);
+    
+    const deskripsi = document.getElementById("deskripsi")?.value || "";
+    if (deskripsi) formData.set("deskripsi", deskripsi);
 
     // Set ukuran fields explicitly (including both unit key variants)
     [
@@ -408,10 +464,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Keep nested ukuran JSON for any backend that reads the object form
     formData.set("ukuran", JSON.stringify(ukuran));
-
-    // Ensure deskripsi is sent
-    const deskripsi = document.getElementById("deskripsi")?.value || "";
-    if (deskripsi) formData.set("deskripsi", deskripsi);
 
     // Handle foto field - preserve gambar lama jika tidak ada file baru
     const fileInput = document.querySelector('input[name="foto"]');
@@ -441,18 +493,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log("📤 DATA DIKIRIM:");
+    console.log("gudang=", gudang, "rak=", rak, "tahap=", tahap);
     for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
+      console.log(`  ${pair[0]}: ${pair[1]}`);
     }
 
     try {
       let response;
       if (isEdit) {
+        console.log("🔄 PUT request ke:", `${BASE_URL}/api/koleksi/${editId}`);
         response = await authFetch(`${BASE_URL}/api/koleksi/${editId}`, {
           method: "PUT",
           body: formData,
         });
       } else {
+        console.log("📤 POST request ke:", `${BASE_URL}/api/koleksi`);
         response = await authFetch(`${BASE_URL}/api/koleksi`, {
           method: "POST",
           body: formData,
