@@ -43,8 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Jika user klik "Logout"
   confirmBtn.addEventListener("click", () => {
-    // Hapus token dari cookie
+    // Hapus token dari cookie (support both root & GitHub Pages subdirectory)
     document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    document.cookie = "token=; path=" + window.location.pathname.split('/').slice(0, -1).join('/') + "/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
     // (Opsional) panggil API logout kalau backend punya
     // Clear localStorage data on logout
@@ -53,8 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("username");
     localStorage.removeItem("phone");
 
+    // Detect base path (support GitHub Pages subdirectory)
+    const basePath = window.location.pathname.includes('/fe-internship') 
+      ? '/fe-internship/' 
+      : '/';
+    const loginPath = basePath + 'index.html';
+
     // Prevent back button dari kembali ke dashboard
-    history.replaceState(null, null, "/index.html");
+    history.replaceState(null, null, loginPath);
 
     /*
     fetch("https://inventorymuseum-de54c3e9b901.herokuapp.com/api/users/logout", {
@@ -70,12 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
       card.classList.add('scale-95','opacity-0');
       setTimeout(() => {
         modal.classList.add('hidden');
-        // redirect after modal hides
-        window.location.href = "/index.html";
+        // redirect after modal hides (use relative path for GitHub Pages compatibility)
+        window.location.href = loginPath;
       }, 220);
     } else {
       modal.classList.add('hidden');
-      window.location.href = "/index.html";
+      window.location.href = loginPath;
     }
   });
 });
