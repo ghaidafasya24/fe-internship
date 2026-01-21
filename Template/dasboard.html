@@ -42,20 +42,56 @@
   </script>
   <style>
     .ease-soft { transition: all .28s cubic-bezier(.2,.8,.2,1); }
+    .sidebar { transition: transform .25s ease; }
+
+    /* Mobile layout adjustments */
+    .layout-shell { min-height: 100vh; }
+    @media (max-width: 1024px) {
+      .layout-shell { flex-direction: column; }
+      .sidebar {
+        width: 260px;
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 50;
+        transform: translateX(-100%);
+        box-shadow: none;
+        border-right: 1px solid rgba(59,110,128,0.08);
+        border-bottom: 0;
+        padding: 20px 16px;
+        gap: 16px;
+        background: #ffffff;
+      }
+      .sidebar nav {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow-y: auto;
+        max-height: calc(100vh - 160px);
+      }
+      .sidebar nav a { width: 100%; text-align: left; }
+      .sidebar-header { width: 180px; }
+      .sidebar-backdrop { display: none; }
+      .sidebar-open .sidebar { transform: translateX(0); box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
+      .sidebar-open .sidebar-backdrop { display: block; }
+    }
+    @media (max-width: 768px) {
+      .content-shell { padding: 12px; }
+    }
   </style>
   <script type="module" src="../Js/controller/get_kategori.js"></script>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-gray-50 font-sans min-h-screen">
 
   <!-- Wrapper -->
-  <div class="flex h-screen">
+  <div class="flex min-h-screen layout-shell">
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-surface shadow-lg flex flex-col border-r border-primary/10">
-      <div class="p-6 text-center border-b border-primary/10 bg-gradient-to-br from-primary/5 to-primary/10">
+    <aside class="w-64 bg-surface shadow-lg flex flex-col border-r border-primary/10 sidebar">
+      <div class="p-6 text-center border-b border-primary/10 bg-gradient-to-br from-primary/5 to-primary/10 sidebar-header">
         <h1 class="text-xl font-bold font-serif text-primary">Museum Sri Baduga</h1>
         <p class="text-sm text-primary/60 mt-1">Admin Dashboard</p>
       </div>
+      <button id="closeSidebar" class="lg:hidden self-end mt-2 mb-1 px-3 py-2 text-primary/70 hover:text-primary text-sm font-semibold rounded-md">Tutup</button>
 
   <nav class="flex-1 p-4 space-y-2">
   <a href="dasboard.html" class="block py-2.5 px-4 bg-primary/10 font-semibold text-primary rounded-lg border-l-4 border-primary">Dashboard</a>
@@ -92,12 +128,21 @@
 
     </aside>
 
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/30 hidden lg:hidden"></div>
+
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col content-shell">
 
       <!-- Header -->
       <header class="bg-white shadow-sm p-4 flex justify-between items-center">
-        <h2 class="text-xl font-semibold text-gray-800">Dashboard Admin Museum Sri Baduga</h2>
+        <div class="flex items-center gap-3">
+          <button id="openSidebar" class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-primary/20 text-primary hover:bg-primary/10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h2 class="text-xl font-semibold text-gray-800">Dashboard Admin Museum Sri Baduga</h2>
+        </div>
       </header>
 
       <!-- Content -->
@@ -222,14 +267,33 @@
     </div>
   </div>
 
-  <!-- Script Modal -->
+  <!-- Script Modal & Sidebar -->
   <script>
     const modal = document.getElementById('modal');
     const openModal = document.getElementById('openModal');
     const closeModal = document.getElementById('closeModal');
+    const burger = document.getElementById('openSidebar');
+    const closeSidebarBtn = document.getElementById('closeSidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
 
-    openModal.addEventListener('click', () => modal.classList.remove('hidden'));
-    closeModal.addEventListener('click', () => modal.classList.add('hidden'));
+    const openSidebar = () => {
+      document.body.classList.add('sidebar-open');
+      backdrop?.classList.remove('hidden');
+    };
+    const hideSidebar = () => {
+      document.body.classList.remove('sidebar-open');
+      backdrop?.classList.add('hidden');
+    };
+
+    burger?.addEventListener('click', openSidebar);
+    closeSidebarBtn?.addEventListener('click', hideSidebar);
+    backdrop?.addEventListener('click', hideSidebar);
+    window.addEventListener('resize', () => { if (window.innerWidth > 1024) hideSidebar(); });
+
+    if (openModal && closeModal && modal) {
+      openModal.addEventListener('click', () => modal.classList.remove('hidden'));
+      closeModal.addEventListener('click', () => modal.classList.add('hidden'));
+    }
   </script>
   <script type="module" src="../Js/controller/dashboard_stats.js"></script>
   <script type="module" src="../Js/controller/kategori.js"></script>
