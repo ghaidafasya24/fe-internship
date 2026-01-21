@@ -42,6 +42,7 @@
   </script>
   <style>
     .ease-soft { transition: all .28s cubic-bezier(.2,.8,.2,1); }
+    .sidebar { transition: transform .25s ease; }
     /* Solid table backgrounds (no transparency) */
     .table-solid thead,
     .table-solid th,
@@ -75,6 +76,7 @@
         border-bottom: 0;
         padding: 20px 16px;
         gap: 16px;
+        background: #ffffff;
       }
       .sidebar nav {
         display: flex;
@@ -243,8 +245,14 @@
     const closeSidebarBtn = document.getElementById('closeSidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
 
-    const openSidebar = () => document.body.classList.add('sidebar-open');
-    const hideSidebar = () => document.body.classList.remove('sidebar-open');
+    const openSidebar = () => {
+      document.body.classList.add('sidebar-open');
+      backdrop?.classList.remove('hidden');
+    };
+    const hideSidebar = () => {
+      document.body.classList.remove('sidebar-open');
+      backdrop?.classList.add('hidden');
+    };
 
     burger?.addEventListener('click', openSidebar);
     closeSidebarBtn?.addEventListener('click', hideSidebar);
