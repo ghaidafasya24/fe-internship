@@ -43,22 +43,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Jika user klik "Logout"
   confirmBtn.addEventListener("click", () => {
-    // Hapus token dari cookie (support both root & GitHub Pages subdirectory)
+    // Hapus token dari cookie (both root path dan GitHub Pages subdirectory)
     document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-    document.cookie = "token=; path=" + window.location.pathname.split('/').slice(0, -1).join('/') + "/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    document.cookie = "token=; path=/fe-internship/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
-    // (Opsional) panggil API logout kalau backend punya
     // Clear localStorage data on logout
     localStorage.removeItem("token");
     localStorage.removeItem("token_expires");
     localStorage.removeItem("username");
     localStorage.removeItem("phone");
 
-    // Detect base path (support GitHub Pages subdirectory)
-    const basePath = window.location.pathname.includes('/fe-internship') 
-      ? '/fe-internship/' 
-      : '/';
-    const loginPath = basePath + 'index.html';
+    // Detect if running on GitHub Pages (by checking pathname)
+    const pathname = window.location.pathname;
+    const isGitHubPages = pathname.includes('/fe-internship/');
+    const loginPath = isGitHubPages ? '/fe-internship/index.html' : '/index.html';
 
     // Prevent back button dari kembali ke dashboard
     history.replaceState(null, null, loginPath);
@@ -77,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
       card.classList.add('scale-95','opacity-0');
       setTimeout(() => {
         modal.classList.add('hidden');
-        // redirect after modal hides (use relative path for GitHub Pages compatibility)
+        // redirect after modal hides
         window.location.href = loginPath;
       }, 220);
     } else {
