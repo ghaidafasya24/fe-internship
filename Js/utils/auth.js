@@ -39,7 +39,7 @@ export function logout(message = "Sesi kamu telah habis. Silakan login kembali."
       window.location.href = "/Template/login.html";
     }, 2000);
   }).catch(() => {
-    alert(message);
+    alert(message); 
     window.location.href = "/Template/login.html";
   });
 }

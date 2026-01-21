@@ -1,4 +1,4 @@
-// Form tambah/edit koleksi (varian fixed)
+// Form tambah/edit koleksi (varian fixed) modul pendukung
 import { BASE_URL } from "../utils/config.js";
 import { authFetch } from "../utils/auth.js";
 import { validateText, validateDate, validateDecimal, escapeHTML, showInputError, clearInputError } from "../utils/validation.js";
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return { exists: false };
   }
 
-  /* ================= LOAD KATEGORI ================= */
+  /* ================= LOAD KATEGORI =================  mengambil data kategori dari API dan mengisinya ke dropdown*/
   const kategoriRes = await authFetch(`${BASE_URL}/api/kategori`);
   const kategoriData = kategoriRes.data || kategoriRes;
 

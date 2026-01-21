@@ -1,0 +1,10 @@
+# Enable MIME type for JavaScript modules on GitHub Pages
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType application/javascript .mjs
+</IfModule>
+
+# Enable CORS if needed
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>
