@@ -4,7 +4,8 @@ import { showAlert, showConfirm } from "../utils/modal.js";
 
 export { renderKoleksi, attachActionListeners };
 
-// Global variables for filtering
+// Global variables for filtering CONFIG URL, AUTH,(FETCH AMAN), MODAL (ALERT/CONFIRM)
+// 6 VARIAVEL GLOBAL: TEMPAT PENYIMPANAN DATA + FILTER STATUS (PAKAI GLOBAL SUPAYA BISA DI AKSES SEMUA FUNGSI)
 let allKoleksiData = [];
 let allGudangData = [];
 let allKategoriData = [];
@@ -12,14 +13,16 @@ let currentFilter = 'all';
 let currentCategory = 'all';
 let currentSearch = '';
 
-// Capitalize first letter for display purposes
+// KECIL -> BESAR HURUP PERTAMA NAMA KOLEKSI
 const capFirst = (text = '') => {
   const trimmed = String(text).trim();
   return trimmed ? `${trimmed.charAt(0).toUpperCase()}${trimmed.slice(1)}` : '';
 };
 
 // ======================= ROW =======================
+// BIKIN SATU BARIS TR DI TABEL BERDASARKAN DATA KOLEKSI
 export function rowKoleksi(index, item) {
+// Jika ada gambar: buat <img>, kalau tidak ada: buat icon placeholder
   const gambarField = item.gambar || item.foto || item.image;
   const gambarSrc = gambarField ? (gambarField.startsWith('http') ? gambarField : `${BASE_URL}${gambarField}`) : null;
   const gambar = gambarSrc 
@@ -30,6 +33,7 @@ export function rowKoleksi(index, item) {
          </svg>
        </div>`;
 
+      // KOLOM AKSI DETAIL (HIJAU), EDIT (BIRU), HAPUS (MERAH)
   return `
     <tr class="hover:bg-primary/[0.02] ease-soft border-b border-gray-100">
       <td class="px-6 py-4 text-center text-sm font-medium text-gray-700">${index}</td>
@@ -69,40 +73,40 @@ async function loadInitialData() {
   try {
     console.log('Starting initial data load...');
 
-    // Load ALL koleksi data first (without filter)
+    // MENAMPILKAN SEMUA DATA KOLEKSI DARI API DENGAN POPULATE UKURAN, KATEGORI, TEMPAT PENYIMPANAN 
     console.log('Loading ALL koleksi data...');
     const koleksiRes = await authFetch(`${BASE_URL}/api/koleksi?populate[]=ukuran&populate[]=kategori&populate[]=tempat_penyimpanan`);
     const koleksiData = koleksiRes.data || koleksiRes;
     allKoleksiData = Array.isArray(koleksiData) ? koleksiData : (koleksiData.data || []);
     console.log('All koleksi data loaded:', allKoleksiData.length, 'items');
 
-    // Load gudang data
+    // Load gudang data (FETCH DARI API GUDANG)
     console.log('Loading gudang data...');
     const gudangRes = await authFetch(`${BASE_URL}/api/gudang`);
     const gudangData = gudangRes.data || gudangRes;
     allGudangData = Array.isArray(gudangData) ? gudangData : (gudangData.data || []);
     console.log('Gudang data loaded:', allGudangData.length, 'items');
 
-    // Load kategori data
+    // Load kategori data (FETCH DARI API KATEGORI)
     console.log('Loading kategori data...');
     const kategoriRes = await authFetch(`${BASE_URL}/api/kategori`);
     const kategoriData = kategoriRes.data || kategoriRes;
     allKategoriData = Array.isArray(kategoriData) ? kategoriData : (kategoriData.data || []);
     console.log('Kategori data loaded:', allKategoriData.length, 'items');
 
-    // Populate gudang submenu
+    // Tampilkan tombol gudang di sidebar (Semua Gudang + daftar gudang)
     console.log('Populating gudang submenu...');
     populateGudangSubmenu();
 
-    // Populate kategori filter based on all data
+    // Isi dropdown kategori filter dengan semua kategori
     console.log('Populating kategori filter (all kategori)...');
     populateKategoriOptions(allKategoriData);
 
-    // Render initial data with current filters
+    // Render tabel tabel berdasarkan filter saat ini (awalnya "Semua Gudang")
     console.log('Rendering all data initially...');
     applyFilters();
 
-    // Setup filter listener (after buttons are created)
+    // Setup event listener untuk tombol gudang, dropdown kategori, input cari
     console.log('Setting up filter listeners...');
     setupFilterListener();
 
@@ -122,9 +126,10 @@ async function loadInitialData() {
   }
 }
 
-// ======================= POPULATE GUDANG SUBMENU =======================
+// ======================= POPULATE GUDANG SUBMENU SIDEBAR =======================
 function populateGudangSubmenu() {
   const gudangContainer = document.querySelector('.gudang-submenu');
+  // Hapus isi tapi simpan tombol "Semua Gudang" yang sudah ada
   if (!gudangContainer) {
     console.error('Gudang submenu container not found');
     return;
@@ -146,7 +151,7 @@ function populateGudangSubmenu() {
 
   console.log('Sorted gudang:', sortedGudang);
 
-  // Add gudang options
+//  Tambah tombol untuk setiap gudang UNTUK SIDEBAR
   sortedGudang.forEach(gudang => {
     const button = document.createElement('button');
     button.className = 'filter-gudang block w-full text-left py-1.5 px-3 rounded text-sm text-primary/70 hover:bg-primary/10 hover:text-primary ease-soft';
@@ -171,6 +176,7 @@ function populateKategoriOptions(sourceKategori = []) {
     }
   });
 
+  // Ubah Map ke array, sort abjad
   const categories = Array.from(map.entries()).sort((a, b) => a[1].toLowerCase().localeCompare(b[1].toLowerCase()));
 
   select.innerHTML = '';
@@ -191,6 +197,10 @@ function populateKategoriOptions(sourceKategori = []) {
 }
 
 // ======================= SETUP FILTER LISTENER =======================
+// Tombol gudang di sidebar: Saat diklik, catat gudang ID ke currentFilter, lalu render ulang tabel.
+// Dropdown kategori: Saat berubah, catat kategori ID ke currentCategory, lalu render ulang tabel.
+// Input cari: Saat ketik, catat teks ke currentSearch (lowercase), lalu render ulang tabel.
+// Semua listener akhirnya memanggil applyFilters() untuk render ulang.
 function setupFilterListener() {
   console.log('Setting up filter listeners...');
 
@@ -254,6 +264,7 @@ function filterByGudang(gudangId) {
 // ======================= APPLY FILTERS (gudang + kategori) =======================
 function getDataByGudang(gudangId) {
   if (gudangId === 'all') return allKoleksiData;
+  // Filter: hanya koleksi dengan gudang_id cocok
   return allKoleksiData.filter(item => {
     const itemGudangId = item.tempat_penyimpanan?.gudang?._id || item.tempat_penyimpanan?.gudang?.id;
     return itemGudangId === gudangId;
@@ -261,8 +272,10 @@ function getDataByGudang(gudangId) {
 }
 
 function applyFilters() {
+  // FILTER BERDASARKAN GUDANG
   const baseData = getDataByGudang(currentFilter);
 
+  // FILTER BERDASARKAN KATEGORI (JIKA TIDAK "ALL")
   let finalData = baseData;
   if (currentCategory !== 'all') {
     finalData = baseData.filter(item => {
@@ -271,6 +284,7 @@ function applyFilters() {
     });
   }
 
+    // Filter berdasarkan carian (cek nama, no_reg, no_inv, kategori, gudang)
   if (currentSearch.trim() !== '') {
     finalData = finalData.filter(item => {
       const term = currentSearch;
@@ -282,10 +296,10 @@ function applyFilters() {
       return nama.includes(term) || noReg.includes(term) || noInv.includes(term) || kat.includes(term) || gud.includes(term);
     });
   }
-
+// 4. Render tabel dengan data hasil filter
   renderKoleksi(finalData);
 
-  // Show/hide tambah koleksi button
+ // 5. Sembunyikan tombol "Tambah Koleksi" jika filter bukan "Semua Gudang"
   const addBtn = document.querySelector('.add-koleksi-btn');
   if (addBtn) {
     addBtn.style.display = currentFilter === 'all' ? 'block' : 'none';
@@ -311,23 +325,28 @@ function renderKoleksi(data = null) {
 
   const dataToRender = data || allKoleksiData;
 
-  // Render
+  // Loop: untuk setiap koleksi, panggil rowKoleksi() dan tambahin HTML ke tabel
   dataToRender.forEach((item, i) => {
     tableBody.innerHTML += rowKoleksi(i + 1, item);
   });
 
-  // Attach listeners
+   // Setup tombol detail/edit/hapus di baris-baris baru
   attachActionListeners();
 }
 
 // ======================= ACTION LISTENERS =======================
 function attachActionListeners() {
+  // Untuk setiap tombol "Detail", setup listener click
   document.querySelectorAll('.detail-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = e.currentTarget.getAttribute('data-id');
       detailKoleksi(id);
     });
   });
+// Untuk setiap tombol "Edit", setup listener click → panggil window.editKoleksi(id)
+  // (fungsi ini dari add-collection.js, dia yang isi form dan buka modal)
+  
+  // Untuk setiap tombol "Hapus", setup listener click → tanya konfirmasi, lalu DELETE
 
   document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -384,9 +403,12 @@ function detailKoleksi(id) {
       document.getElementById('detail_tanggal_perolehan').textContent = tanggal;
 
       // Tempat penyimpanan
-      const tempatPenyimpanan = item.tempat_penyimpanan
-        ? `${item.tempat_penyimpanan.gudang?.nama_gudang || "-"} / ${item.tempat_penyimpanan.rak?.nama_rak || "-"} / ${item.tempat_penyimpanan.tahap?.nama_tahap || "-"}`
-        : "-";
+      let tempatPenyimpanan = "-";
+      if (item.tempat_penyimpanan) {
+        const lokasi = `${item.tempat_penyimpanan.gudang?.nama_gudang || "-"} / ${item.tempat_penyimpanan.rak?.nama_rak || "-"} / ${item.tempat_penyimpanan.tahap?.nama_tahap || "-"}`;
+        const catatan = item.tempat_penyimpanan.catatan ? ` - ${item.tempat_penyimpanan.catatan}` : "";
+        tempatPenyimpanan = lokasi + catatan;
+      }
       document.getElementById('detail_tempat_penyimpanan').textContent = tempatPenyimpanan;
 
       // Ukuran detail (use dynamic units with robust fallbacks)

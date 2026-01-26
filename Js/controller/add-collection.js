@@ -30,28 +30,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Cek duplikasi nomor registrasi & inventaris
   async function checkDuplicateNumbers(noReg, noInv, ignoreId = null) {
-    const res = await authFetch(`${BASE_URL}/api/koleksi`);
-    const raw = res?.data ?? res;
-    const list = Array.isArray(raw) ? raw : (raw?.data ?? []);
-    const normalizedReg = String(noReg || "").trim().toLowerCase();
-    const normalizedInv = String(noInv || "").trim().toLowerCase();
+    try {
+      const res = await authFetch(`${BASE_URL}/api/koleksi`);
+      const raw = res?.data ?? res;
+      const list = Array.isArray(raw) ? raw : (raw?.data ?? []);
+      const normalizedReg = String(noReg || "").trim().toLowerCase();
+      const normalizedInv = String(noInv || "").trim().toLowerCase();
 
-    for (const item of list) {
-      const id = item._id || item.id;
-      if (ignoreId && id === ignoreId) continue;
+      for (const item of list) {
+        const id = item._id || item.id;
+        if (ignoreId && id === ignoreId) continue;
 
-      const itemReg = String(item.no_reg || "").trim().toLowerCase();
-      if (normalizedReg && itemReg === normalizedReg) {
-        return { exists: true, field: "no_reg" };
+        const itemReg = String(item.no_reg || "").trim().toLowerCase();
+        if (normalizedReg && itemReg === normalizedReg) {
+          return { exists: true, field: "no_reg" };
+        }
+
+        const itemInv = String(item.no_inv || "").trim().toLowerCase();
+        if (normalizedInv && itemInv === normalizedInv) {
+          return { exists: true, field: "no_inv" };
+        }
       }
 
-      const itemInv = String(item.no_inv || "").trim().toLowerCase();
-      if (normalizedInv && itemInv === normalizedInv) {
-        return { exists: true, field: "no_inv" };
-      }
+      return { exists: false };
+    } catch (error) {
+      console.warn("⚠️ Gagal cek duplikasi (masalah jaringan), melanjutkan tanpa cek:", error);
+      // Beri tahu user tapi jangan blokir submit; backend tetap bisa validasi saat koneksi pulih
+      showAlert("Tidak dapat cek duplikasi karena jaringan bermasalah. Coba lagi saat koneksi stabil.", "warning");
+      return { exists: false, skipped: true };
     }
-
-    return { exists: false };
   }
 
   /* ================= LOAD KATEGORI ================= */
@@ -226,6 +233,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Wait for DOM update before setting value
         await new Promise(resolve => setTimeout(resolve, 10));
         tahapSelect.value = tahapId || "";
+      }
+
+      // Catatan Penyimpanan
+      const catatanField = document.getElementById("catatan_penyimpanan");
+      if (catatanField) {
+        catatanField.value = data.tempat_penyimpanan?.catatan || "";
       }
 
       updateLokasi();
@@ -436,6 +449,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (gudang) formData.set("gudang_id", gudang);
     if (rak) formData.set("rak_id", rak);
     if (tahap) formData.set("tahap_id", tahap);
+    
+    // Catatan penyimpanan - try multiple field name formats
+    const catatanPenyimpanan = document.getElementById("catatan_penyimpanan")?.value || "";
+    if (catatanPenyimpanan) {
+      formData.set("catatan", catatanPenyimpanan); // Try simple field name
+      formData.set("catatan_penyimpanan", catatanPenyimpanan); // Keep original
+      formData.set("tempat_penyimpanan[catatan]", catatanPenyimpanan); // Try nested format
+    }
     
     // Other form fields
     const asalPerolehan = document.getElementById("asal_perolehan")?.value;

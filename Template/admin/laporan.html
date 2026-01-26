@@ -75,6 +75,28 @@
     @media (max-width: 768px) {
       .content-shell { padding: 12px; }
     }
+    /* Clamp panjang deskripsi + toggle */
+    .desc-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3; /* standard property for compatibility */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      max-width: 520px;
+    }
+    .desc-text.expanded {
+      display: block;
+      -webkit-line-clamp: unset;
+      line-clamp: unset; /* standard property for compatibility */
+      overflow: visible;
+      max-width: none;
+    }
+    .desc-toggle {
+      color: #3b6e80;
+      text-decoration: underline;
+      font-size: 0.75rem; /* text-xs */
+      white-space: nowrap;
+    }
   </style>
 </head>
 

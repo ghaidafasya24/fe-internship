@@ -79,7 +79,15 @@ async function fetchKoleksiWithFilters(filters = {}) {
 
     return items;
   } catch (err) {
-    console.error("Error fetching filtered data:", err);
+    console.error("❌ Error fetching filtered data:", err);
+    if (err instanceof SyntaxError && err.message.includes('JSON')) {
+      console.error("⚠️ Server return HTML bukan JSON. Cek endpoint URL atau koneksi server.");
+      showAlert("Gagal fetch data: Endpoint tidak valid atau server error. Coba refresh halaman.", "error");
+    } else if (err.message.includes('Network error')) {
+      showAlert("Gagal fetch data: Masalah jaringan. Periksa koneksi internet.", "error");
+    } else {
+      showAlert("Gagal fetch data: " + err.message, "error");
+    }
     return [];
   }
 }

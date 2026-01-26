@@ -78,7 +78,12 @@ function renderTable(list = []) {
         <td class="px-6 py-4 text-sm text-primary/70">${bahan}</td>
         <td class="px-6 py-4 text-sm text-primary/70">${kondisi}</td>
         <td class="px-6 py-4 text-sm text-primary/70">${tgl}</td>
-        <td class="px-6 py-4 text-sm text-primary/70">${desc}</td>
+        <td class="px-6 py-4 text-sm text-primary/70">
+          <div class="flex items-start gap-2">
+            <span class="desc-text">${desc}</span>
+            ${desc && desc.length > 140 ? '<button class="desc-toggle" type="button">Lihat selengkapnya</button>' : ''}
+          </div>
+        </td>
         <td class="px-6 py-4 text-sm text-primary/70">${ukuran.panjang_keseluruhan || "-"}</td>
         <td class="px-6 py-4 text-sm text-primary/70">${ukuran.lebar || "-"}</td>
         <td class="px-6 py-4 text-sm text-primary/70">${ukuran.tebal || "-"}</td>
@@ -92,6 +97,16 @@ function renderTable(list = []) {
       </tr>
     `;
   }).join("");
+
+  // Pasang toggle "Lihat selengkapnya" untuk deskripsi
+  Array.from(tbody.querySelectorAll('.desc-toggle')).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const textEl = btn.parentElement?.querySelector('.desc-text');
+      if (!textEl) return;
+      const expanded = textEl.classList.toggle('expanded');
+      btn.textContent = expanded ? 'Tutup' : 'Lihat selengkapnya';
+    });
+  });
 }
 
 // Ekspor data ke CSV

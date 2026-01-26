@@ -66,7 +66,14 @@ export async function authFetch(url, options = {}) {
     options.headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(url, options);
+  let res;
+  try {
+    res = await fetch(url, options);
+  } catch (err) {
+    console.error("❌ Network error during fetch:", err);
+    // Beri pesan yang jelas agar caller bisa menampilkan alert yang ramah
+    throw new Error("Network error: gagal menghubungi server. Periksa koneksi internet kamu.");
+  }
 
   // 🔥 HANDLE TOKEN INVALID DARI SERVER
   if (res.status === 401 || res.status === 403) {

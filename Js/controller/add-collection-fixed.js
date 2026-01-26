@@ -223,6 +223,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         tahapSelect.value = tahapId || "";
       }
 
+      // Catatan Penyimpanan
+      const catatanField = document.getElementById("catatan_penyimpanan");
+      if (catatanField) {
+        catatanField.value = data.tempat_penyimpanan?.catatan || "";
+      }
+
       updateLokasi();
 
       // Gambar - tampilkan jika ada dan simpan path lama
@@ -424,6 +430,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (gudang) formData.set("gudang_id", gudang);
     if (rak) formData.set("rak_id", rak);
     if (tahap) formData.set("tahap_id", tahap);
+    
+    // Catatan penyimpanan - try multiple field name formats
+    const catatanPenyimpanan = document.getElementById("catatan_penyimpanan")?.value || "";
+    if (catatanPenyimpanan) {
+      formData.set("catatan", catatanPenyimpanan); // Try simple field name
+      formData.set("catatan_penyimpanan", catatanPenyimpanan); // Keep original
+      formData.set("tempat_penyimpanan[catatan]", catatanPenyimpanan); // Try nested format
+    }
     
     // Other form fields
     const asalPerolehan = document.getElementById("asal_perolehan")?.value;

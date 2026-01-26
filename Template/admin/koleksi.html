@@ -180,6 +180,7 @@
               <p class="text-sm text-primary/60 mt-1">Kelola koleksi museum dengan mudah</p>
             </div>
           </div>
+          <!-- TAMBAH KOLEKSI TOMBOL -->
           <button id="openModal" class="add-koleksi-btn bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold ease-soft shadow-md flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -193,6 +194,7 @@
       <div class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
         <div class="bg-surface rounded-xl shadow-sm border border-primary/5 overflow-hidden">
           <!-- Filter Bar -->
+           <!-- FILTER UNTUK KOLEKSI BERDASARKAN KATEGORI -->
           <div class="border-b border-primary/10 bg-gray-50/50 px-4 sm:px-6 py-3 sm:py-4">
             <div class="flex items-center justify-between gap-4 sm:gap-6 filter-bar">
               <div class="flex items-center gap-3 flex-wrap">
@@ -201,6 +203,7 @@
                   <option value="all">Semua Kategori</option>
                 </select>
               </div>
+              <!-- INPUT SEARCH KOLEKSI -->
               <div class="flex items-center gap-3 flex-1 max-w-md search-group">
                 <label for="searchKoleksi" class="text-sm font-semibold text-primary whitespace-nowrap">Cari:</label>
                 <input id="searchKoleksi" type="text" placeholder="Nama koleksi, No Reg, atau No Inv..." class="border border-primary/20 rounded-lg px-4 py-2.5 text-sm flex-1 focus:ring-2 focus:ring-primary focus:border-transparent ease-soft bg-white" />
@@ -220,6 +223,7 @@
                   <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10" style="width: 15%;">Gambar</th>
                   <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10" style="width: 200px;">Aksi</th>
                 </tr>
+                <!-- TABEL UTAMA DIISI PAKAI #TABELKOLEKSI DI ISI PAKAI JS -->
               </thead>
               <tbody id="tableKoleksi" class="divide-y divide-gray-100"></tbody>
             </table>
@@ -229,7 +233,7 @@
     </main>
   </div>
 
-  <!-- Modal -->
+  <!-- Modal  UNTUKK TAMBAH KOLEKSI-->
   <div id="modal" class="fixed inset-0 hidden bg-black/40 backdrop-blur-sm flex justify-center items-center p-4 z-50">
     <div class="bg-surface rounded-xl shadow-lg p-6 w-full max-w-4xl max-h-[95vh] overflow-y-auto border border-primary/10">
       <h3 id="modalTitle" class="text-2xl font-serif font-bold text-primary mb-6">Tambah Koleksi</h3>
@@ -364,7 +368,7 @@
             class="border border-primary/20 rounded-lg px-3 py-2 w-full text-sm focus:ring-2 focus:ring-primary focus:border-transparent ease-soft" />
         </div>
 
-        <!-- Baris 7: Penyimpanan (Gudang & Rak) -->
+        <!-- Baris 7: Penyimpanan (Gudang & Rak) di ambil jadi js -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-sm font-semibold text-primary mb-2">Gudang</label>
@@ -386,14 +390,21 @@
         </div>
         <input type="hidden" id="tempat_penyimpanan" name="tempat_penyimpanan" value="" />
 
-        <!-- Baris 9: Deskripsi -->
+        <!-- Baris 9: Catatan Penyimpanan -->
+        <div>
+          <label class="block text-sm font-semibold text-primary mb-2">Catatan Penyimpanan</label>
+          <textarea id="catatan_penyimpanan" name="catatan_penyimpanan" placeholder="Catatan khusus tentang kondisi penyimpanan atau lokasi spesifik..."
+            class="border border-primary/20 rounded-lg px-3 py-2 w-full h-16 text-sm focus:ring-2 focus:ring-primary focus:border-transparent ease-soft resize-none"></textarea>
+        </div>
+
+        <!-- Baris 10: Deskripsi -->
         <div>
           <label class="block text-sm font-semibold text-primary mb-2">Deskripsi</label>
           <textarea id="deskripsi" name="ket" placeholder="Catatan dan deskripsi tambahan tentang koleksi..."
             class="border border-primary/20 rounded-lg px-3 py-2 w-full h-24 text-sm focus:ring-2 focus:ring-primary focus:border-transparent ease-soft resize-none"></textarea>
         </div>
 
-        <!-- Baris 10: Gambar -->
+        <!-- Baris 11: Gambar -->
         <div>
           <label class="block text-sm font-semibold text-primary mb-2">Gambar/Foto</label>
           <input type="file" id="foto" name="foto" accept="image/*"
@@ -537,7 +548,8 @@
   const btnTambah = document.getElementById("openModal");
   const modal = document.getElementById("modal");
   const btnClose = document.getElementById("closeAddModal");
-  const burger = document.getElementById("openSidebar");
+  // UNTUK MODE MOBILE
+  const burger = document.getElementById("openSidebar"); 
   const closeSidebarBtn = document.getElementById("closeSidebar");
   const backdrop = document.getElementById("sidebarBackdrop");
 

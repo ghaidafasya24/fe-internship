@@ -73,332 +73,399 @@
 
   <body class="antialiased bg-surface text-accent">
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR - Modern & Clean -->
     <header id="siteNav" class="site-nav transparent">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-[var(--nav-h)]">
           <!-- Brand -->
-          <a class="brand" href="#home" aria-label="Museum Sri Baduga">
-  <img 
-    src="assets/images/Logo_Real_SriBaduga.png" 
-    alt="Logo"
-    class="block"
-    style="height: 150px;"  
-  >
-</a>
-
+          <a class="brand" href="#home" aria-label="Museum Sri Baduga" class="flex items-center gap-3">
+            <img 
+              src="assets/images/Logo_Real_SriBaduga.png" 
+              alt="Logo"
+              class="block h-12 w-auto"
+            >
+            <span class="hidden sm:block font-serif text-lg font-semibold text-surface">Museum Sri Baduga</span>
+          </a>
 
           <!-- menu (desktop) -->
           <nav class="hidden lg:flex items-center gap-8 text-sm font-medium">
-            <a href="#home" class="text-surface/90 hover:text-surface">Beranda</a>
-            <a href="#sejarah" class="text-surface/90 hover:text-surface">Sejarah</a>
-            <a href="#koleksi" class="text-surface/90 hover:text-surface">Koleksi</a>
-            <a href="#galeri" class="text-surface/90 hover:text-surface">Galeri</a>
-            <a href="#struktur-organisasi" class="text-surface/90 hover:text-surface">Struktur</a>
+            <a href="#home" class="text-surface/90 hover:text-surface transition ease-soft">Beranda</a>
+            <a href="#koleksi" class="text-surface/90 hover:text-surface transition ease-soft">Sistem Gudang</a>
+            <a href="#struktur-organisasi" class="text-surface/90 hover:text-surface transition ease-soft">Struktur</a>
+            <a href="#kontak" class="text-surface/90 hover:text-surface transition ease-soft">Kontak</a>
           </nav>
 
           <!-- actions -->
-          <div class="flex items-center gap-3">
-            <!-- search icon (kept white on transparent nav, changes when nav solid) -->
-            <button type="button" class="rounded-lg px-3 py-2 bg-white/10 text-surface/90 hover:bg-white/20 ease-soft hidden md:inline-flex">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-current" fill="none" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="8" stroke-width="2"/></svg>
-            </button>
-
-            <!-- Sign in (keep your existing link) -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Sign in Button -->
             <button type="button"
               onclick="window.location.href='Template/login.html';"
               id="signInBtn"
-              class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-xl border border-transparent transition ease-soft"
-              style="background-color: #6b8ea0; color:#000;">
-              Sign in
+              class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent transition ease-soft hover:opacity-90"
+              style="background-color: #ffffff; color:#3b6e80;">
+              Masuk
+            </button>
+            
+            <!-- Mobile menu icon -->
+            <button type="button" id="mobileMenuBtn" class="lg:hidden rounded-lg p-2 text-surface hover:bg-white/10">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
           </div>
         </div>
       </div>
     </header>
 
- <!-- HERO -->
-<section id="home" 
-  class="relative h-screen flex items-center justify-center overflow-hidden">
-
-  <!-- Background dengan parallax slow zoom -->
-  <div class="absolute inset-0 scale-110 bg-cover bg-center animate-zoom-slow"
-    style="background-image:url(assets/images/Sri_Baduga_Museum.JPG);">
-  </div>
-
-  <!-- Overlay gelap elegan -->
-  <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-
-  <div class="relative z-10 max-w-4xl text-center px-6">
-    <h1 class="font-serif text-white text-4xl sm:text-5xl md:text-6xl leading-tight font-bold drop-shadow-2xl">
-      Selamat Datang di Pergudangan Museum Sri Baduga
-    </h1>
-
-    <p class="text-white/80 max-w-2xl mx-auto mt-4 text-lg">
-      Yuk! jelajahi koleksi gudang museum Sri Baduga
-    </p>
-
-    <div class="mt-8 flex justify-center gap-4">
-
-      <!-- tombol jelajahi -->
-      <a href="#koleksi" id="exploreBtn"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold shadow-xl backdrop-blur-md transition transform hover:scale-105"
-        style="background-color:#6b8ea0;color:#000;">
-        Jelajahi Koleksi
-      </a>
-
-      <!-- tombol struktur -->
-      <a href="#struktur-organisasi"
-        class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/20 text-white/90 hover:bg-white/10 transition transform hover:scale-105 backdrop-blur-sm">
-        Lihat Struktur
-      </a>
-
-    </div>
-  </div>
-
-  <!-- pagination dots -->
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
-    <div class="flex gap-2">
-      <span class="w-3 h-3 rounded-full bg-white/90"></span>
-      <span class="w-3 h-3 rounded-full bg-white/40"></span>
-      <span class="w-3 h-3 rounded-full bg-white/20"></span>
-    </div>
-  </div>
-</section>
-
-<!-- ANIMASI ZOOM -->
-<style>
-@keyframes zoom-slow {
-  0% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-.animate-zoom-slow {
-  animation: zoom-slow 18s ease-out forwards;
-}
-</style>
-
-
-    <!-- SEJARAH -->
-    <section id="sejarah" class="py-20 bg-surface">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="text-center mb-10">
-          <h2 class="text-3xl font-serif text-primary-700">Sejarah Museum</h2>
-          <p class="mt-3 text-gray-600 max-w-2xl mx-auto">Ringkasan perjalanan museum dan perannya dalam melestarikan warisan budaya.</p>
+    <!-- WELCOME BANNER - Simple & Clean -->
+    <section id="home" class="relative pt-24 pb-12 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 overflow-hidden">
+      <!-- Decorative circles -->
+      <div class="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-10 w-96 h-96 bg-primary-900/30 rounded-full blur-3xl"></div>
+      
+      <div class="relative max-w-7xl mx-auto px-6 text-center">
+        <div class="inline-flex items-center gap-2 mb-4 px-5 py-2.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/30 shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+          <span class="text-sm font-semibold text-white">Sistem Gudang Digital Museum</span>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div class="order-2 lg:order-1">
-            <p class="text-gray-700 leading-relaxed">
-              Museum Sri Baduga berdiri untuk merawat koleksi budaya yang memiliki nilai sejarah dan edukatif.
-              Koleksi dan bangunan menjadi medium edukasi publik dan penelitian.
-            </p>
-            <p class="text-gray-700 mt-4 leading-relaxed">Selain pameran tetap, museum menyelenggarakan program edukasi, konservasi, dan pelibatan komunitas.</p>
-
-            <a href="#sejarah" class="inline-block mt-6 px-5 py-2 rounded-lg font-medium" style="background:#f6f6f6;color:#333;border:1px solid rgba(0,0,0,0.04)">Baca Selengkapnya →</a>
+        
+        <h1 class="font-serif text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">
+          Museum Sri Baduga
+        </h1>
+        
+        <p class="text-white/90 text-lg max-w-2xl mx-auto mb-8 drop-shadow-md">
+          Platform pengelolaan dan inventarisasi koleksi gudang museum
+        </p>
+        
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="#koleksi" class="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white text-primary-700 font-semibold shadow-xl hover:shadow-2xl hover:bg-primary-50 transition-all transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+            <span>Lihat Sistem Gudang</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+          <a href="#struktur-organisasi" class="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl border-2 border-white/50 text-white font-semibold hover:bg-white/15 hover:border-white transition-all shadow-lg backdrop-blur-sm transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <span>Lihat Struktur</span>
+          </a>
+        </div>
+        
+        <!-- Stats or features mini -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mt-10 pt-8 border-t border-white/20">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center backdrop-blur-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+            <p class="text-white/90 font-semibold text-sm">Manajemen Koleksi</p>
           </div>
-
-          <div class="order-1 lg:order-2">
-            <!-- keep original image path if you have one -->
-            <img src="assets/images/gambarMuseumSriBaduga.png" alt="Sejarah Museum" class="w-full rounded-xl shadow-lg object-cover h-64">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center backdrop-blur-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <p class="text-white/90 font-semibold text-sm">Laporan Real-time</p>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center backdrop-blur-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <p class="text-white/90 font-semibold text-sm">Keamanan Terjamin</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- STRUKTUR ORGANISASI -->
-    <section id="struktur-organisasi" class="py-20 bg-primary-50">
+    <!-- FOOTER - Simple & Readable Design -->
+    <section id="struktur-organisasi" class="relative py-20 bg-gradient-to-br from-gray-50 via-white to-primary-50 overflow-hidden">
+      <div class="absolute top-20 left-0 w-96 h-96 bg-primary-200/30 rounded-full blur-3xl -z-10"></div>
+      
       <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="text-center mb-12">
-          <h2 class="text-3xl font-serif text-primary-800">Struktur Organisasi</h2>
-          <p class="mt-3 text-gray-600 max-w-2xl mx-auto">Susunan organisasi yang mengelola dan menjalankan kegiatan Museum Sri Baduga.</p>
+          <div class="inline-flex items-center gap-2 mb-4 px-5 py-2.5 rounded-full bg-primary-100 border border-primary-200 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM9 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
+            <span class="text-sm font-bold text-primary-700">ORGANISASI</span>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-serif text-primary-900 font-bold mb-4">Struktur Organisasi</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto"></p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <!-- Left: diagram (use your existing asset) -->
-          <div>
-            <img src="assets/images/STRUKTUR_ORGANISASI.png" alt="Bagan Struktur Organisasi" class="w-full h-auto rounded-xl shadow-lg border">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <!-- Left: diagram -->
+          <div class="order-2 lg:order-1">
+            <div class="group">
+              <div class="absolute inset-0 bg-gradient-to-br from-primary-600/20 to-primary-400/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300 -m-2"></div>
+              <div class="relative bg-white rounded-3xl p-8 shadow-2xl hover:shadow-2xl transition-all duration-300">
+                <img src="assets/images/struktur organisasi uptd.webp" alt="Bagan Struktur Organisasi" class="w-full h-auto rounded-2xl">
+              </div>
+            </div>
           </div>
 
           <!-- Right: textual structure -->
-          <div class="space-y-5">
-            <h3 class="text-2xl font-semibold text-primary-700">Susunan Jabatan</h3>
-            <ul class="list-disc ml-5 text-gray-700 space-y-2">
-              <li><strong>Kepala Dinas:</strong> Drs. Benny Bachtiar, M.Si</li>
-              <li><strong>Kepala UPTD Pengelolaan Kebudayaan:</strong> Aty Heriyanto, S.STP., M.M</li>
-              <li><strong>Kepala Sub Bagian Tata Usaha:</strong> Wantih Nurdiana, S.H., M.Hum</li>
-              <li><strong>Pamong Budaya Ahli Muda</strong></li>
-              <li><strong>Sub Unit:</strong> Pengelola Museum, Konservasi, Edukasi, Pelayanan Publik, dll.</li>
-            </ul>
+          <div class="order-1 lg:order-2 space-y-8">
+            <div>
+              <h3 class="text-3xl font-serif text-primary-900 font-bold mb-6">Susunan Pimpinan</h3>
+              
+              <div class="space-y-4">
+                <div class="group bg-gradient-to-br from-primary-50 to-primary-100/50 rounded-2xl p-6 border border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105">
+                  <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-primary-600/20 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-primary-600 font-bold uppercase tracking-widest mb-1">Kepala Dinas</p>
+                      <p class="text-base font-bold text-gray-900">Dr. Iendra Sofyan, ST., M.Si</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="group bg-gradient-to-br from-primary-50 to-primary-100/50 rounded-2xl p-6 border border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105">
+                  <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-primary-500/20 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-primary-600 font-bold uppercase tracking-widest mb-1">Sekretaris Dinas</p>
+                      <p class="text-base font-bold text-gray-900">Ani Widiani, S.T., M.SHS.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="group bg-gradient-to-br from-primary-50 to-primary-100/50 rounded-2xl p-6 border border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105">
+                  <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-primary-400/20 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-primary-600 font-bold uppercase tracking-widest mb-1">Kepala Subbagian Tata Usaha</p>
+                      <p class="text-base font-bold text-gray-900">Suryaningsih, S.S., M.P.Par.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <a href="assets/images/STRUKTUR_ORGANISASI.png" class="inline-block mt-2 text-primary-800 font-medium hover:underline">Lihat Bagan Lengkap →</a>
+            <div class="bg-gradient-to-br from-white to-primary-50 rounded-2xl p-6 border border-primary-300 shadow-lg">
+              <h4 class="font-bold text-primary-900 mb-4 flex items-center gap-2 text-lg">
+                <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10.5 1.5H5.75A2.25 2.25 0 003.5 3.75v12.5A2.25 2.25 0 005.75 18.5h8.5a2.25 2.25 0 002.25-2.25V6.5m-9.5-5v5h5"/></svg>
+                </div>
+                Sub Unit Utama
+              </h4>
+              <ul class="space-y-3 text-sm text-gray-700">
+                <li class="flex items-center gap-3"><span class="w-2 h-2 bg-primary-600 rounded-full"></span><span class="font-medium">Pengelola Museum</span></li>
+                <li class="flex items-center gap-3"><span class="w-2 h-2 bg-primary-600 rounded-full"></span><span class="font-medium">Konservasi & Preservasi</span></li>
+                <li class="flex items-center gap-3"><span class="w-2 h-2 bg-primary-600 rounded-full"></span><span class="font-medium">Edukasi & Program</span></li>
+                <li class="flex items-center gap-3"><span class="w-2 h-2 bg-primary-600 rounded-full"></span><span class="font-medium">Pelayanan Publik</span></li>
+              </ul>
+            </div>
+
+            <button id="btnBaganLengkap" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105 bg-primary-600 text-white hover:bg-primary-700">
+              Lihat Bagan Lengkap
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- KOLEKSI UNGGULAN -->
-    <section id="koleksi" class="py-16 bg-surface">
+    <!-- Modal Bagan Lengkap -->
+    <div id="modalBaganLengkap" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl animate-in fade-in zoom-in-95 duration-300">
+        <!-- Close Button -->
+        <button id="closeBaganModal" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 flex items-center justify-center transition-all duration-200 transform hover:scale-110 shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <!-- Modal Content -->
+        <div class="p-6 md:p-8">
+          <h3 class="text-2xl md:text-3xl font-serif font-bold text-primary-900 mb-4 pr-12">Bagan Struktur Organisasi</h3>
+          <div class="rounded-2xl overflow-hidden shadow-xl border border-primary-100 bg-gray-50">
+            <img src="assets/images/struktur organisasi uptd.webp" alt="Bagan Struktur Organisasi Lengkap" class="w-full h-auto block max-h-[60vh] object-contain">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SISTEM GUDANG - Modern Features -->
+    <section id="koleksi" class="relative py-20 bg-white overflow-hidden">
+      <div class="absolute top-0 left-0 w-96 h-96 bg-primary-100/40 rounded-full blur-3xl -z-10"></div>
+      <div class="absolute bottom-0 right-0 w-96 h-96 bg-primary-50 rounded-full blur-3xl -z-10"></div>
+      
       <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="text-center mb-8">
-          <h2 class="text-3xl font-serif text-primary-700">Koleksi Unggulan</h2>
-          <p class="text-gray-600 mt-2">Koleksi pilihan yang merepresentasikan nilai sejarah dan budaya.</p>
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center gap-2 mb-4 px-5 py-2.5 rounded-full bg-primary-100 border border-primary-200 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+            <span class="text-sm font-bold text-primary-700">FITUR UTAMA</span>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-serif text-primary-900 font-bold mb-4">Sistem Gudang Museum</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">Platform pengelolaan dan inventarisasi koleksi gudang Museum Sri Baduga dengan teknologi terkini</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Card 1 -->
-          <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
-            <img src="assets/images/koleksi_Museum_LP1.jpg" alt="Koleksi 1" class="w-full h-56 object-cover">
-            <div class="p-4">
-              <h3 class="font-serif text-xl text-primary-800">Patung Perunggu</h3>
-              <p class="text-sm text-gray-500">Tahun 1880 • Kayu & Perunggu</p>
-              <div class="mt-4 text-right">
-                <a href="#" class="text-primary-700 font-semibold">Detail →</a>
+          <!-- Card 1 - Manajemen Koleksi -->
+          <article class="group relative bg-gradient-to-br from-white to-primary-50 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-primary-100 hover:border-primary-300">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-600/10 to-primary-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="relative p-8">
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all group-hover:scale-110">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
               </div>
+              <h3 class="font-serif text-2xl text-primary-900 font-bold mb-3">Manajemen Koleksi</h3>
+              <p class="text-gray-600 leading-relaxed mb-6">Sistem pencatatan dan pengelolaan koleksi gudang dengan kategorisasi lengkap dan terstruktur.</p>
+              <a href="Template/login.html" class="inline-flex items-center gap-2 text-primary-700 font-bold hover:text-primary-900 transition group/link">
+                Akses Sistem
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
             </div>
           </article>
 
-          <!-- Card 2 -->
-          <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
-            <img src="assets/images/koleksi_Museum_LP2.jpg" alt="Koleksi 2" class="w-full h-56 object-cover">
-            <div class="p-4">
-              <h3 class="font-serif text-xl text-primary-800">Wayang Golek</h3>
-              <p class="text-sm text-gray-500">Tahun 1905</p>
-              <div class="mt-4 text-right">
-                <a href="#" class="text-primary-700 font-semibold">Detail →</a>
+          <!-- Card 2 - Laporan Inventaris -->
+          <article class="group relative bg-gradient-to-br from-white to-primary-50 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-primary-100 hover:border-primary-300">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-600/10 to-primary-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="relative p-8">
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all group-hover:scale-110">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
               </div>
+              <h3 class="font-serif text-2xl text-primary-900 font-bold mb-3">Laporan Inventaris</h3>
+              <p class="text-gray-600 leading-relaxed mb-6">Pantau stok dan status koleksi gudang dengan laporan real-time yang lengkap dan akurat.</p>
+              <a href="Template/login.html" class="inline-flex items-center gap-2 text-primary-700 font-bold hover:text-primary-900 transition group/link">
+                Lihat Laporan
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
             </div>
           </article>
 
-          <!-- Card 3 -->
-          <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
-            <img src="assets/images/Ilustrasi_Pakaian_Adat_Jawa_Timur.width-800.format-webp.webp" alt="Koleksi 3" class="w-full h-56 object-cover">
-            <div class="p-4">
-              <h3 class="font-serif text-xl text-primary-800">Tekstil Tradisional</h3>
-              <p class="text-sm text-gray-500">Tahun 1870</p>
-              <div class="mt-4 text-right">
-                <a href="#" class="text-primary-700 font-semibold">Detail →</a>
+          <!-- Card 3 - Keamanan Data -->
+          <article class="group relative bg-gradient-to-br from-white to-primary-50 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-primary-100 hover:border-primary-300">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-600/10 to-primary-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="relative p-8">
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-500 flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all group-hover:scale-110">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
               </div>
+              <h3 class="font-serif text-2xl text-primary-900 font-bold mb-3">Keamanan Data</h3>
+              <p class="text-gray-600 leading-relaxed mb-6">Sistem keamanan dengan kontrol akses dan perlindungan data untuk menjaga informasi koleksi.</p>
+              <a href="Template/login.html" class="inline-flex items-center gap-2 text-primary-700 font-bold hover:text-primary-900 transition group/link">
+                Login Sistem
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
             </div>
           </article>
+        </div>
+
+        <div class="text-center mt-12">
+          <a href="Template/login.html" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105 bg-primary-600 text-white hover:bg-primary-700">
+            Masuk ke Sistem Gudang
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- GALERI -->
-   <section id="galeri" class="py-20 bg-white">
-  <div class="max-w-6xl mx-auto px-6">
-    
-    <h2 class="text-3xl font-bold text-center text-gray-800 mb-12 reveal">
-      Galeri Museum
-    </h2>
-
-    <!-- GRID -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-
-      <!-- ITEM 1 -->
-      <div class="reveal">
-        <img 
-          src="assets/images/museum1.jpeg" 
-          alt="Galeri 1"
-          class="w-full h-64 object-cover rounded-xl shadow-lg cursor-pointer 
-                 hover:scale-[1.03] transition-all duration-500"
-          data-lightbox
-        >
-      </div>
-
-      <!-- ITEM 2 -->
-      <div class="reveal">
-        <img 
-          src="assets/images/museum2.jpeg" 
-          alt="Galeri 2"
-          class="w-full h-64 object-cover rounded-xl shadow-lg cursor-pointer 
-                 hover:scale-[1.03] transition-all duration-500"
-          data-lightbox
-        >
-      </div>
-
-      <!-- ITEM 3 -->
-      <div class="reveal">
-        <img 
-          src="assets/images/museum3.jpeg" 
-          alt="Galeri 3"
-          class="w-full h-64 object-cover rounded-xl shadow-lg cursor-pointer
-                 hover:scale-[1.03] transition-all duration-500"
-          data-lightbox
-        >
-      </div>
-
-      <!-- ITEM 4 -->
-      <div class="reveal">
-        <img 
-          src="assets/images/museum4.jpeg" 
-          alt="Galeri 4"
-          class="w-full h-64 object-cover rounded-xl shadow-lg cursor-pointer
-                 hover:scale-[1.03] transition-all duration-500"
-          data-lightbox
-        >
-      </div>
-
-      <!-- ITEM 5 -->
-      <div class="reveal">
-        <img 
-          src="assets/images/museum6.jpeg" 
-          alt="Galeri 5"
-          class="w-full h-64 object-cover rounded-xl shadow-lg cursor-pointer
-                 hover:scale-[1.03] transition-all duration-500"
-          data-lightbox
-        >
-      </div>
-
-      <!-- ITEM 6 -->
-      <div class="reveal">
-        <img 
-          src="assets/images/museum8.jpeg" 
-          alt="Galeri 6"
-          class="w-full h-64 object-cover rounded-xl shadow-lg cursor-pointer
-                 hover:scale-[1.03] transition-all duration-500"
-          data-lightbox
-        >
-      </div>
-
-    </div>
-  </div>
-</section>
-  <!-- AKHIR GALERI -->
-
-    <!-- FOOTER -->
-    <footer id="kontak" class="bg-primary-800 text-surface py-12">
-      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div>
-          <div class="flex items-center gap-3 mb-3">
-            <img src="assets/images/Logo_Real_SriBaduga.png" alt="logo" class="h-10 w-auto rounded" />
-            <span class="font-serif text-lg">Museum Sri Baduga</span>
+    <!-- FOOTER - Simple & Readable Design -->
+    <footer id="kontak" class="text-surface py-16" style="background-color: #2a4851;">
+      <div class="max-w-7xl mx-auto px-6">
+        <!-- Footer Content Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+          
+          <!-- Brand Section -->
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <img src="assets/images/Logo_Real_SriBaduga.png" alt="logo" class="h-12 w-auto rounded" />
+            </div>
+            <h3 class="font-serif text-lg font-bold text-white mb-3">Museum Sri Baduga</h3>
+            <p class="text-white/80 text-sm leading-relaxed">Melestarikan warisan budaya dan seni nusantara melalui koleksi, pameran, dan program edukasi yang berkelanjutan.</p>
+            
+            <!-- Social Media -->
+            <div class="flex gap-3 mt-6">
+              <a href="https://www.instagram.com/sribadugamuseum?igsh=eDkwZnY5Mm1hZnZl" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-primary-600 flex items-center justify-center transition" title="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/></svg>
+              </a>
+              <a href="https://www.youtube.com/@museumsribadugaofficial4200" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-primary-600 flex items-center justify-center transition" title="YouTube">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </a>
+              <a href="https://www.tiktok.com/@sribaduga1980?_r=1&_t=ZS-93FXhryR4lE" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-primary-600 flex items-center justify-center transition" title="TikTok">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.321 5.562a5.122 5.122 0 0 1-2.8-2.715V2h-3.385v13.064a2.844 2.844 0 1 1-2.844-2.844c.462 0 .902.1 1.311.285V8.87A5.5 5.5 0 0 0 10.292 8 5.505 5.505 0 0 0 4.79 13.504a5.505 5.505 0 0 0 5.5 5.5 5.506 5.506 0 0 0 5.5-5.5V11.25a7.08 7.08 0 0 0 3.74 1.03V8.9a5.12 5.12 0 0 1-0.209-0.338z"/></svg>
+              </a>
+            </div>
           </div>
-          <p class="text-primary-100">Museum yang menjaga dan membagikan cerita sejarah melalui koleksi dan pameran.</p>
-        </div>
-        <div>
-          <h4 class="font-medium mb-3 text-primary-100">Menu</h4>
-          <ul class="space-y-2 text-primary-100/90">
-            <li><a href="#home" class="hover:text-museumgold">Beranda</a></li>
-            <li><a href="#sejarah" class="hover:text-museumgold">Sejarah</a></li>
-            <li><a href="#koleksi" class="hover:text-museumgold">Koleksi Unggulan</a></li>
-            <li><a href="#galeri" class="hover:text-museumgold">Galeri</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-medium mb-3 text-primary-100">Kontak</h4>
-          <p class="text-primary-100/90">Jl. Contoh No.123, Kota</p>
-          <p class="mt-1 text-primary-100/90">email@museum.example</p>
-          <p class="mt-1 text-primary-100/90">(021) 1234 5678</p>
-        </div>
-      </div>
 
-      <div class="mt-8 border-t border-primary-700/40 pt-6 text-center text-primary-100/80">
-        <small>© <span id="year"></span> Museum Sri Baduga. All rights reserved.</small>
+          <!-- Quick Links -->
+          <div>
+            <h4 class="font-bold mb-6 text-white text-lg">Menu</h4>
+            <ul class="space-y-3 text-white/80">
+              <li><a href="#home" class="hover:text-white transition inline-flex items-center gap-2">
+                <span class="w-1 h-1 bg-white/60 rounded-full"></span>
+                Beranda
+              </a></li>
+              <li><a href="#sejarah" class="hover:text-white transition inline-flex items-center gap-2">
+                <span class="w-1 h-1 bg-white/60 rounded-full"></span>
+                Sejarah
+              </a></li>
+              <li><a href="#koleksi" class="hover:text-white transition inline-flex items-center gap-2">
+                <span class="w-1 h-1 bg-white/60 rounded-full"></span>
+                Sistem Gudang
+              </a></li>
+              <li><a href="#galeri" class="hover:text-white transition inline-flex items-center gap-2">
+                <span class="w-1 h-1 bg-white/60 rounded-full"></span>
+                Galeri
+              </a></li>
+            </ul>
+          </div>
+
+          <!-- Info -->
+          <div>
+            <h4 class="font-bold mb-6 text-white text-lg">Informasi</h4>
+            <ul class="space-y-4 text-white/80">
+              <li class="flex gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                <span>Jalan BKR No. 185, Kelurahan Pelindung Hewan, Kecamatan Astanaanyar, Kota Bandung, Jawa Barat</span>
+              </li>
+              <li class="flex gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <a href="mailto:museumsribaduga@jabarprov.go.id" class="hover:text-white transition">museumsribaduga@jabarprov.go.id</a>
+              </li>
+              <li class="flex gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                <a href="tel:+621234567890" class="hover:text-white transition">(013) 2187 1980</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Jam Operasional -->
+          <div>
+            <h4 class="font-bold mb-6 text-white text-lg">Jam Operasional</h4>
+            <ul class="space-y-3 text-white/80 text-sm">
+              <li class="flex justify-between">
+                <span>Senin - Jumat</span>
+                <span class="font-semibold">09:00 - 17:00</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Sabtu</span>
+                <span class="font-semibold">10:00 - 17:00</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Minggu</span>
+                <span class="font-semibold">10:00 - 16:00</span>
+              </li>
+              <li class="pt-2 border-t border-white/20">
+                <p class="text-white/70 mt-2"><span class="font-semibold">Tutup:</span> Hari Libur Nasional</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t border-white/20 pt-8">
+          <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-white/70 text-sm text-center md:text-left">
+              <p>© <span id="year"></span> Museum Sri Baduga. Semua hak dilindungi.</p>
+            </div>
+            <div class="flex gap-6 text-white/70 text-sm">
+              <a href="#" class="hover:text-white transition">Kebijakan Privasi</a>
+              <a href="#" class="hover:text-white transition">Syarat & Ketentuan</a>
+              <a href="#" class="hover:text-white transition">Hubungi Kami</a>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
 
-    <!-- SCRIPT: navbar scroll + small helpers -->
+    <!-- SCRIPT: navbar scroll + smooth interactions -->
     <script>
       // set copyright year
       document.getElementById('year').textContent = new Date().getFullYear();
@@ -406,30 +473,91 @@
       const nav = document.getElementById('siteNav');
       const signInBtn = document.getElementById('signInBtn');
       const exploreBtn = document.getElementById('exploreBtn');
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 
       function updateNavOnScroll() {
         if (!nav) return;
         if (window.scrollY > 40) {
           nav.classList.add('solid');
           nav.classList.remove('transparent');
-          // change button background to slightly darker blue-gray for contrast
-          if (signInBtn) signInBtn.style.backgroundColor = '#5a7b8c';
-          if (exploreBtn) exploreBtn.style.backgroundColor = '#5a7b8c';
+          // change button background for contrast
+          if (signInBtn) signInBtn.style.backgroundColor = '#ffffff';
+          if (exploreBtn) exploreBtn.style.backgroundColor = '#ffffff';
         } else {
           nav.classList.add('transparent');
           nav.classList.remove('solid');
-          if (signInBtn) signInBtn.style.backgroundColor = '#6b8ea0';
-          if (exploreBtn) exploreBtn.style.backgroundColor = '#6b8ea0';
+          if (signInBtn) signInBtn.style.backgroundColor = '#ffffff';
+          if (exploreBtn) exploreBtn.style.backgroundColor = '#ffffff';
         }
       }
 
       updateNavOnScroll();
       window.addEventListener('scroll', updateNavOnScroll, { passive: true });
 
-      // small accessibility: keyboard focus ring on buttons
+      // Mobile menu toggle
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+          console.log('Mobile menu clicked');
+          // Future: implement mobile menu
+        });
+      }
+
+      // Modal Bagan Lengkap
+      const btnBaganLengkap = document.getElementById('btnBaganLengkap');
+      const modalBaganLengkap = document.getElementById('modalBaganLengkap');
+      const closeBaganModal = document.getElementById('closeBaganModal');
+
+      if (btnBaganLengkap && modalBaganLengkap) {
+        btnBaganLengkap.addEventListener('click', () => {
+          modalBaganLengkap.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        });
+
+        closeBaganModal.addEventListener('click', () => {
+          modalBaganLengkap.classList.add('hidden');
+          document.body.style.overflow = 'auto';
+        });
+
+        // Close modal when clicking outside
+        modalBaganLengkap.addEventListener('click', (e) => {
+          if (e.target === modalBaganLengkap) {
+            modalBaganLengkap.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+          }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !modalBaganLengkap.classList.contains('hidden')) {
+            modalBaganLengkap.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+          }
+        });
+      }
+
+      // Smooth scroll with accessibility focus
+      document.querySelectorAll('a[href^="#"]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const href = el.getAttribute('href');
+          if (href === '#') return;
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth' });
+            target.focus();
+          }
+        });
+      });
+
+      // Accessibility: keyboard focus ring on buttons
       document.querySelectorAll('button, a').forEach(el => {
         el.addEventListener('focus', () => el.classList.add('ring-2', 'ring-primary-300'));
         el.addEventListener('blur', () => el.classList.remove('ring-2', 'ring-primary-300'));
+      });
+
+      // Add loading animation
+      window.addEventListener('load', () => {
+        document.body.style.opacity = '1';
       });
     </script>
 
