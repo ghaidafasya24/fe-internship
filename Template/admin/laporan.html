@@ -384,10 +384,16 @@
                   </select>
                 </div>
               </div>
-              <button id="btnApplyMonthFilter" class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold flex items-center gap-2">
-                <span id="btnApplyMonthFilterIcon">📅</span>
-                <span id="btnApplyMonthFilterText">Tampilkan Data Bulan Ini</span>
-              </button>
+              <div class="flex gap-2">
+                <button id="btnApplyMonthFilter" class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold flex items-center gap-2">
+                  <span id="btnApplyMonthFilterIcon">📅</span>
+                  <span id="btnApplyMonthFilterText">Tampilkan Data Bulan Ini</span>
+                </button>
+                <button id="btnResetMonthFilter" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 font-semibold flex items-center gap-2">
+                  <span>🔄</span>
+                  <span>Reset</span>
+                </button>
+              </div>
             </div>
 
             <!-- Tabel Data Per Bulan -->
@@ -426,10 +432,16 @@
                   <input type="date" id="filterEndDate" class="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white cursor-pointer text-gray-800" placeholder="Pilih tanggal akhir">
                 </div>
               </div>
-              <button id="btnApplyDateFilter" class="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 font-semibold flex items-center gap-2">
-                <span id="btnApplyDateFilterIcon">📆</span>
-                <span id="btnApplyDateFilterText">Tampilkan Data Range Ini</span>
-              </button>
+              <div class="flex gap-2">
+                <button id="btnApplyDateFilter" class="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 font-semibold flex items-center gap-2">
+                  <span id="btnApplyDateFilterIcon">📆</span>
+                  <span id="btnApplyDateFilterText">Tampilkan Data Range Ini</span>
+                </button>
+                <button id="btnResetDateFilter" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 font-semibold flex items-center gap-2">
+                  <span>🔄</span>
+                  <span>Reset</span>
+                </button>
+              </div>
             </div>
 
             <!-- Tabel Data Per Range Tanggal -->
@@ -938,30 +950,28 @@
         enableDateFilter();
       }
 
-      // When month filter is used - disable date filter
-      monthFilter.addEventListener('change', () => {
-        if (monthFilter.value) {
-          disableDateFilter();
-        }
+      // Tombol Reset Month Filter
+      const btnResetMonth = document.getElementById('btnResetMonthFilter');
+      btnResetMonth?.addEventListener('click', () => {
+        monthFilter.value = '';
+        yearFilter.value = '';
+        resetFilterStatus();
+        enableDateFilter();
+        // Clear month table
+        const monthTableSection = document.getElementById('monthTableSection');
+        if (monthTableSection) monthTableSection.classList.add('hidden');
       });
 
-      yearFilter.addEventListener('change', () => {
-        if (monthFilter.value && yearFilter.value) {
-          disableDateFilter();
-        }
-      });
-
-      // When date filter is used - disable month filter
-      startDateFilter.addEventListener('change', () => {
-        if (startDateFilter.value) {
-          disableMonthFilter();
-        }
-      });
-
-      endDateFilter.addEventListener('change', () => {
-        if (endDateFilter.value) {
-          disableMonthFilter();
-        }
+      // Tombol Reset Date Filter
+      const btnResetDate = document.getElementById('btnResetDateFilter');
+      btnResetDate?.addEventListener('click', () => {
+        startDateFilter.value = '';
+        endDateFilter.value = '';
+        resetFilterStatus();
+        enableMonthFilter();
+        // Clear date table
+        const dateTableSection = document.getElementById('dateTableSection');
+        if (dateTableSection) dateTableSection.classList.add('hidden');
       });
 
       // Button: Apply Month Filter dengan validasi & loading
@@ -982,7 +992,7 @@
         btnApplyMonth.querySelector('#btnApplyMonthFilterText').textContent = 'Loading...';
         btnApplyMonth.disabled = true;
 
-        // Disable date filter
+        // Disable date filter saat month filter diaktifkan
         disableDateFilter();
 
         try {
@@ -992,8 +1002,16 @@
           // Load actual data
           await loadReportByMonth(month, year);
           
-          // Show feedback - data loaded
-          showFilterStatus(`✅ Filter Aktif`, `Data ${monthNames[parseInt(month)]} ${year} ditampilkan`);
+          // Cek apakah ada data atau tidak
+          const tableBody = document.getElementById('tableReportByMonth');
+          const hasData = tableBody && tableBody.rows.length > 0 && !tableBody.querySelector('svg');
+          
+          // Show feedback - data loaded atau kosong
+          if (hasData) {
+            showFilterStatus(`✅ Filter Aktif`, `Data ${monthNames[parseInt(month)]} ${year} ditampilkan`);
+          } else {
+            showFilterStatus(`⚠️ Filter Aktif`, `Tidak ada data untuk ${monthNames[parseInt(month)]} ${year}`);
+          }
           
           // Restore button
           btnApplyMonth.querySelector('#btnApplyMonthFilterIcon').textContent = originalIcon;
@@ -1032,7 +1050,7 @@
         btnApplyDate.querySelector('#btnApplyDateFilterText').textContent = 'Loading...';
         btnApplyDate.disabled = true;
 
-        // Disable month filter
+        // Disable month filter saat date filter diaktifkan
         disableMonthFilter();
 
         try {
@@ -1044,8 +1062,16 @@
           // Load actual data
           await loadReportByDateRange(startDate, endDate);
           
-          // Show feedback - data loaded
-          showFilterStatus(`✅ Filter Aktif`, `Data periode ${formattedStart} - ${formattedEnd} ditampilkan`);
+          // Cek apakah ada data atau tidak
+          const tableBody = document.getElementById('tableReportByDate');
+          const hasData = tableBody && tableBody.rows.length > 0 && !tableBody.querySelector('svg');
+          
+          // Show feedback - data loaded atau kosong
+          if (hasData) {
+            showFilterStatus(`✅ Filter Aktif`, `Data periode ${formattedStart} - ${formattedEnd} ditampilkan`);
+          } else {
+            showFilterStatus(`⚠️ Filter Aktif`, `Tidak ada data untuk periode ${formattedStart} - ${formattedEnd}`);
+          }
           
           // Restore button
           btnApplyDate.querySelector('#btnApplyDateFilterIcon').textContent = originalIcon;
