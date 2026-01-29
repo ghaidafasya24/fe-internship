@@ -66,6 +66,25 @@ function renderTable(list = []) {
     })() : "-";
     const desc = item.deskripsi || "-";
     const ukuran = item.ukuran || {};
+    // Get gambar URL
+    const gambarUrl = item.gambar || item.foto || item.foto_utama || item.images || item.image;
+    const primaryImage = Array.isArray(gambarUrl) ? gambarUrl[0] : gambarUrl;
+    const imgUrl = typeof primaryImage === 'string' ? primaryImage : primaryImage?.url || null;
+    
+    // Construct proper image URL
+    let imageDisplay = '-';
+    if (imgUrl) {
+      // If URL is absolute or data URL, use as-is
+      if (imgUrl.startsWith('http') || imgUrl.startsWith('data:')) {
+        imageDisplay = imgUrl;
+      } else if (imgUrl.startsWith('/')) {
+        // Absolute path on server
+        imageDisplay = `${BASE_URL}${imgUrl}`;
+      } else {
+        // Relative path
+        imageDisplay = `${BASE_URL}/${imgUrl}`;
+      }
+    }
 
     return `
       <tr class="hover:bg-primary/[0.02] ease-soft">
@@ -83,6 +102,9 @@ function renderTable(list = []) {
             <span class="desc-text">${desc}</span>
             ${desc && desc.length > 140 ? '<button class="desc-toggle" type="button">Lihat selengkapnya</button>' : ''}
           </div>
+        </td>
+        <td class="px-6 py-4 text-sm text-primary/70 text-center">
+          ${imageDisplay !== '-' ? `<img src="${imageDisplay}" alt="Gambar" class="w-12 h-12 object-cover rounded border border-primary/20 shadow-sm" onerror="this.style.display='none'; this.parentElement.innerHTML='❌';">` : '<span class="text-primary/50">-</span>'}
         </td>
         <td class="px-6 py-4 text-sm text-primary/70">${ukuran.panjang_keseluruhan || "-"}</td>
         <td class="px-6 py-4 text-sm text-primary/70">${ukuran.lebar || "-"}</td>

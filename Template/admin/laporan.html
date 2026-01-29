@@ -38,7 +38,7 @@
           }
         }
       }
-    }
+    };
   </script>
   <style>
     .sidebar { transition: transform .25s ease; }
@@ -96,6 +96,25 @@
       text-decoration: underline;
       font-size: 0.75rem; /* text-xs */
       white-space: nowrap;
+    }
+    /* Modal animations */
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -239,6 +258,7 @@
                     <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10">Kondisi</th>
                     <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10">Tgl Perolehan</th>
                     <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10">Deskripsi</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10">Gambar</th>
                     <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10">Panjang</th>
                     <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10">Lebar</th>
                     <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/10">Tebal</th>
@@ -316,6 +336,17 @@
               </div>
             </div>
             
+            <!-- Status Filter dan Informasi Periode -->
+            <div id="filterStatusAlert" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 hidden">
+              <div class="flex items-start gap-3">
+                <span class="text-xl">ℹ️</span>
+                <div>
+                  <p class="text-sm font-semibold text-blue-900" id="filterStatusText">Filter aktif</p>
+                  <p class="text-xs text-blue-700 mt-1" id="filterPeriodText"></p>
+                </div>
+              </div>
+            </div>
+            
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p class="text-sm text-blue-800">
                 <strong>💡 Petunjuk:</strong> Gunakan filter per bulan untuk melihat data satu bulan spesifik, atau filter per tanggal untuk range tanggal tertentu.
@@ -353,8 +384,9 @@
                   </select>
                 </div>
               </div>
-              <button id="btnApplyMonthFilter" class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold">
-                Tampilkan Data Bulan Ini
+              <button id="btnApplyMonthFilter" class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold flex items-center gap-2">
+                <span id="btnApplyMonthFilterIcon">📅</span>
+                <span id="btnApplyMonthFilterText">Tampilkan Data Bulan Ini</span>
               </button>
             </div>
 
@@ -387,15 +419,16 @@
               <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                   <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Mulai</label>
-                  <input type="date" id="filterStartDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <input type="date" id="filterStartDate" class="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white cursor-pointer text-gray-800" placeholder="Pilih tanggal mulai">
                 </div>
                 <div>
                   <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Akhir</label>
-                  <input type="date" id="filterEndDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <input type="date" id="filterEndDate" class="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white cursor-pointer text-gray-800" placeholder="Pilih tanggal akhir">
                 </div>
               </div>
-              <button id="btnApplyDateFilter" class="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 font-semibold">
-                Tampilkan Data Range Ini
+              <button id="btnApplyDateFilter" class="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 font-semibold flex items-center gap-2">
+                <span id="btnApplyDateFilterIcon">📆</span>
+                <span id="btnApplyDateFilterText">Tampilkan Data Range Ini</span>
               </button>
             </div>
 
@@ -425,20 +458,23 @@
     </main>
   </div>
 
-  <!-- jsPDF & AutoTable -->
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+  <!-- jsPDF Library (UMD) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  
+  <!-- jsPDF AutoTable Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" crossorigin="anonymous"></script>
   
   <!-- XLSX for Excel export -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
 
   <!-- Logout Handler Script -->
   <script type="module" src="../../Js/controller/logout.js"></script>
 
   <!-- Main Laporan Script -->
   <script type="module">
-    import { loadLaporan } from "../../Js/controller/laporan.js";
-    import { loadReportPerGudang, detailReportGudang, loadReportByDateRange, loadReportByMonth, exportReportToPDF, exportPerBulanExcel, exportPerBulanExcelSingle, exportPerTanggalExcel, exportGudangToExcel, exportAllGudangToExcel, exportAllGudangToPDF } from "../../Js/controller/reporting.js";
+    // Import semua dari reporting.js (sudah include loadLaporan)
+    import { loadLaporan, loadReportPerGudang, detailReportGudang, loadReportByDateRange, loadReportByMonth, exportReportToPDF, exportPerBulanExcel, exportPerBulanExcelSingle, exportPerTanggalExcel, exportGudangToExcel, exportAllGudangToExcel, exportAllGudangToPDF, exportAllDataToPDF } from "../../Js/controller/reporting.js";
+    import { showAlert } from "../../Js/utils/modal.js";
 
     // Tab switching function
     const switchTab = (tabName) => {
@@ -481,6 +517,7 @@
     window.exportPerBulanExcel = exportPerBulanExcel;
     window.exportPerBulanExcelSingle = exportPerBulanExcelSingle;
     window.exportPerTanggalExcel = exportPerTanggalExcel;
+    window.showAlert = showAlert;
     window.exportGudangToExcel = exportGudangToExcel;
     window.exportAllGudangToExcel = exportAllGudangToExcel;
     window.exportAllGudangToPDF = exportAllGudangToPDF;
@@ -526,8 +563,9 @@
 
     // Export handlers
     const setupExportHandlers = () => {
-      const exportExcelBtn = document.getElementById('exportExcelBtn');
-      if (exportExcelBtn) {
+      console.log('🔧 setupExportHandlers() called');
+      const exportExcelBtns = document.querySelectorAll('#exportExcelBtn');
+      exportExcelBtns.forEach(exportExcelBtn => {
         exportExcelBtn.addEventListener('click', async () => {
           const btn = exportExcelBtn;
           const originalText = btn.innerHTML;
@@ -535,46 +573,70 @@
           btn.disabled = true;
 
           try {
-            // Dynamically import xlsx library
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-            script.onload = () => {
-              const rows = [];
-              const table = document.getElementById('laporanTable');
-              const headers = [];
-              
-              table.querySelectorAll('thead th').forEach(th => {
-                headers.push(th.textContent.trim());
+            // Cek apakah XLSX sudah tersedia
+            if (!window.XLSX) {
+              // Dynamically import xlsx library jika belum ada
+              await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
               });
-              rows.push(headers);
+              await new Promise(resolve => setTimeout(resolve, 500)); // Wait for init
+            }
 
-              table.querySelectorAll('tbody tr').forEach(tr => {
-                const row = [];
-                tr.querySelectorAll('td').forEach(td => {
+            const rows = [];
+            const table = document.getElementById('laporanTable');
+            const headers = [];
+            
+            // Get header names
+            table.querySelectorAll('thead th').forEach(th => {
+              headers.push(th.textContent.trim());
+            });
+            rows.push(headers);
+
+            // Get data rows - handle kolom Gambar khusus
+            table.querySelectorAll('tbody tr').forEach(tr => {
+              const row = [];
+              const tds = tr.querySelectorAll('td');
+              tds.forEach((td, colIdx) => {
+                // Kolom Gambar (index 10) - get image status
+                if (colIdx === 10) {
+                  const img = td.querySelector('img');
+                  if (img) {
+                    row.push('Ada');
+                  } else {
+                    const text = td.textContent.trim();
+                    row.push(text || 'Tidak Ada');
+                  }
+                } else {
                   row.push(td.textContent.trim());
-                });
-                rows.push(row);
+                }
               });
+              rows.push(row);
+            });
 
-              const worksheet = XLSX.utils.aoa_to_sheet(rows);
-              const workbook = XLSX.utils.book_new();
-              XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Koleksi");
-              XLSX.writeFile(workbook, `Laporan_Koleksi_${new Date().getTime()}.xlsx`);
+            const worksheet = window.XLSX.utils.aoa_to_sheet(rows);
+            const workbook = window.XLSX.utils.book_new();
+            window.XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Koleksi");
+            window.XLSX.writeFile(workbook, `Laporan_Koleksi_${new Date().toISOString().split('T')[0]}.xlsx`);
 
-              btn.innerHTML = originalText;
-              btn.disabled = false;
-            };
-            document.head.appendChild(script);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            console.log('✅ Excel export berhasil');
           } catch (error) {
             console.error('Export error:', error);
+            alert('Gagal export Excel: ' + error.message);
             btn.innerHTML = originalText;
             btn.disabled = false;
           }
         });
-      }
+      });
 
-      const exportPdfBtn = document.getElementById('exportPdfBtn');
-      if (exportPdfBtn) {
+      // Handle SEMUA tombol PDF dengan ID exportPdfBtn (bisa ada duplicate)
+      const exportPdfBtns = document.querySelectorAll('#exportPdfBtn');
+      exportPdfBtns.forEach(exportPdfBtn => {
         exportPdfBtn.addEventListener('click', async () => {
           const btn = exportPdfBtn;
           const originalText = btn.innerHTML;
@@ -582,38 +644,20 @@
           btn.disabled = true;
 
           try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4');
+            // Panggil fungsi exportAllDataToPDF yang sudah ada
+            await exportAllDataToPDF();
             
-            const table = document.getElementById('laporanTable');
-            doc.autoTable({
-              html: '#laporanTable',
-              startY: 10,
-              headStyles: {
-                fillColor: [59, 110, 128],
-                textColor: 255,
-                fontSize: 9,
-                fontStyle: 'bold'
-              },
-              bodyStyles: {
-                fontSize: 8
-              },
-              alternateRowStyles: {
-                fillColor: [245, 245, 245]
-              },
-              margin: { top: 10 }
-            });
-
-            doc.save(`Laporan_Koleksi_${new Date().getTime()}.pdf`);
             btn.innerHTML = originalText;
             btn.disabled = false;
+            console.log('✅ PDF export berhasil');
           } catch (error) {
-            console.error('Export error:', error);
+            console.error('Export PDF error:', error);
+            alert('Gagal export PDF: ' + error.message);
             btn.innerHTML = originalText;
             btn.disabled = false;
           }
         });
-      }
+      });
 
       // Export Per Gudang Excel
       const exportPerGudangBtn = document.getElementById('exportPerGudangExcel');
@@ -672,30 +716,88 @@
         });
       }
 
-      // Export Per Bulan
+      // Export Per Bulan - Dari tab Dashboard Laporan Koleksi
       const exportPerBulanBtn = document.getElementById('exportPerBulanExcel');
       if (exportPerBulanBtn) {
         exportPerBulanBtn.addEventListener('click', async () => {
           const btn = exportPerBulanBtn;
           const originalText = btn.innerHTML;
+
+          // Validasi - cek apakah user sudah pilih bulan dan tahun
+          const monthSelect = document.getElementById('filterMonth');
+          const yearSelect = document.getElementById('filterYear');
+          
+          if (!monthSelect?.value || !yearSelect?.value) {
+            showAlert('Warning', 'Silakan pilih bulan dan tahun terlebih dahulu di tab "Berdasarkan Periode"', 'warning');
+            return;
+          }
+
           btn.innerHTML = '<span>⏳</span> Exporting...';
           btn.disabled = true;
 
           try {
-            await exportPerBulanExcel();
+            const month = monthSelect.value;
+            const year = yearSelect.value;
+            await exportPerBulanExcelSingle(month, year);
             btn.innerHTML = originalText;
             btn.disabled = false;
+            showAlert('Success', 'Export Per Bulan berhasil!', 'success');
           } catch (error) {
             console.error('Export error:', error);
+            showAlert('Error', 'Gagal export: ' + error.message, 'error');
             btn.innerHTML = originalText;
             btn.disabled = false;
           }
         });
       }
 
-      // Export Per Tanggal
-      const exportPerTanggalBtn = document.getElementById('exportPerTanggalExcel');
-      if (exportPerTanggalBtn) {
+      // Export Per Bulan dari Tab "Berdasarkan Periode" (ID: exportPerBulanExcelBtn)
+      const exportPerBulanExcelBtn = document.getElementById('exportPerBulanExcelBtn');
+      console.log('🔍 Looking for exportPerBulanExcelBtn...', exportPerBulanExcelBtn);
+      if (exportPerBulanExcelBtn) {
+        console.log('✅ Found exportPerBulanExcelBtn, attaching listener');
+        exportPerBulanExcelBtn.addEventListener('click', async () => {
+          console.log('🟠 Export Per Bulan Excel Button CLICKED!');
+          const btn = exportPerBulanExcelBtn;
+          const originalText = btn.innerHTML;
+
+          // Validasi - cek apakah user sudah pilih bulan dan tahun
+          const monthSelect = document.getElementById('filterMonth');
+          const yearSelect = document.getElementById('filterYear');
+          
+          console.log('📋 Month:', monthSelect?.value, 'Year:', yearSelect?.value);
+
+          if (!monthSelect?.value || !yearSelect?.value) {
+            console.log('⚠️ Month or Year not selected');
+            showAlert('Warning', 'Silakan pilih bulan dan tahun terlebih dahulu', 'warning');
+            return;
+          }
+
+          btn.innerHTML = '<span>⏳</span> Exporting...';
+          btn.disabled = true;
+
+          try {
+            const month = monthSelect.value;
+            const year = yearSelect.value;
+            console.log('🚀 Calling exportPerBulanExcelSingle(' + month + ', ' + year + ')');
+            await exportPerBulanExcelSingle(month, year);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            showAlert('Success', 'Export Per Bulan berhasil!', 'success');
+          } catch (error) {
+            console.error('Export error:', error);
+            showAlert('Error', 'Gagal export: ' + error.message, 'error');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+          }
+        });
+      } else {
+        console.error('❌ exportPerBulanExcelBtn NOT FOUND!');
+      }
+
+      // Export Per Tanggal - Handle SEMUA tombol dengan ID yang sama
+      const exportPerTanggalBtns = document.querySelectorAll('#exportPerTanggalExcel');
+      exportPerTanggalBtns.forEach(exportPerTanggalBtn => {
         exportPerTanggalBtn.addEventListener('click', async () => {
           const btn = exportPerTanggalBtn;
           const originalText = btn.innerHTML;
@@ -705,7 +807,7 @@
           const endDate = document.getElementById('filterEndDate')?.value;
 
           if (!startDate || !endDate) {
-            alert('Silakan input Tanggal Mulai dan Tanggal Akhir terlebih dahulu di tab "Berdasarkan Tanggal", kemudian klik "Terapkan Filter"');
+            showAlert('Warning', 'Silakan input Tanggal Mulai dan Tanggal Akhir terlebih dahulu di tab "Berdasarkan Tanggal", kemudian klik "Terapkan Filter"', 'warning');
             return;
           }
 
@@ -718,18 +820,19 @@
             btn.disabled = false;
           } catch (error) {
             console.error('Export error:', error);
-            alert('Gagal export: ' + error.message);
+            showAlert('Error', 'Gagal export: ' + error.message, 'error');
             btn.innerHTML = originalText;
             btn.disabled = false;
           }
         });
-      }
+      });
     };
 
     // Setup export handlers
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', setupExportHandlers);
     } else {
+      // DOM already loaded, call immediately
       setupExportHandlers();
     }
 
@@ -748,75 +851,252 @@
           yearSelect.appendChild(option);
         }
       }
-      
-      // Handler untuk filter per bulan
-      const monthFilterBtn = document.getElementById('btnApplyMonthFilter');
-      if (monthFilterBtn) {
-        monthFilterBtn.addEventListener('click', async () => {
-          const month = document.getElementById('filterMonth').value;
-          const year = document.getElementById('filterYear').value;
-          
-          if (!month || !year) {
-            alert('Silakan pilih bulan dan tahun terlebih dahulu');
-            return;
-          }
-          
-          // Load data untuk bulan tersebut
-          await loadReportByMonth(month, year);
-        });
-      }
-      
-      // Handler untuk filter per range tanggal
-      const dateFilterBtn = document.getElementById('btnApplyDateFilter');
-      if (dateFilterBtn) {
-        dateFilterBtn.addEventListener('click', () => {
-          const startDate = document.getElementById('filterStartDate').value;
-          const endDate = document.getElementById('filterEndDate').value;
-          
-          if (!startDate || !endDate) {
-            alert('Silakan pilih tanggal mulai dan akhir');
-            return;
-          }
-
-          loadReportByDateRange(startDate, endDate);
-        });
-      }
-      
-      // Handler untuk export per bulan (button di atas)
-      const exportPerBulanBtn = document.getElementById('exportPerBulanExcelBtn');
-      if (exportPerBulanBtn) {
-        exportPerBulanBtn.addEventListener('click', async () => {
-          const month = document.getElementById('filterMonth').value;
-          const year = document.getElementById('filterYear').value;
-          
-          if (!month || !year) {
-            alert('Silakan pilih bulan dan tahun terlebih dahulu, lalu klik "Tampilkan Data Bulan Ini"');
-            return;
-          }
-          
-          const btn = exportPerBulanBtn;
-          const originalText = btn.innerHTML;
-          btn.innerHTML = '<span>⏳</span> Exporting...';
-          btn.disabled = true;
-          
-          try {
-            await exportPerBulanExcelSingle(month, year);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-          } catch (error) {
-            console.error('Export error:', error);
-            alert('Gagal export: ' + error.message);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-          }
-        });
-      }
+      // Note: Event listeners untuk filter buttons dipindahkan ke UCD section di bawah
+      // untuk menghindari duplicate event listeners
     };
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', setupDateFilter);
     } else {
       setupDateFilter();
+    }
+
+    // ============================================
+    // UCD: FILTER MUTUAL EXCLUSIVITY & VALIDATION
+    // ============================================
+    const setupFilterListeners = () => {
+      const monthFilter = document.getElementById('filterMonth');
+      const yearFilter = document.getElementById('filterYear');
+      const startDateFilter = document.getElementById('filterStartDate');
+      const endDateFilter = document.getElementById('filterEndDate');
+      const btnApplyMonth = document.getElementById('btnApplyMonthFilter');
+      const btnApplyDate = document.getElementById('btnApplyDateFilter');
+      const filterStatusAlert = document.getElementById('filterStatusAlert');
+      const filterStatusText = document.getElementById('filterStatusText');
+      const filterPeriodText = document.getElementById('filterPeriodText');
+      
+      if (!monthFilter || !yearFilter || !btnApplyMonth || !btnApplyDate) {
+        console.error('Filter elements not found!');
+        return;
+      }
+      
+      const monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+      // Helper: Reset filter status
+      function resetFilterStatus() {
+        filterStatusAlert.classList.add('hidden');
+      }
+
+      // Helper: Show filter status
+      function showFilterStatus(title, period) {
+        filterStatusText.textContent = title;
+        filterPeriodText.textContent = period;
+        filterStatusAlert.classList.remove('hidden');
+      }
+
+      // Helper: Disable date inputs
+      function disableDateFilter() {
+        startDateFilter.disabled = true;
+        endDateFilter.disabled = true;
+        btnApplyDate.disabled = true;
+        btnApplyDate.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      // Helper: Enable date inputs
+      function enableDateFilter() {
+        startDateFilter.disabled = false;
+        endDateFilter.disabled = false;
+        btnApplyDate.disabled = false;
+        btnApplyDate.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      // Helper: Disable month inputs
+      function disableMonthFilter() {
+        monthFilter.disabled = true;
+        yearFilter.disabled = true;
+        btnApplyMonth.disabled = true;
+        btnApplyMonth.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      // Helper: Enable month inputs
+      function enableMonthFilter() {
+        monthFilter.disabled = false;
+        yearFilter.disabled = false;
+        btnApplyMonth.disabled = false;
+        btnApplyMonth.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      // Helper: Clear filter
+      function clearFilters() {
+        monthFilter.value = '';
+        yearFilter.value = '';
+        startDateFilter.value = '';
+        endDateFilter.value = '';
+        resetFilterStatus();
+        enableMonthFilter();
+        enableDateFilter();
+      }
+
+      // When month filter is used - disable date filter
+      monthFilter.addEventListener('change', () => {
+        if (monthFilter.value) {
+          disableDateFilter();
+        }
+      });
+
+      yearFilter.addEventListener('change', () => {
+        if (monthFilter.value && yearFilter.value) {
+          disableDateFilter();
+        }
+      });
+
+      // When date filter is used - disable month filter
+      startDateFilter.addEventListener('change', () => {
+        if (startDateFilter.value) {
+          disableMonthFilter();
+        }
+      });
+
+      endDateFilter.addEventListener('change', () => {
+        if (endDateFilter.value) {
+          disableMonthFilter();
+        }
+      });
+
+      // Button: Apply Month Filter dengan validasi & loading
+      btnApplyMonth.addEventListener('click', async () => {
+        const month = monthFilter.value;
+        const year = yearFilter.value;
+
+        // Validasi
+        if (!month || !year) {
+          showAlert('Warning', 'Silakan pilih bulan dan tahun terlebih dahulu', 'warning');
+          return;
+        }
+
+        // Loading state
+        const originalIcon = btnApplyMonth.querySelector('#btnApplyMonthFilterIcon').textContent;
+        const originalText = btnApplyMonth.querySelector('#btnApplyMonthFilterText').textContent;
+        btnApplyMonth.querySelector('#btnApplyMonthFilterIcon').textContent = '⏳';
+        btnApplyMonth.querySelector('#btnApplyMonthFilterText').textContent = 'Loading...';
+        btnApplyMonth.disabled = true;
+
+        // Disable date filter
+        disableDateFilter();
+
+        try {
+          // Show feedback - data loading
+          showFilterStatus('⏳ Sedang memuat data...', `${monthNames[parseInt(month)]} ${year}`);
+          
+          // Load actual data
+          await loadReportByMonth(month, year);
+          
+          // Show feedback - data loaded
+          showFilterStatus(`✅ Filter Aktif`, `Data ${monthNames[parseInt(month)]} ${year} ditampilkan`);
+          
+          // Restore button
+          btnApplyMonth.querySelector('#btnApplyMonthFilterIcon').textContent = originalIcon;
+          btnApplyMonth.querySelector('#btnApplyMonthFilterText').textContent = originalText;
+          btnApplyMonth.disabled = false;
+        } catch (err) {
+          console.error('Error loading month data:', err);
+          showAlert('Error', 'Gagal memuat data: ' + err.message, 'error');
+          btnApplyMonth.querySelector('#btnApplyMonthFilterIcon').textContent = originalIcon;
+          btnApplyMonth.querySelector('#btnApplyMonthFilterText').textContent = originalText;
+          btnApplyMonth.disabled = false;
+          resetFilterStatus();
+        }
+      });
+
+      // Button: Apply Date Filter dengan validasi & loading
+      btnApplyDate.addEventListener('click', async () => {
+        const startDate = startDateFilter.value;
+        const endDate = endDateFilter.value;
+
+        // Validasi
+        if (!startDate || !endDate) {
+          showAlert('Warning', 'Silakan pilih tanggal mulai dan akhir terlebih dahulu', 'warning');
+          return;
+        }
+
+        if (new Date(endDate) < new Date(startDate)) {
+          showAlert('Warning', 'Tanggal akhir tidak boleh lebih kecil dari tanggal mulai', 'warning');
+          return;
+        }
+
+        // Loading state
+        const originalIcon = btnApplyDate.querySelector('#btnApplyDateFilterIcon').textContent;
+        const originalText = btnApplyDate.querySelector('#btnApplyDateFilterText').textContent;
+        btnApplyDate.querySelector('#btnApplyDateFilterIcon').textContent = '⏳';
+        btnApplyDate.querySelector('#btnApplyDateFilterText').textContent = 'Loading...';
+        btnApplyDate.disabled = true;
+
+        // Disable month filter
+        disableMonthFilter();
+
+        try {
+          // Show feedback - data loading
+          const formattedStart = new Date(startDate).toLocaleDateString('id-ID');
+          const formattedEnd = new Date(endDate).toLocaleDateString('id-ID');
+          showFilterStatus('⏳ Sedang memuat data...', `${formattedStart} - ${formattedEnd}`);
+          
+          // Load actual data
+          await loadReportByDateRange(startDate, endDate);
+          
+          // Show feedback - data loaded
+          showFilterStatus(`✅ Filter Aktif`, `Data periode ${formattedStart} - ${formattedEnd} ditampilkan`);
+          
+          // Restore button
+          btnApplyDate.querySelector('#btnApplyDateFilterIcon').textContent = originalIcon;
+          btnApplyDate.querySelector('#btnApplyDateFilterText').textContent = originalText;
+          btnApplyDate.disabled = false;
+        } catch (err) {
+          console.error('Error:', err);
+          btnApplyDate.querySelector('#btnApplyDateFilterIcon').textContent = originalIcon;
+          btnApplyDate.querySelector('#btnApplyDateFilterText').textContent = originalText;
+          btnApplyDate.disabled = false;
+          resetFilterStatus();
+        }
+      });
+    };
+
+    // Setup date inputs with better UX
+    const setupDateInputs = () => {
+      const startDateInput = document.getElementById('filterStartDate');
+      const endDateInput = document.getElementById('filterEndDate');
+
+      if (startDateInput) {
+        startDateInput.addEventListener('focus', function() {
+          console.log('📅 Start date input focused');
+        });
+        startDateInput.addEventListener('change', function() {
+          console.log('📅 Start date changed:', this.value);
+        });
+      }
+
+      if (endDateInput) {
+        endDateInput.addEventListener('focus', function() {
+          console.log('📅 End date input focused');
+        });
+        endDateInput.addEventListener('change', function() {
+          console.log('📅 End date changed:', this.value);
+        });
+      }
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupDateInputs);
+    } else {
+      setupDateInputs();
+    }
+
+    // Call setupFilterListeners dengan proper timing
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupFilterListeners);
+    } else {
+      // DOM already loaded, call immediately
+      setupFilterListeners();
     }
   </script>
 

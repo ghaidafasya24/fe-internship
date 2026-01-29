@@ -325,6 +325,25 @@ function renderKoleksi(data = null) {
 
   const dataToRender = data || allKoleksiData;
 
+  // Jika tidak ada data, tampilkan pesan
+  if (!dataToRender || dataToRender.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="6" class="px-6 py-12 text-center">
+          <div class="flex flex-col items-center justify-center gap-3">
+            <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <p class="text-lg font-semibold text-gray-600">Tidak Ada Koleksi</p>
+            <p class="text-sm text-gray-500">Tidak ada data koleksi untuk kategori atau gudang yang dipilih. Coba ubah filter atau tambahkan koleksi baru.</p>
+          </div>
+        </td>
+      </tr>
+    `;
+    // Jangan setup action listeners jika tidak ada data
+    return;
+  }
+
   // Loop: untuk setiap koleksi, panggil rowKoleksi() dan tambahin HTML ke tabel
   dataToRender.forEach((item, i) => {
     tableBody.innerHTML += rowKoleksi(i + 1, item);

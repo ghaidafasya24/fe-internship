@@ -2,7 +2,14 @@
 // Primary color: #3b6e80
 
 // ==================== SHOW ALERT ====================
-export function showAlert(message, type = 'info') {
+export function showAlert(title, message = '', type = 'info') {
+  // Handle both old format (message, type) and new format (title, message, type)
+  if (typeof message === 'string' && (message === 'success' || message === 'error' || message === 'warning' || message === 'info')) {
+    // Old format: showAlert(message, type)
+    type = message;
+    message = title;
+    title = '';
+  }
   const icons = {
     success: `<svg class="w-12 h-12 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -19,14 +26,15 @@ export function showAlert(message, type = 'info') {
   };
 
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] animate-fadeIn';
+  modal.className = 'fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999]';
   modal.innerHTML = `
-    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4 transform animate-scaleIn border border-primary/10">
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4 transform border border-primary/10" style="animation: slideUp 0.3s ease-out;">
       <div class="flex flex-col items-center text-center">
         <div class="mb-4">
           ${icons[type] || icons.info}
         </div>
-        <p class="text-primary text-base leading-relaxed">${message}</p>
+        ${title ? `<h3 class="text-primary font-semibold text-lg mb-2">${title}</h3>` : ''}
+        <p class="text-gray-700 text-base leading-relaxed">${message}</p>
         <button class="mt-6 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium ease-soft shadow-md">
           OK
         </button>
@@ -37,7 +45,7 @@ export function showAlert(message, type = 'info') {
   document.body.appendChild(modal);
 
   const closeModal = () => {
-    modal.classList.add('animate-fadeOut');
+    modal.style.animation = 'fadeOut 0.2s ease-out';
     setTimeout(() => modal.remove(), 200);
   };
 
