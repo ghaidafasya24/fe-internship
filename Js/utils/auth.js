@@ -29,18 +29,34 @@ export function isTokenExpired() {
 
 // Hapus token + redirect ke login dengan alert
 export function logout(message = "Sesi kamu telah habis. Silakan login kembali.") {
-  document.cookie =
-    "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  // Hapus token dari cookie (both root path dan GitHub Pages subdirectory)
+  document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  document.cookie = "token=; path=/fe-internship/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
+  // Clear localStorage data on logout
+  localStorage.removeItem("token");
+  localStorage.removeItem("token_expires");
+  localStorage.removeItem("username");
+  localStorage.removeItem("phone");
+
+  // Dapatkan base path untuk GitHub Pages compatibility
+  const pathname = window.location.pathname;
+  const isGitHubPages = pathname.includes('/fe-internship/');
+  const basePath = isGitHubPages ? '/fe-internship' : '';
+  const loginPath = basePath + "/Template/login.html";
+  
+  // Prevent back button dari kembali ke dashboard
+  history.replaceState(null, null, loginPath);
+  
   // Import modal dynamically
   import('./modal.js').then(({ showAlert }) => {
     showAlert(message, "warning");
     setTimeout(() => {
-      window.location.href = "/Template/login.html";
+      window.location.href = loginPath;
     }, 2000);
   }).catch(() => {
     alert(message); 
-    window.location.href = "/Template/login.html";
+    window.location.href = loginPath;
   });
 }
 
