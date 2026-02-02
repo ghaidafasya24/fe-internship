@@ -113,8 +113,8 @@ export async function authFetch(url, options = {}) {
 let idleTimer = null;
 let tokenRefreshTimer = null;
 let lastActivityTime = Date.now();
-const IDLE_TIMEOUT = 30 * 60 * 1000; // 30 menit idle = auto logout
-const TOKEN_EXTENSION_DURATION = 60 * 60 * 1000; // Extend token 1 jam saat ada aktivitas
+const IDLE_TIMEOUT = 2 * 60 * 60 * 1000; // 2 jam idle = auto logout
+const TOKEN_EXTENSION_DURATION = 2 * 60 * 60 * 1000; // Extend token 2 jam saat ada aktivitas
 
 // Perpanjang token saat ada aktivitas (extend cookie max-age)
 function extendTokenExpiry() {
@@ -130,9 +130,9 @@ function extendTokenExpiry() {
     // Hanya extend jika token masih valid (belum expired)
     if (timeUntilExpiry > 0) {
       // Extend cookie lifetime agar token tetap tersimpan di browser
-      // Saat ada aktivitas, perpanjang cookie sampai 1 jam ke depan
-      document.cookie = `token=${token}; path=/; max-age=${TOKEN_EXTENSION_DURATION / 1000}`; // 1 jam
-      console.log("🔄 Token extended on activity (1 hour)");
+      // Saat ada aktivitas, perpanjang cookie sampai 2 jam ke depan
+      document.cookie = `token=${token}; path=/; max-age=${TOKEN_EXTENSION_DURATION / 1000}`; // 2 jam
+      console.log("🔄 Token extended on activity (2 hours)");
     }
   } catch (err) {
     console.error("Error extending token:", err);
@@ -150,8 +150,8 @@ async function autoRefreshToken() {
     const now = Date.now();
     const timeUntilExpiry = expiry - now;
     
-    // Jika token akan expired dalam 5 menit, coba refresh
-    if (timeUntilExpiry > 0 && timeUntilExpiry < 5 * 60 * 1000) {
+    // Jika token akan expired dalam 15 menit, coba refresh
+    if (timeUntilExpiry > 0 && timeUntilExpiry < 15 * 60 * 1000) {
       console.log("🔄 Token expiring soon, attempting to refresh...");
       
       // Coba endpoint refresh jika tersedia
@@ -193,7 +193,7 @@ function resetIdleTimer() {
   }
   
   idleTimer = setTimeout(() => {
-    logout("Sesi berakhir karena tidak ada aktivitas selama 30 menit.");
+    logout("Sesi berakhir karena tidak ada aktivitas selama 2 jam.");
   }, IDLE_TIMEOUT);
   
   // Trigger auto refresh check saat ada aktivitas
@@ -228,16 +228,16 @@ export function startTokenExpiryCheck() {
       const timeUntilExpiry = expiry - now;
       const timeSinceLastActivity = now - lastActivityTime;
       
-      // Warning 5 menit sebelum expired
-      if (timeUntilExpiry > 0 && timeUntilExpiry < 5 * 60 * 1000 && !window.tokenExpiryWarningShown) {
+      // Warning 10 menit sebelum expired
+      if (timeUntilExpiry > 0 && timeUntilExpiry < 10 * 60 * 1000 && !window.tokenExpiryWarningShown) {
         window.tokenExpiryWarningShown = true;
         import('./modal.js').then(({ showAlert }) => {
-          showAlert("Info", "Sesi Anda akan berakhir dalam 5 menit. Lakukan aktivitas atau simpan pekerjaan Anda.", "warning");
+          showAlert("Info", "Sesi Anda akan berakhir dalam 10 menit. Lakukan aktivitas atau simpan pekerjaan Anda.", "warning");
         });
       }
       
-      // Auto logout HANYA jika token expired DAN tidak ada aktivitas dalam 10 menit terakhir
-      if (timeUntilExpiry <= 0 && timeSinceLastActivity > 10 * 60 * 1000) {
+      // Auto logout HANYA jika token expired DAN tidak ada aktivitas dalam 30 menit terakhir
+      if (timeUntilExpiry <= 0 && timeSinceLastActivity > 30 * 60 * 1000) {
         console.warn("⚠️ Token expired and no recent activity - logging out");
         logout("Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan login kembali.");
       } else if (timeUntilExpiry <= 0) {
